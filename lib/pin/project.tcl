@@ -123,4 +123,77 @@ snit::type ::pin::project {
 		assert {$info(root) ne ""}
 		return [file join $info(root) {*}$args]
 	}
+
+	#---------------------------------------------------------------------
+	# Loading the Project file
+
+	# loadinfo
+	#
+	# Attempts to load the project metadata from the project file into
+	# the meta() array.
+
+	typemethod loadinfo {} {
+		assert {$info(intree)}
+
+		# FIRST, set up the slave interpreter to parse this.
+		# TODO: Use a smart interpreter
+		set interp [interp create -safe]
+
+		$interp alias project [myproc ProjectCmd]
+		$interp alias app     [myproc AppCmd]
+		$interp alias require [myproc RequireCmd]
+
+		# NEXT, try to parse the file.  The commands will throw
+		# SYNTAX errors if they detect a problem.
+
+		try {
+			$interp eval [readfile [project root $projectFile]]
+		} trap SYNTAX {result} {
+			throw FATAL "Syntax error in $projectFile: $result"
+		} trap {TCL WRONGARGS} {result} {
+			throw FATAL "Syntax error in $projectFile: $result"
+		}
+	}
+
+	# ProjectCmd name version description
+	# 
+	# name        - The project name
+	# version     - The project version
+	# description - The project description
+	# 
+	# Defines the project's identity.  The version must be a valid
+	# [package provide] version string.
+	#
+	# TODO: Add [prepare] command.
+	# TODO: Validate project name.
+	# TODO: Validate version string
+	# TODO: Validate that there's a description.
+
+	proc ProjectCmd {name version description} {
+		set meta(name)        $name
+		set meta(version)     $version
+		set meta(description) [tighten $description]
+	}
+
+	# AppCmd name
+	#
+	# name - The application name.
+	#
+	# Specifies that this project builds an application called $name.
+
+	proc AppCmd {name} {
+		ladd meta(apps) $name
+	}
+
+	# RequireCmd name version
+	#
+	# name    - The package name.
+	# version - The package's version number
+	#
+	# Specifies that this project requires the named package.
+
+	proc RequireCmd {name version} {
+		# TODO: Add relevant code
+	}
+
 }

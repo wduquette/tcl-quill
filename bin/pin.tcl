@@ -45,6 +45,7 @@ proc main {argv} {
 
 	if {[project intree]} {
 		puts "project: [project root]"
+		project loadinfo
 	} else {
 		puts "Not in a project tree."
 	}
@@ -64,6 +65,7 @@ try {
 	puts $result
 	exit 1
 } on error {result eopt} {
-	puts "Unexpected error: $result\n"
+	puts "Unexpected error: $result"
+	puts "([dict get $eopt -errorcode])\n"
 	puts [dict get $eopt -errorinfo]
 }

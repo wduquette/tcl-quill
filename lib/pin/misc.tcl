@@ -18,7 +18,11 @@
 
 namespace eval ::pin:: {
 	namespace export \
-		assert
+		assert       \
+		lshift       \
+		outdent      \
+		readfile     \
+		tighten
 }
 
 #-------------------------------------------------------------------------
@@ -40,6 +44,24 @@ proc ::pin::assert {expression} {
     }
 
     throw ASSERT "Assertion failed: $expression"
+}
+
+# ladd listvar value
+#
+# listvar - The name of a list variable
+# value   - A value to add the list
+#
+# Adds the value to the list if it isn't already present.  Returns
+# the new list.
+
+proc ::pin::ladd {listvar value} {
+	upvar 1 $listvar theList
+
+	if {$value ni $theList} {
+		lappend theList $value
+	}
+
+	return $theList
 }
 
 # lshift listvar
@@ -95,5 +117,21 @@ proc ::pin::tighten {text} {
     regsub -all {\s+} $text " " text
     
     return [string trim $text]
+}
+
+# readfile filename
+#
+# filename  - A filename
+#
+# Opens the named file and reads it into memory.
+
+proc ::pin::readfile {filename} {
+	set f [open $filename r]
+
+	try {
+		return [read $f]		
+	} finally {
+		close $f
+	}
 }
 
