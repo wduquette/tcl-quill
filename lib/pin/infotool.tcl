@@ -26,8 +26,8 @@ set ::pin::tools(info) {
 }
 
 set ::pin::help(info) {
-	This tool displays the project's metadata to the console in human
-	readable form.
+	The "pin info" tool displays the project's metadata to the console 
+	in human-readable form.
 }
 
 #-------------------------------------------------------------------------

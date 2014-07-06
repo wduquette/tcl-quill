@@ -47,7 +47,7 @@ proc main {argv} {
 
 	# NEXT, if there are no arguments then just display the help.
 	if {[llength $argv] == 0} {
-		puts "TODO: Write helptool"
+		helptool execute {}
 		return
 	}
 
@@ -78,6 +78,8 @@ proc main {argv} {
 	# NEXT, execute the tool.
 	set cmd [dict get $pin::tools($tool) ensemble]
 	$cmd execute $argv
+
+	puts ""
 }
 
 #-------------------------------------------------------------------------

@@ -31,6 +31,7 @@ namespace eval ::pin:: {
 
 source [file join $::pin::library misc.tcl    ]
 source [file join $::pin::library project.tcl ]
+source [file join $::pin::library helptool.tcl]
 source [file join $::pin::library infotool.tcl]
 
 
