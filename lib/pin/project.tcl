@@ -125,6 +125,15 @@ snit::type ::pin::project {
 	}
 
 	#---------------------------------------------------------------------
+	# Metadata Queries
+
+	typemethod name        {} { return $meta(name)        }
+	typemethod version     {} { return $meta(version)     }
+	typemethod description {} { return $meta(description) }
+	typemethod {app names} {} { return $meta(apps)        }
+
+
+	#---------------------------------------------------------------------
 	# Loading the Project file
 
 	# loadinfo

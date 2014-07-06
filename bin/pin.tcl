@@ -41,14 +41,43 @@ namespace import pin::*
 # argv - Command line arguments
 
 proc main {argv} {
+	# FIRST, are we in a project tree, and if so what's the project
+	# root?
 	project findroot
 
-	if {[project intree]} {
-		puts "project: [project root]"
-		project loadinfo
-	} else {
-		puts "Not in a project tree."
+	# NEXT, if there are no arguments then just display the help.
+	if {[llength $argv] == 0} {
+		puts "TODO: Write helptool"
+		return
 	}
+
+	# NEXT, get the tool
+	set tool [lshift argv]
+
+	if {![info exists ::pin::tools($tool)]} {
+		throw FATAL [outdent "
+			Unknown subcommand: \"$tool\"
+			See 'pin help' for a list of commands.
+		"]
+	}
+
+	# NEXT, check the number of arguments.
+	checkargs "pin $tool" {*}[dict get $::pin::tools($tool) argspec] $argv
+
+	# NEXT, load the project info if the tool needs it.
+	if {[dict get $pin::tools($tool) intree]} {
+		if {![project intree]} {
+			throw FATAL [outdent {
+				This tool can only be used in a project tree.
+				See "pin help" for more information.
+			}]
+		}
+		project loadinfo
+	}
+
+	# NEXT, execute the tool.
+	set cmd [dict get $pin::tools($tool) ensemble]
+	$cmd execute $argv
 }
 
 #-------------------------------------------------------------------------

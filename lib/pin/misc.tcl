@@ -19,6 +19,7 @@
 namespace eval ::pin:: {
 	namespace export \
 		assert       \
+		checkargs    \
 		lshift       \
 		outdent      \
 		readfile     \
@@ -44,6 +45,26 @@ proc ::pin::assert {expression} {
     }
 
     throw ASSERT "Assertion failed: $expression"
+}
+
+# checkargs command min max usage argv
+#
+# command   - The base command, e.g., "pin new"
+# min       - The minimum number of commands (an integer)
+# max       - The maximum number of commands (an integer or "-")
+# usage     - The argument usage list, doc-style.
+# argv      - The actual argument list
+#
+# Verifies that the right number of arguments are provided to a tool.
+
+proc ::pin::checkargs {command min max usage argv} {
+	set len [llength $argv]
+
+	if {$len >= $min && ($max eq "-" || $len <= $max)} {
+		return
+	}
+
+	throw FATAL "Usage: $command $usage"
 }
 
 # ladd listvar value

@@ -29,7 +29,8 @@ namespace eval ::pin:: {
 	variable library [file dirname [info script]]
 }
 
-source [file join $::pin::library misc.tcl   ]
-source [file join $::pin::library project.tcl]
+source [file join $::pin::library misc.tcl    ]
+source [file join $::pin::library project.tcl ]
+source [file join $::pin::library infotool.tcl]
 
 
