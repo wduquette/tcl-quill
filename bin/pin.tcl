@@ -31,6 +31,7 @@ package require snit 2.3
 
 # pin(n) is the package containing the bulk of the Pinion code.
 package require pin
+namespace import pin::*
 
 #-------------------------------------------------------------------------
 # Main Routine
@@ -40,7 +41,13 @@ package require pin
 # argv - Command line arguments
 
 proc main {argv} {
-	puts "Hello, <$argv>"
+	project findroot
+
+	if {[project intree]} {
+		puts "project: [project root]"
+	} else {
+		puts "Not in a project tree."
+	}
 }
 
 #-------------------------------------------------------------------------
