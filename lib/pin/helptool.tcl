@@ -70,7 +70,7 @@ snit::type ::pin::helptool {
 		foreach tool [lsort [array names ::pin::tools]] {
 			set desc [dict get $::pin::tools($tool) description]
 
-			puts [format "%-10s %s" $tool $desc]
+			puts [format "%-8s - %s" $tool $desc]
 		}
 
 		puts ""

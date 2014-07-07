@@ -132,6 +132,19 @@ snit::type ::pin::project {
 	typemethod description {} { return $meta(description) }
 	typemethod {app names} {} { return $meta(apps)        }
 
+	# libpath
+	#
+	# Returns the full set of library directories for this project.
+	# The assumption is that any code needed by the project is either
+	# on this path or included in a linked teapot.
+	
+	typemethod libpath {} {
+		lappend result \
+			[project root lib]
+
+		return $result
+	}
+
 
 	#---------------------------------------------------------------------
 	# Loading the Project file

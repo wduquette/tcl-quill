@@ -1,0 +1,65 @@
+# -*-Tcl-*-
+#-------------------------------------------------------------------------
+# TITLE:
+#    misc.test
+#
+# AUTHOR:
+#    Will Duquette
+#
+# DESCRIPTION:
+#    kutils(n): Test cases for misc.tcl
+
+#-------------------------------------------------------------------------
+# Load the tcltest package
+
+if {[lsearch [namespace children] ::tcltest] == -1} {
+    package require tcltest 2.3
+    eval ::tcltest::configure $argv
+}
+
+namespace import ::tcltest::*
+
+#-------------------------------------------------------------------------
+# Load the package to be tested
+
+package require pin
+namespace import ::pin::*
+
+#-------------------------------------------------------------------------
+# outdent
+
+test outdent-1.1 {outdent block} -body {
+    outdent {
+        ---Hello---
+           ---GoodBye---
+    }
+} -result {---Hello---
+   ---GoodBye---}
+
+
+#-----------------------------------------------------------------------
+# tighten
+
+test tighten-1.1 {tighten blanks} -body {
+    tighten {    abc    def    }
+} -result {abc def}
+
+test tighten-1.2 {tighten newlines} -body {
+    tighten {
+        abc
+        def
+    }
+} -result {abc def}
+
+test tighten-1.3 {tighten all whitespace characters} -body {
+    tighten " \n\n   abc \n \r \f \t def \n  "
+} -result {abc def}
+
+
+#---------------------------------------------------------------------
+# Clean up and finish
+
+::tcltest::cleanupTests
+
+
+
