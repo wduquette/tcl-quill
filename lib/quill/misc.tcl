@@ -20,6 +20,7 @@ namespace eval ::quill:: {
 	namespace export \
 		assert       \
 		checkargs    \
+        ladd         \
 		lshift       \
 		outdent      \
 		readfile     \

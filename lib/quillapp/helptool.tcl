@@ -17,20 +17,20 @@
 #-------------------------------------------------------------------------
 # Register the tool
 
-set ::quill::tools(help) {
+set ::quillapp::tools(help) {
 	command     "help"
 	description "Displays this help."
 	argspec     {0 1 "topic"}
 	intree      false
-	ensemble    ::quill::helptool
+	ensemble    ::quillapp::helptool
 }
 
-# No ::quill::help() entry is required; this is a special case.
+# No ::quillapp::help() entry is required; this is a special case.
 
 #-------------------------------------------------------------------------
 # Namespace Export
 
-namespace eval ::quill:: {
+namespace eval ::quillapp:: {
 	namespace export \
 		helptool
 } 
@@ -38,7 +38,7 @@ namespace eval ::quill:: {
 #-------------------------------------------------------------------------
 # Tool Singleton: helptool
 
-snit::type ::quill::helptool {
+snit::type ::quillapp::helptool {
 	# Make it a singleton
 	pragma -hasinstances no -hastypedestroy no
 
@@ -67,8 +67,8 @@ snit::type ::quill::helptool {
 		puts "quill is a tool for working with Tcl projects.  It has"
 		puts "the following subcommands:\n"
 
-		foreach tool [lsort [array names ::quill::tools]] {
-			set desc [dict get $::quill::tools($tool) description]
+		foreach tool [lsort [array names ::quillapp::tools]] {
+			set desc [dict get $::quillapp::tools($tool) description]
 
 			puts [format "%-8s - %s" $tool $desc]
 		}
@@ -84,11 +84,11 @@ snit::type ::quill::helptool {
 	# Displays help for the topic.
 
 	proc DisplayTopic {topic} {
-		if {![info exists ::quill::help($topic)]} {
+		if {![info exists ::quillapp::help($topic)]} {
 			throw FATAL "No help is available for this topic: \"$topic\""
 		}
 
-		puts [outdent $::quill::help($topic)]
+		puts [outdent $::quillapp::help($topic)]
 	}
 
 

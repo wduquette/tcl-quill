@@ -16,7 +16,7 @@
 #-------------------------------------------------------------------------
 # Namespace Exports
 
-namespace eval ::quill:: {
+namespace eval ::quillapp:: {
 	namespace export \
 		project
 }
@@ -24,7 +24,7 @@ namespace eval ::quill:: {
 #-------------------------------------------------------------------------
 # project ensemble
 
-snit::type ::quill::project {
+snit::type ::quillapp::project {
 	# Make it a singleton
 	pragma -hasinstances no -hastypedestroy no
 

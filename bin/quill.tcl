@@ -30,8 +30,8 @@ package require snit 2.3
 # TODO: package require quillinfo -- needed for project info.
 
 # quill(n) is the package containing the bulk of the quill code.
-package require quill
-namespace import quill::*
+package require quillapp
+namespace import quill::* quillapp::*
 
 #-------------------------------------------------------------------------
 # Main Routine
@@ -54,7 +54,7 @@ proc main {argv} {
 	# NEXT, get the tool
 	set tool [lshift argv]
 
-	if {![info exists ::quill::tools($tool)]} {
+	if {![info exists ::quillapp::tools($tool)]} {
 		throw FATAL [outdent "
 			Unknown subcommand: \"$tool\"
 			See 'quill help' for a list of commands.
@@ -62,10 +62,11 @@ proc main {argv} {
 	}
 
 	# NEXT, check the number of arguments.
-	checkargs "quill $tool" {*}[dict get $::quill::tools($tool) argspec] $argv
+	checkargs "quill $tool" \
+		{*}[dict get $::quillapp::tools($tool) argspec] $argv
 
 	# NEXT, load the project info if the tool needs it.
-	if {[dict get $quill::tools($tool) intree]} {
+	if {[dict get $quillapp::tools($tool) intree]} {
 		if {![project intree]} {
 			throw FATAL [outdent {
 				This tool can only be used in a project tree.
@@ -76,7 +77,7 @@ proc main {argv} {
 	}
 
 	# NEXT, execute the tool.
-	set cmd [dict get $quill::tools($tool) ensemble]
+	set cmd [dict get $quillapp::tools($tool) ensemble]
 	$cmd execute $argv
 
 	puts ""

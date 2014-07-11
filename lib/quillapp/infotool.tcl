@@ -17,15 +17,15 @@
 #-------------------------------------------------------------------------
 # Register the tool
 
-set ::quill::tools(info) {
+set ::quillapp::tools(info) {
 	command     "info"
 	description "Displays the project metadata to the console."
 	argspec     {0 0 ""}
 	intree      true
-	ensemble    ::quill::infotool
+	ensemble    ::quillapp::infotool
 }
 
-set ::quill::help(info) {
+set ::quillapp::help(info) {
 	The "quill info" tool displays the project's metadata to the console 
 	in human-readable form.
 }
@@ -33,7 +33,7 @@ set ::quill::help(info) {
 #-------------------------------------------------------------------------
 # Namespace Export
 
-namespace eval ::quill:: {
+namespace eval ::quillapp:: {
 	namespace export \
 		infotool
 } 
@@ -41,7 +41,7 @@ namespace eval ::quill:: {
 #-------------------------------------------------------------------------
 # Tool Singleton: infotool
 
-snit::type ::quill::infotool {
+snit::type ::quillapp::infotool {
 	# Make it a singleton
 	pragma -hasinstances no -hastypedestroy no
 

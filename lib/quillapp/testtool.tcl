@@ -17,15 +17,15 @@
 #-------------------------------------------------------------------------
 # Register the tool
 
-set ::quill::tools(test) {
+set ::quillapp::tools(test) {
 	command     "test"
 	description "Executes the project test suite."
 	argspec     {0 - "?target ?module?? ?options...?"}
 	intree      true
-	ensemble    ::quill::testtool
+	ensemble    ::quillapp::testtool
 }
 
-set ::quill::help(test) {
+set ::quillapp::help(test) {
 	The "quill test" tool executes the project Tcltest test suite.  By 
 	default, "quill test" runs the test suites for all subdirectories of
 	<root>/test.  Given one argument, the "target", it executes the
@@ -45,7 +45,7 @@ set ::quill::help(test) {
 #-------------------------------------------------------------------------
 # Namespace Export
 
-namespace eval ::quill:: {
+namespace eval ::quillapp:: {
 	namespace export \
 		testtool
 } 
@@ -53,7 +53,7 @@ namespace eval ::quill:: {
 #-------------------------------------------------------------------------
 # Tool Singleton: testtool
 
-snit::type ::quill::testtool {
+snit::type ::quillapp::testtool {
 	# Make it a singleton
 	pragma -hasinstances no -hastypedestroy no
 

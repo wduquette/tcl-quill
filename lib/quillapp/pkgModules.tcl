@@ -9,27 +9,30 @@
 #    Tcl-quill: A Project Build System for Tcl/Tk
 #
 # DESCRIPTION:
-#    quill(n) Package Loader
+#    quillapp(n) Package Loader
 #
 #-----------------------------------------------------------------------
 
 # TODO: Need to set this to project version.
-package provide quill 1.0
+package provide quillapp 1.0
 
 #-----------------------------------------------------------------------
 # Required Packages
 
 # TODO: use [quill require]
 package require snit
+package require quill
 
 #-----------------------------------------------------------------------
 # Get the library directory
 
-namespace eval ::quill:: {
+namespace eval ::quillapp:: {
 	variable library [file dirname [info script]]
 }
 
-source [file join $::quill::library misc.tcl     ]
-source [file join $::quill::library templates.tcl]
+source [file join $::quillapp::library project.tcl  ]
+source [file join $::quillapp::library helptool.tcl ]
+source [file join $::quillapp::library infotool.tcl ]
+source [file join $::quillapp::library testtool.tcl ]
 
 

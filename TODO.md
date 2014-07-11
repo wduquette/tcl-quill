@@ -34,6 +34,9 @@ Quill should provide the following tools.
 * quill new
   * Create a new project tree given a template
 
+* quill replace
+  * Project search and replace command
+
 * quill run
   * Run the main app (or a given app) with a given command line.
 
