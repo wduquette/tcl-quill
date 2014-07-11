@@ -18,7 +18,8 @@
 
 namespace eval ::quill:: {
 	namespace export \
-		readfile
+		readfile     \
+        writefile
 }
 
 #-------------------------------------------------------------------------

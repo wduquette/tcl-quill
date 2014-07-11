@@ -1,0 +1,75 @@
+# -*-Tcl-*-
+#-------------------------------------------------------------------------
+# TITLE:
+#    fileutils.test
+#
+# AUTHOR:
+#    Will Duquette
+#
+# DESCRIPTION:
+#    quill(n): Test cases for fileutils.tcl
+
+#-------------------------------------------------------------------------
+# Load the tcltest package
+
+if {[lsearch [namespace children] ::tcltest] == -1} {
+    package require tcltest 2.3
+    eval ::tcltest::configure $argv
+}
+
+namespace import ::tcltest::test
+
+#-------------------------------------------------------------------------
+# Load the package to be tested
+
+package require quill
+namespace import ::quill::*
+
+#-------------------------------------------------------------------------
+# Setup
+
+
+
+#-------------------------------------------------------------------------
+# readfile
+
+test readfile-1.1 {reads file from disk} -setup {
+    tcltest::makeFile "test data" readfile-1.1.txt
+} -body {
+    readfile readfile-1.1.txt
+} -result {test data
+}
+
+#-------------------------------------------------------------------------
+# writefile
+
+test writefile-1.1 {writes file to disk} -setup {
+    # This will cause the file to be cleaned up at the end.
+    tcltest::makeFile "setup" writefile-1.1.txt
+} -body {
+    writefile writefile-1.1.txt "test data"
+    readfile writefile-1.1.txt
+} -result {test data}
+
+test writefile-1.2 {doesn't rewrite if no change} -setup {
+    # This will cause the file to be cleaned up at the end.
+    tcltest::makeFile "setup" writefile-1.2.txt
+} -body {
+    writefile writefile-1.2.txt "test data"
+    set t1 [file mtime writefile-1.2.txt]
+
+    after 1500
+
+    writefile writefile-1.2.txt "test data"
+    set t2 [file mtime writefile-1.2.txt]
+
+    expr {$t2 == $t1}
+} -result {1}
+
+#-------------------------------------------------------------------------
+# Clean up and finish
+
+::tcltest::cleanupTests
+
+
+
