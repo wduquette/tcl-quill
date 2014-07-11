@@ -2,13 +2,16 @@
 
 ## Next
 
-* Replace "templates.tcl" with fileutils.tcl.
-  * Move readfile from misc.tcl to fileutils.tcl
-  * Complete tests.
+* Add tests for all quill(n) commands
+* Support building man pages
+* Support building trees
 * Support building .kits
 * Support requires.
 
-## Eventually
+## To Find Out
+
+* Can tclapp take a teapot package file and include it straight into a
+  wrapped app?
 
 ## Missing Tools
 
@@ -28,6 +31,7 @@ Quill should provide the following tools.
     * Man pages
     * Markdown?
     * A fancier format with section numbers?
+
 * quill install
   * Install build products into the local environment.
 

@@ -29,7 +29,9 @@ namespace eval ::quill:: {
 	variable library [file dirname [info script]]
 }
 
-source [file join $::quill::library misc.tcl     ]
-source [file join $::quill::library templates.tcl]
+source [file join $::quill::library control.tcl    ]
+source [file join $::quill::library fileutils.tcl  ]
+source [file join $::quill::library listutils.tcl  ]
+source [file join $::quill::library stringutils.tcl]
 
 

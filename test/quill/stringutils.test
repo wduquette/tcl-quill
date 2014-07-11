@@ -1,13 +1,13 @@
 # -*-Tcl-*-
 #-------------------------------------------------------------------------
 # TITLE:
-#    misc.test
+#    stringutils.test
 #
 # AUTHOR:
 #    Will Duquette
 #
 # DESCRIPTION:
-#    quill(n): Test cases for misc.tcl
+#    quill(n): Test cases for stringutils.tcl
 
 #-------------------------------------------------------------------------
 # Load the tcltest package
