@@ -1,7 +1,6 @@
-tcl-pinion
-==========
+# Quill
 
-Pinion is a build tool for Tcl/Tk projects, inspired by
+Quill is a build tool for Tcl/Tk projects, inspired by
 [Leiningen](http://leiningen.org).  It is intended to:
 
 * Create new skeleton project trees.
@@ -14,12 +13,11 @@ Pinion is a build tool for Tcl/Tk projects, inspired by
   * Reusable packages (teapot modules, .tm or .zip)
 * Make it easy to build and deploy Tcl applications and libraries.
 
-Assumptions
------------
+## Assumptions
 
-At present, Pinion relies heavily on ActiveState's package repository
+At present, Quill relies heavily on ActiveState's package repository
 tool-chain, and particularly on "teacup" (delivered with ActiveTcl)
-and "tclapp" (delivered as part of TclDevKit).  In particular, Pinion
+and "tclapp" (delivered as part of TclDevKit).  In particular, Quill
 assumes the following:
 
 * ActiveTcl 8.6.1 or later is installed on the system.

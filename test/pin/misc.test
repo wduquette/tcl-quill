@@ -7,7 +7,7 @@
 #    Will Duquette
 #
 # DESCRIPTION:
-#    kutils(n): Test cases for misc.tcl
+#    quill(n): Test cases for misc.tcl
 
 #-------------------------------------------------------------------------
 # Load the tcltest package
@@ -17,13 +17,13 @@ if {[lsearch [namespace children] ::tcltest] == -1} {
     eval ::tcltest::configure $argv
 }
 
-namespace import ::tcltest::*
+namespace import ::tcltest::test
 
 #-------------------------------------------------------------------------
 # Load the package to be tested
 
-package require pin
-namespace import ::pin::*
+package require quill
+namespace import ::quill::*
 
 #-------------------------------------------------------------------------
 # outdent

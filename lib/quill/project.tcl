@@ -6,7 +6,7 @@
 #    Will Duquette
 # 
 # PROJECT:
-#    Pinion: Project Build System for Tcl
+#    Quill: Project Build System for Tcl
 #
 # DESCRIPTION:
 #    Project file parser and metadata object
@@ -16,7 +16,7 @@
 #-------------------------------------------------------------------------
 # Namespace Exports
 
-namespace eval ::pin:: {
+namespace eval ::quill:: {
 	namespace export \
 		project
 }
@@ -24,14 +24,14 @@ namespace eval ::pin:: {
 #-------------------------------------------------------------------------
 # project ensemble
 
-snit::type ::pin::project {
+snit::type ::quill::project {
 	# Make it a singleton
 	pragma -hasinstances no -hastypedestroy no
 
 	#---------------------------------------------------------------------
 	# Constants
 
-	typevariable projectFile "project.pin"
+	typevariable projectFile "project.quill"
 
 	#---------------------------------------------------------------------
 	# Type Variables
@@ -71,7 +71,7 @@ snit::type ::pin::project {
 
 	# findroot
 	#
-	# Looks for the project's root directory by looking for project.pin
+	# Looks for the project's root directory by looking for project.quill
 	# in the current directory and on up the chain.
 
 	typemethod findroot {} {

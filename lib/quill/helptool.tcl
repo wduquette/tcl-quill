@@ -6,31 +6,31 @@
 #    Will Duquette
 # 
 # PROJECT:
-#    Pinion: Project Build System for Tcl/Tk
+#    Quill: Project Build System for Tcl/Tk
 #
 # DESCRIPTION:
-#    "pin help" tool implementation.  This tool outputs help information
-#    for Pinion users to the console.
+#    "quill help" tool implementation.  This tool outputs help information
+#    for quill users to the console.
 #
 #-------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------
 # Register the tool
 
-set ::pin::tools(help) {
+set ::quill::tools(help) {
 	command     "help"
 	description "Displays this help."
 	argspec     {0 1 "topic"}
 	intree      false
-	ensemble    ::pin::helptool
+	ensemble    ::quill::helptool
 }
 
-# No ::pin::help() entry is required; this is a special case.
+# No ::quill::help() entry is required; this is a special case.
 
 #-------------------------------------------------------------------------
 # Namespace Export
 
-namespace eval ::pin:: {
+namespace eval ::quill:: {
 	namespace export \
 		helptool
 } 
@@ -38,7 +38,7 @@ namespace eval ::pin:: {
 #-------------------------------------------------------------------------
 # Tool Singleton: helptool
 
-snit::type ::pin::helptool {
+snit::type ::quill::helptool {
 	# Make it a singleton
 	pragma -hasinstances no -hastypedestroy no
 
@@ -64,17 +64,17 @@ snit::type ::pin::helptool {
 	# descriptions.
 
 	proc DisplayToolList {} {
-		puts "Pinion is a tool for working with Tcl projects.  It has"
+		puts "quill is a tool for working with Tcl projects.  It has"
 		puts "the following subcommands:\n"
 
-		foreach tool [lsort [array names ::pin::tools]] {
-			set desc [dict get $::pin::tools($tool) description]
+		foreach tool [lsort [array names ::quill::tools]] {
+			set desc [dict get $::quill::tools($tool) description]
 
 			puts [format "%-8s - %s" $tool $desc]
 		}
 
 		puts ""
-		puts "Use 'pin help <topic>' to see more about any tool."
+		puts "Use 'quill help <topic>' to see more about any tool."
 	}
 
 	# DisplayTopic topic
@@ -84,11 +84,11 @@ snit::type ::pin::helptool {
 	# Displays help for the topic.
 
 	proc DisplayTopic {topic} {
-		if {![info exists ::pin::help($topic)]} {
+		if {![info exists ::quill::help($topic)]} {
 			throw FATAL "No help is available for this topic: \"$topic\""
 		}
 
-		puts [outdent $::pin::help($topic)]
+		puts [outdent $::quill::help($topic)]
 	}
 
 

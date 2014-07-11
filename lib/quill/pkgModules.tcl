@@ -6,34 +6,34 @@
 #    Will Duquette
 # 
 # PROJECT:
-#    Tcl-Pinion: A Project Build System for Tcl/Tk
+#    Tcl-quill: A Project Build System for Tcl/Tk
 #
 # DESCRIPTION:
-#    pin(n) Package Loader
+#    quill(n) Package Loader
 #
 #-----------------------------------------------------------------------
 
 # TODO: Need to set this to project version.
-package provide pin 1.0
+package provide quill 1.0
 
 #-----------------------------------------------------------------------
 # Required Packages
 
-# TODO: use [pinion require]
+# TODO: use [quill require]
 package require snit
 
 #-----------------------------------------------------------------------
 # Get the library directory
 
-namespace eval ::pin:: {
+namespace eval ::quill:: {
 	variable library [file dirname [info script]]
 }
 
-source [file join $::pin::library misc.tcl     ]
-source [file join $::pin::library templates.tcl]
-source [file join $::pin::library project.tcl  ]
-source [file join $::pin::library helptool.tcl ]
-source [file join $::pin::library infotool.tcl ]
-source [file join $::pin::library testtool.tcl ]
+source [file join $::quill::library misc.tcl     ]
+source [file join $::quill::library templates.tcl]
+source [file join $::quill::library project.tcl  ]
+source [file join $::quill::library helptool.tcl ]
+source [file join $::quill::library infotool.tcl ]
+source [file join $::quill::library testtool.tcl ]
 
 

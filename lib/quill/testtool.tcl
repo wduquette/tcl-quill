@@ -6,10 +6,10 @@
 #    Will Duquette
 # 
 # PROJECT:
-#    Pinion: Project Build System for Tcl/Tk
+#    Quill: Project Build System for Tcl/Tk
 #
 # DESCRIPTION:
-#    "pin test" tool implementation.  This tool outputs the project's
+#    "quill test" tool implementation.  This tool outputs the project's
 #    information to the console.
 #
 #-------------------------------------------------------------------------
@@ -17,17 +17,17 @@
 #-------------------------------------------------------------------------
 # Register the tool
 
-set ::pin::tools(test) {
+set ::quill::tools(test) {
 	command     "test"
 	description "Executes the project test suite."
 	argspec     {0 - "?target ?module?? ?options...?"}
 	intree      true
-	ensemble    ::pin::testtool
+	ensemble    ::quill::testtool
 }
 
-set ::pin::help(test) {
-	The "pin test" tool executes the project Tcltest test suite.  By 
-	default, "pin test" runs the test suites for all subdirectories of
+set ::quill::help(test) {
+	The "quill test" tool executes the project Tcltest test suite.  By 
+	default, "quill test" runs the test suites for all subdirectories of
 	<root>/test.  Given one argument, the "target", it executes the
 	test suite for the target subdirectory.  Given two arguments, a 
 	"target" and a "module" name, runs the tests for the 
@@ -37,7 +37,7 @@ set ::pin::help(test) {
 
 	It is assumed that the target subdirectory contains a test script
 	called "all_tests.test" that executes all of the other test scripts
-	in the subdirectory.  Note that "pin new" and "pin add" create 
+	in the subdirectory.  Note that "quill new" and "quill add" create 
 	the necessary script whenever a library package is added to the
 	project.
 }
@@ -45,7 +45,7 @@ set ::pin::help(test) {
 #-------------------------------------------------------------------------
 # Namespace Export
 
-namespace eval ::pin:: {
+namespace eval ::quill:: {
 	namespace export \
 		testtool
 } 
@@ -53,7 +53,7 @@ namespace eval ::pin:: {
 #-------------------------------------------------------------------------
 # Tool Singleton: testtool
 
-snit::type ::pin::testtool {
+snit::type ::quill::testtool {
 	# Make it a singleton
 	pragma -hasinstances no -hastypedestroy no
 

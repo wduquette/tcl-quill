@@ -1,3 +1,0 @@
-project tcl-pinion 0.1a0 "Pinion Project Build System for Tcl/Tk"
-app pin
-require snit 2.3

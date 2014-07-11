@@ -6,10 +6,10 @@
 #    Will Duquette
 # 
 # PROJECT:
-#    Pinion: Project Build System for Tcl/Tk
+#    Quill: Project Build System for Tcl/Tk
 #
 # DESCRIPTION:
-#    "pin info" tool implementation.  This tool outputs the project's
+#    "quill info" tool implementation.  This tool outputs the project's
 #    information to the console.
 #
 #-------------------------------------------------------------------------
@@ -17,23 +17,23 @@
 #-------------------------------------------------------------------------
 # Register the tool
 
-set ::pin::tools(info) {
+set ::quill::tools(info) {
 	command     "info"
 	description "Displays the project metadata to the console."
 	argspec     {0 0 ""}
 	intree      true
-	ensemble    ::pin::infotool
+	ensemble    ::quill::infotool
 }
 
-set ::pin::help(info) {
-	The "pin info" tool displays the project's metadata to the console 
+set ::quill::help(info) {
+	The "quill info" tool displays the project's metadata to the console 
 	in human-readable form.
 }
 
 #-------------------------------------------------------------------------
 # Namespace Export
 
-namespace eval ::pin:: {
+namespace eval ::quill:: {
 	namespace export \
 		infotool
 } 
@@ -41,7 +41,7 @@ namespace eval ::pin:: {
 #-------------------------------------------------------------------------
 # Tool Singleton: infotool
 
-snit::type ::pin::infotool {
+snit::type ::quill::infotool {
 	# Make it a singleton
 	pragma -hasinstances no -hastypedestroy no
 

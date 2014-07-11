@@ -6,7 +6,7 @@
 #    Will Duquette
 # 
 # PROJECT:
-#    Pinion: Project Build System for Tcl
+#    Quill: Project Build System for Tcl
 #
 # DESCRIPTION:
 #    Miscellaneous small procs.
@@ -16,7 +16,7 @@
 #-------------------------------------------------------------------------
 # Namespace Exports
 
-namespace eval ::pin:: {
+namespace eval ::quill:: {
 	namespace export \
 		assert       \
 		checkargs    \
@@ -39,7 +39,7 @@ namespace eval ::pin:: {
 # failed and what the condition was.  Assertions throw the error code
 # ASSERT.
 
-proc ::pin::assert {expression} {
+proc ::quill::assert {expression} {
     if {[uplevel 1 [list expr $expression]]} {
         return
     }
@@ -49,7 +49,7 @@ proc ::pin::assert {expression} {
 
 # checkargs command min max usage argv
 #
-# command   - The base command, e.g., "pin new"
+# command   - The base command, e.g., "quill new"
 # min       - The minimum number of commands (an integer)
 # max       - The maximum number of commands (an integer or "-")
 # usage     - The argument usage list, doc-style.
@@ -57,7 +57,7 @@ proc ::pin::assert {expression} {
 #
 # Verifies that the right number of arguments are provided to a tool.
 
-proc ::pin::checkargs {command min max usage argv} {
+proc ::quill::checkargs {command min max usage argv} {
 	set len [llength $argv]
 
 	if {$len >= $min && ($max eq "-" || $len <= $max)} {
@@ -75,7 +75,7 @@ proc ::pin::checkargs {command min max usage argv} {
 # Adds the value to the list if it isn't already present.  Returns
 # the new list.
 
-proc ::pin::ladd {listvar value} {
+proc ::quill::ladd {listvar value} {
 	upvar 1 $listvar theList
 
 	if {$value ni $theList} {
@@ -92,7 +92,7 @@ proc ::pin::ladd {listvar value} {
 # Pops and returns the argument from the front of the list stored
 # in the variable.
 
-proc ::pin::lshift {listvar} {
+proc ::quill::lshift {listvar} {
     upvar 1 $listvar thelist
 
     set result [lindex $thelist 0]
@@ -107,7 +107,7 @@ proc ::pin::lshift {listvar} {
 #
 # This command outdents a multi-line text string to the left margin.
 
-proc ::pin::outdent {text} {
+proc ::quill::outdent {text} {
     # FIRST, remove any leading blank lines
     regsub {\A(\s*\n)} $text "" text
 
@@ -134,7 +134,7 @@ proc ::pin::outdent {text} {
 # trailing whitespace is trimmed, and all internal whitespace
 # is replaced with single space characters between non-whitespace tokens.
 
-proc ::pin::tighten {text} {
+proc ::quill::tighten {text} {
     regsub -all {\s+} $text " " text
     
     return [string trim $text]
@@ -146,7 +146,7 @@ proc ::pin::tighten {text} {
 #
 # Opens the named file and reads it into memory.
 
-proc ::pin::readfile {filename} {
+proc ::quill::readfile {filename} {
 	set f [open $filename r]
 
 	try {

@@ -1,0 +1,3 @@
+project tcl-quill 0.1a0 "Quill Project Build System for Tcl/Tk"
+app quill
+require snit 2.3

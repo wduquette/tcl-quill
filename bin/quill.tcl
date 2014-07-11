@@ -4,13 +4,13 @@
 exec tclsh "$0" "$@"
 
 #-------------------------------------------------------------------------
-# NAME: pin.tcl
+# NAME: quill.tcl
 #
 # PROJECT:
-#  Tcl-Pinion: A Project Build System for Tcl/Tk
+#  Quill: A Project Build System for Tcl/Tk
 #
 # DESCRIPTION:
-#  Loader script for the pin(1) tool.
+#  Loader script for the quill(1) tool.
 #
 #-------------------------------------------------------------------------
 
@@ -25,13 +25,13 @@ set auto_path [linsert $auto_path 0 $libdir]
 package require Tcl 8.6
 package require snit 2.3
 
-# pinion(n) is a generated package containing this project's 
+# quillinfo(n) is a generated package containing this project's 
 # metadata.
-# TODO: package require pinion -- needed for project info.
+# TODO: package require quillinfo -- needed for project info.
 
-# pin(n) is the package containing the bulk of the Pinion code.
-package require pin
-namespace import pin::*
+# quill(n) is the package containing the bulk of the quill code.
+package require quill
+namespace import quill::*
 
 #-------------------------------------------------------------------------
 # Main Routine
@@ -54,29 +54,29 @@ proc main {argv} {
 	# NEXT, get the tool
 	set tool [lshift argv]
 
-	if {![info exists ::pin::tools($tool)]} {
+	if {![info exists ::quill::tools($tool)]} {
 		throw FATAL [outdent "
 			Unknown subcommand: \"$tool\"
-			See 'pin help' for a list of commands.
+			See 'quill help' for a list of commands.
 		"]
 	}
 
 	# NEXT, check the number of arguments.
-	checkargs "pin $tool" {*}[dict get $::pin::tools($tool) argspec] $argv
+	checkargs "quill $tool" {*}[dict get $::quill::tools($tool) argspec] $argv
 
 	# NEXT, load the project info if the tool needs it.
-	if {[dict get $pin::tools($tool) intree]} {
+	if {[dict get $quill::tools($tool) intree]} {
 		if {![project intree]} {
 			throw FATAL [outdent {
 				This tool can only be used in a project tree.
-				See "pin help" for more information.
+				See "quill help" for more information.
 			}]
 		}
 		project loadinfo
 	}
 
 	# NEXT, execute the tool.
-	set cmd [dict get $pin::tools($tool) ensemble]
+	set cmd [dict get $quill::tools($tool) ensemble]
 	$cmd execute $argv
 
 	puts ""

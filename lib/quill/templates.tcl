@@ -6,7 +6,7 @@
 #    Will Duquette
 # 
 # PROJECT:
-#    Pinion: Project Build System for Tcl/Tk
+#    Quill: Project Build System for Tcl/Tk
 #
 # DESCRIPTION:
 #    This module contains code for generating files from templates.
@@ -16,7 +16,7 @@
 #-------------------------------------------------------------------------
 # Namespace Exports
 
-namespace eval ::pin:: {
+namespace eval ::quill:: {
 	namespace export \
 		writefile
 }
@@ -32,7 +32,10 @@ namespace eval ::pin:: {
 # Writes the text to the file, only if the content of the file has 
 # changed.
 
-proc ::pin::writefile {filename text} {
+# TODO Move this and readfile to files.tcl; put the template stuff
+# in ftemplate.
+
+proc ::quill::writefile {filename text} {
 	# FIRST, see if there's already a file with the same content.
 	if {[file exists $filename]} {
 		set oldtext [readfile $filename]
