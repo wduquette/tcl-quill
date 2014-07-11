@@ -26,20 +26,22 @@ namespace eval ::quill:: {
 # Command Definitions
 
 
-# ladd listvar value
+# ladd listvar value...
 #
 # listvar - The name of a list variable
-# value   - A value to add the list
+# values  - Values to add to the list
 #
-# Adds the value to the list if it isn't already present.  Returns
+# Adds each value to the list if it isn't already present.  Returns
 # the new list.
 
-proc ::quill::ladd {listvar value} {
+proc ::quill::ladd {listvar args} {
 	upvar 1 $listvar theList
 
-	if {$value ni $theList} {
-		lappend theList $value
-	}
+    foreach value $args {
+        if {$value ni $theList} {
+            lappend theList $value
+        }
+    }
 
 	return $theList
 }

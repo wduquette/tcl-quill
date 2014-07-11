@@ -1,0 +1,91 @@
+# -*-Tcl-*-
+#-------------------------------------------------------------------------
+# TITLE:
+#    listutils.test
+#
+# AUTHOR:
+#    Will Duquette
+#
+# DESCRIPTION:
+#    quill(n): Test cases for listutils.tcl
+
+#-------------------------------------------------------------------------
+# Load the tcltest package
+
+if {[lsearch [namespace children] ::tcltest] == -1} {
+    package require tcltest 2.3
+    eval ::tcltest::configure $argv
+}
+
+namespace import ::tcltest::test
+
+#-------------------------------------------------------------------------
+# Load the package to be tested
+
+package require quill
+namespace import ::quill::*
+
+#-------------------------------------------------------------------------
+# Setup
+
+
+
+#-------------------------------------------------------------------------
+# ladd
+
+test ladd-1.1 {add one value to empty list} -body {
+    set mylist [list]
+    ladd mylist a
+    set mylist
+} -result {a}
+
+test ladd-1.2 {add multiple values to empty list} -body {
+    set mylist [list]
+    ladd mylist a b c
+    set mylist
+} -result {a b c}
+
+test ladd-1.3 {add multiple values to existing list} -body {
+    set mylist [list a b c]
+    ladd mylist d e f
+    set mylist
+} -result {a b c d e f}
+
+test ladd-1.4 {add some existing values to existing list} -body {
+    set mylist [list a b c d]
+    ladd mylist a c e f
+    set mylist
+} -result {a b c d e f}
+
+test ladd-1.5 {returns new list} -body {
+    set mylist [list a b c]
+    ladd mylist b c d
+} -result {a b c d}
+
+#-------------------------------------------------------------------------
+# lshift
+
+test lshift-1.1 {returns empty string from empty list} -body {
+    set mylist [list]
+    lshift mylist
+} -result {}
+
+test lshift-1.2 {extracts first word} -body {
+    set mylist [list a b c]
+    set first [lshift mylist]
+    list $first $mylist
+} -result {a {b c}}
+
+test lshift-1.3 {extracts final word} -body {
+    set mylist [list a]
+    set first [lshift mylist]
+    list $first $mylist
+} -result {a {}}
+
+#-------------------------------------------------------------------------
+# Clean up and finish
+
+::tcltest::cleanupTests
+
+
+
