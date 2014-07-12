@@ -25,20 +25,6 @@ namespace import ::tcltest::test
 package require quill
 namespace import ::quill::*
 
-#-------------------------------------------------------------------------
-# Setup
-
-proc errcatch {script} {
-    try {
-        uplevel 1 $script
-    } on error {result eopts} {
-        return "[dict get $eopts -errorcode] $result"
-    }
-
-    error "Script should have thrown error"
-}
-
-
 
 #-------------------------------------------------------------------------
 # assert
@@ -49,10 +35,40 @@ test assert-1.1 {assert succeeds} -body {
 } -result {OK}
 
 test assert-1.2 {assert fails} -body {
-    errcatch {
+    codecatch {
         assert {1 + 1 == 3}
     }
-} -result {ASSERT Assertion failed: 1 + 1 == 3}
+} -result {ASSERT {Assertion failed: 1 + 1 == 3}}
+
+#-------------------------------------------------------------------------
+# codecatch
+
+test codecatch-1.1 {script succeeds} -body {
+    codecatch {
+        set a "No error"
+    }
+} -result {ok {No error}}
+
+test codecatch-1.2 {script fails} -body {
+    codecatch {
+        throw FAILURE "Simulated error"
+    }
+} -result {FAILURE {Simulated error}}
+
+#-------------------------------------------------------------------------
+# precond
+
+test precond-1.1 {precondition is met} -body {
+    codecatch {
+        precond {1 + 1 == 2} "Math works"
+    }
+} -result {ok {}}
+
+test precond-1.2 {script fails} -body {
+    codecatch {
+        precond {1 + 1 == 3} "Math fails"
+    }
+} -result {ASSERT {Math fails}}
 
 #---------------------------------------------------------------------
 # Clean up and finish

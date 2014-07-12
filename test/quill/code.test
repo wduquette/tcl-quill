@@ -1,0 +1,77 @@
+# -*-Tcl-*-
+#-----------------------------------------------------------------------
+# TITLE:
+#    code.test
+#
+# AUTHOR:
+#    Will Duquette
+#
+# DESCRIPTION:
+#    quill(n0: Test cases for code.tcl
+
+#-------------------------------------------------------------------------
+# Load the tcltest package
+
+if {[lsearch [namespace children] ::tcltest] == -1} {
+    package require tcltest 2.3
+    eval ::tcltest::configure $argv
+}
+
+namespace import ::tcltest::test
+
+#-------------------------------------------------------------------------
+# Load the package to be tested
+
+package require quill
+namespace import ::quill::*
+
+#-------------------------------------------------------------------------
+# Setup
+
+proc sample {a b {c 1} {d 2} args} {
+    return "$a $b $c $d $args"
+}
+
+
+#-----------------------------------------------------------------------
+# getproc
+
+test getproc-1.1 {retrieves proc definition} -body {
+    set a \n[code getproc assert]\n
+} -result {
+proc assert expression {
+    if {[uplevel 1 [list expr $expression]]} {
+        return
+    }
+
+    throw ASSERT "Assertion failed: $expression"
+}
+}
+
+test getproc-1.2 {retrieves proc definition with optional args} -body {
+    set a \n[code getproc sample]\n
+} -result {
+proc sample {a b {c 1} {d 2} args} {
+    return "$a $b $c $d $args"
+}
+}
+
+test getproc-1.3 {namespaces are stripped from proc name} -body {
+    set a \n[code getproc ::quill::assert]\n
+} -result {
+proc assert expression {
+    if {[uplevel 1 [list expr $expression]]} {
+        return
+    }
+
+    throw ASSERT "Assertion failed: $expression"
+}
+}
+
+#---------------------------------------------------------------------
+# Clean up and finish
+
+::tcltest::cleanupTests
+
+
+

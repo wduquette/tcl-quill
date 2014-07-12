@@ -18,13 +18,17 @@
 
 namespace eval ::quill:: {
 	namespace export \
-		assert
+		assert       \
+        codecatch    \
+        precond
 }
 
 #-------------------------------------------------------------------------
 # Command Definitions
 
 # assert expression
+#
+# expression  - A boolean expression
 #
 # This command is used for checking procedure invariants: conditions
 # which logically must be true if the procedure is written correctly,
@@ -42,3 +46,39 @@ proc ::quill::assert {expression} {
     throw ASSERT "Assertion failed: $expression"
 }
 
+# codecatch script
+#
+# script   - A tcl script
+#
+# Executes the script in the caller's context, catching the result.  
+# Returns a 2-element list, the errorCode and the error message. If 
+# there was no error, returns "ok" and the return value.
+
+proc ::quill::codecatch {script} {
+    try {
+        set output [uplevel 1 $script]
+    } on error {result eopts} {
+        return [list [dict get $eopts -errorcode] $result]
+    }
+
+    return [list ok $output]
+}
+
+
+# precond expression message
+#
+# This command is used for checking procedure preconditions: invariants
+# on the command's arguments, which will never be false in a properly 
+# written program.
+#
+# If the precondition fails an error is thrown indicating that a
+# precondition failed, with the given message.  The error code is
+# ASSERT.
+
+proc ::quill::precond {expression message} {
+    if {[uplevel 1 [list expr $expression]]} {
+        return
+    }
+
+    throw ASSERT $message
+}
