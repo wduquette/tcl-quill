@@ -3,6 +3,12 @@
 ## Next
 
 * Support building man pages
+  * DONE Add smartinterp to quill(n)
+  * DONE Define macro(n)
+  * Test macro(n)
+  * Use macro(n) to define manpage(n)
+    * All macros?  No embedded HTML?
+  * Define "quill docs"
 * Support building trees
 * Support building .kits
 * Support requires.
