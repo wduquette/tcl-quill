@@ -19,7 +19,8 @@
 namespace eval ::quill:: {
 	namespace export \
 		readfile     \
-        writefile
+        writefile    \
+        genfile
 }
 
 #-------------------------------------------------------------------------
@@ -72,6 +73,28 @@ proc ::quill::writefile {filename text} {
     }
 }
 
+# genfile template filename mapping...
+#
+# template  - Name of a template file
+# filename  - Name of the file to write.
+# mapping   - A [string map] mapping to apply to the template,
+#             passed as a single argument or as multiple arguments
+#             on the command line.
+#
+# Reads the template, applies the mapping, and writes the result,
+# only if the resulting file has changed.
+
+proc ::quill::genfile {template filename args} {
+    # FIRST, get the mapping.
+    if {[llength $args] == 1} {
+        set mapping [lindex $args 0]
+    } else {
+        set mapping $args
+    }
+
+    # NEXT, format and output the result
+    writefile $filename [string map $mapping [readfile $template]]
+}
 
 
 

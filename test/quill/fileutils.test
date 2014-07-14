@@ -67,6 +67,40 @@ test writefile-1.2 {doesn't rewrite if no change} -setup {
 } -result {1}
 
 #-------------------------------------------------------------------------
+# genfile-1.1
+
+test genfile-1.1 {writes file to disk} -setup {
+    tcltest::makeFile "--%parm--" genfile.template
+    # This will cause the file to be cleaned up at the end.
+    tcltest::makeFile "setup" genfile.txt
+} -body {
+    genfile genfile.template genfile.txt
+    readfile genfile.txt
+} -result {--%parm--
+}
+
+test genfile-1.2 {mapping as multiple args} -setup {
+    tcltest::makeFile "--%parm--" genfile.template
+    # This will cause the file to be cleaned up at the end.
+    tcltest::makeFile "setup" genfile.txt
+} -body {
+    genfile genfile.template genfile.txt %parm "test data"
+    readfile genfile.txt
+} -result {--test data--
+}
+
+test genfile-1.3 {mapping as one arg} -setup {
+    tcltest::makeFile "--%parm--" genfile.template
+    # This will cause the file to be cleaned up at the end.
+    tcltest::makeFile "setup" genfile.txt
+} -body {
+    genfile genfile.template genfile.txt {%parm "more data"}
+    readfile genfile.txt
+} -result {--more data--
+}
+
+
+#-------------------------------------------------------------------------
 # Clean up and finish
 
 ::tcltest::cleanupTests

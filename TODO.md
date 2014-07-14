@@ -2,7 +2,6 @@
 
 ## Next
 
-* Add tests for all quill(n) commands
 * Create quillinfo(n) automatically.
 * Support building man pages
 * Support building trees
