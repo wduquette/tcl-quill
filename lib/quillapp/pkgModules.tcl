@@ -30,10 +30,12 @@ namespace eval ::quillapp:: {
 	variable library [file dirname [info script]]
 }
 
-source [file join $::quillapp::library misc.tcl     ]
-source [file join $::quillapp::library project.tcl  ]
-source [file join $::quillapp::library helptool.tcl ]
-source [file join $::quillapp::library infotool.tcl ]
-source [file join $::quillapp::library testtool.tcl ]
+source [file join $::quillapp::library misc.tcl       ]
+source [file join $::quillapp::library gentree.tcl    ]
+source [file join $::quillapp::library project.tcl    ]
+source [file join $::quillapp::library helptool.tcl   ]
+source [file join $::quillapp::library infotool.tcl   ]
+source [file join $::quillapp::library testtool.tcl   ]
+source [file join $::quillapp::library versiontool.tcl]
 
 

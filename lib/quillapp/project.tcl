@@ -51,18 +51,20 @@ snit::type ::quillapp::project {
 	#
 	# Data includes:
 	#
-	# name          - The project name
+	# project       - The project name
 	# version       - The project version number
 	# description   - The project description
+	# homepage      - URL of the project home page.
 	# apps          - List of application names
 	#
 	# app-$name     - Dictionary of application metadata
 	#   TBD
 
 	typevariable meta -array {
-		name        ""
+		project     ""
 		version     ""
 		description ""
+		url         "http://my.home.page"
 		apps        {}
 	}
 
@@ -121,16 +123,32 @@ snit::type ::quillapp::project {
 
 	typemethod root {args} {
 		assert {$info(root) ne ""}
-		return [file join $info(root) {*}$args]
+		return [file normalize [file join $info(root) {*}$args]]
 	}
 
 	#---------------------------------------------------------------------
 	# Metadata Queries
 
-	typemethod name        {} { return $meta(name)        }
+	typemethod name        {} { return $meta(project)     }
 	typemethod version     {} { return $meta(version)     }
 	typemethod description {} { return $meta(description) }
 	typemethod {app names} {} { return $meta(apps)        }
+
+	# gotinfo
+	#
+	# Returns 1 if we've loaded the project's info, and 0 otherwise.
+
+	typemethod gotinfo {} {
+		expr {$meta(project) ne ""}
+	}
+
+	# gotapp
+	#
+	# Returns 1 if the project defines an application, and 0 otherwise.
+
+	typemethod gotapp {} {
+		expr {[llength $meta(apps)] > 0}
+	}
 
 	# libpath
 	#
@@ -161,9 +179,10 @@ snit::type ::quillapp::project {
 		# TODO: Use a smart interpreter
 		set interp [interp create -safe]
 
-		$interp alias project [myproc ProjectCmd]
-		$interp alias app     [myproc AppCmd]
-		$interp alias require [myproc RequireCmd]
+		$interp alias project  [myproc ProjectCmd]
+		$interp alias homepage [myproc HomepageCmd]
+		$interp alias app      [myproc AppCmd]
+		$interp alias require  [myproc RequireCmd]
 
 		# NEXT, try to parse the file.  The commands will throw
 		# SYNTAX errors if they detect a problem.
@@ -171,15 +190,25 @@ snit::type ::quillapp::project {
 		try {
 			$interp eval [readfile [project root $projectFile]]
 		} trap SYNTAX {result} {
-			throw FATAL "Syntax error in $projectFile: $result"
+			throw FATAL "Error in $projectFile: $result"
 		} trap {TCL WRONGARGS} {result} {
-			throw FATAL "Syntax error in $projectFile: $result"
+			throw FATAL "Error in $projectFile: $result"
+		}
+
+		# NEXT, if no project is specified that's an error.
+		if {$meta(project) eq ""} {
+			throw FATAL [outdent {
+				The project.quill file doesn't define a project.
+				Please add a \"project\" statement.
+			}]
 		}
 	}
 
-	# ProjectCmd name version description
+
+
+	# ProjectCmd project version description
 	# 
-	# name        - The project name
+	# project     - The project project
 	# version     - The project version
 	# description - The project description
 	# 
@@ -191,10 +220,24 @@ snit::type ::quillapp::project {
 	# TODO: Validate version string
 	# TODO: Validate that there's a description.
 
-	proc ProjectCmd {name version description} {
-		set meta(name)        $name
+	proc ProjectCmd {project version description} {
+		if {$meta(project) ne ""} {
+			throw SYNTAX "Multiple \"project\" statements in file"
+		}
+
+		set meta(project)     $project
 		set meta(version)     $version
 		set meta(description) [tighten $description]
+	}
+
+	# HomepageCmd url
+	#
+	# url - The project home page url.
+	#
+	# Specifies that this project's home page is at the given URL.
+
+	proc HomepageCmd {url} {
+		set meta(homepage) $url
 	}
 
 	# AppCmd name
@@ -218,4 +261,29 @@ snit::type ::quillapp::project {
 		# TODO: Add relevant code
 	}
 
+	#---------------------------------------------------------------------
+	# Saving project metadata
+	#
+	# For projects with an "app", Quill saves the project metadata into
+	# a package called "quillinfo", thus giving the application access
+	# to the information.
+
+	# quillinfo save
+	#
+	# Saves project metadata as appropriate.
+
+	typemethod {quillinfo save} {} {
+		assert {[$type gotinfo]}
+
+		# FIRST, save the info to quillinfo.
+		if {[$type gotapp]} {
+			gentree {
+				quillinfo_pkgIndex   lib/quillinfo/pkgIndex.tcl
+				quillinfo_pkgModules lib/quillinfo/pkgModules.tcl
+				quillinfo_quillinfo  lib/quillinfo/quillinfo.tcl
+			} %project     $meta(project)          \
+			  %description $meta(description)      \
+			  %meta        [list [array get meta]]
+		}
+	}
 }

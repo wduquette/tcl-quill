@@ -27,7 +27,7 @@ package require snit 2.3
 
 # quillinfo(n) is a generated package containing this project's 
 # metadata.
-# TODO: package require quillinfo -- needed for project info.
+package require quillinfo
 
 # quill(n) is the package containing the bulk of the quill code.
 package require quillapp
@@ -67,13 +67,19 @@ proc main {argv} {
 
 	# NEXT, load the project info if the tool needs it.
 	if {[dict get $quillapp::tools($tool) intree]} {
+		# FIRST, fail if we need to be a project and we aren't.
 		if {![project intree]} {
 			throw FATAL [outdent {
 				This tool can only be used in a project tree.
 				See "quill help" for more information.
 			}]
 		}
+
+		# NEXT, load the project info.
 		project loadinfo
+
+		# NEXT, save the project metadata, in case it has changed.
+		project quillinfo save
 	}
 
 	# NEXT, execute the tool.
