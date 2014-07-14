@@ -2,7 +2,6 @@
 
 ## Next
 
-* Create quillinfo(n) automatically.
 * Support building man pages
 * Support building trees
 * Support building .kits

@@ -1,0 +1,371 @@
+# -*-Tcl-*-
+#---------------------------------------------------------------------
+# TITLE:
+#    smartinterp.test
+#
+# AUTHOR:
+#    Will Duquette
+#
+# PROJECT:
+#    Tcl-quill: A Project Build System for Tcl/Tk
+#
+# DESCRIPTION:
+#    Test cases for smartinterp(n).
+
+#-------------------------------------------------------------------------
+# Load the tcltest package
+
+if {[lsearch [namespace children] ::tcltest] == -1} {
+    package require tcltest 2.3
+    eval ::tcltest::configure $argv
+}
+
+namespace import ::tcltest::test
+
+#-------------------------------------------------------------------------
+# Load the package to be tested
+
+package require quill
+namespace import ::quill::*
+
+#-----------------------------------------------------------------------
+# Test Routines
+
+# hello name
+#
+# Says hello to name
+
+proc hello {name} {
+    return "Hello, $name!"
+}
+
+# echo args
+#
+# Returns its arguments.
+
+proc echo {args} {
+    return "echo <[join $args ><]>"
+}
+
+#-----------------------------------------------------------------------
+# -commands 
+
+test commands-1.1 {all commands, by default} -body {
+    set interp [smartinterp %AUTO%]
+    
+    $interp eval {info commands open}
+} -cleanup {
+    $interp destroy
+} -result {open}
+
+test commands-1.2 {all commands, when -commands all} -body {
+    set interp [smartinterp %AUTO% -commands all]
+    
+    $interp eval {info commands open}
+} -cleanup {
+    $interp destroy
+} -result {open}
+
+test commands-1.3 {only safe commands -commands safe} -body {
+    set interp [smartinterp %AUTO% -commands safe]
+    
+    set a [$interp eval {info commands open}]
+    set b [$interp eval {info commands set}]
+    list $a $b
+} -cleanup {
+    $interp destroy
+} -result {{} set}
+
+test commands-1.4 {no commands -commands none} -body {
+    set interp [smartinterp %AUTO% -commands none]
+    
+    $interp invokehidden info commands
+} -cleanup {
+    $interp destroy
+} -result {}
+
+
+#-----------------------------------------------------------------------
+# Method: ensemble
+
+test ensemble-1.1 {ensemble, no subs defined or passed} -setup {
+    set interp [smartinterp %AUTO%]
+} -body {
+    $interp ensemble root
+    $interp eval {root}
+} -returnCodes {
+    error
+} -cleanup {
+    $interp destroy
+} -result {wrong # args: should be "root subcommand ?arg arg...?"}
+
+test ensemble-1.2 {double ensemble, no sub passed} -setup {
+    set interp [smartinterp %AUTO%]
+} -body {
+    $interp ensemble root
+    $interp ensemble {root branch}
+    $interp eval {root}
+} -returnCodes {
+    error
+} -cleanup {
+    $interp destroy
+} -result {wrong # args: should be "root subcommand ?arg arg...?"}
+
+test ensemble-1.3 {double ensemble, no subsub passed} -setup {
+    set interp [smartinterp %AUTO%]
+} -body {
+    $interp ensemble root
+    $interp ensemble {root branch}
+    $interp eval {root branch}
+} -returnCodes {
+    error
+} -cleanup {
+    $interp destroy
+} -result {wrong # args: should be "root branch subcommand ?arg arg...?"}
+
+test ensemble-1.4 {ensemble, no subs defined, 1 passed} -setup {
+    set interp [smartinterp %AUTO%]
+} -body {
+    $interp ensemble root
+    $interp eval {root branch}
+} -returnCodes {
+    error
+} -cleanup {
+    $interp destroy
+} -result {bad subcommand "branch": must be }
+
+test ensemble-1.5 {double ensemble, wrong sub passed} -setup {
+    set interp [smartinterp %AUTO%]
+} -body {
+    $interp ensemble root
+    $interp ensemble {root branch}
+    $interp eval {root nonesuch}
+} -returnCodes {
+    error
+} -cleanup {
+    $interp destroy
+} -result {bad subcommand "nonesuch": must be branch}
+
+test ensemble-1.6 {double ensemble, wrong subsub passed} -setup {
+    set interp [smartinterp %AUTO%]
+} -body {
+    $interp ensemble root
+    $interp ensemble {root branch}
+    $interp eval {root branch nonesuch}
+} -returnCodes {
+    error
+} -cleanup {
+    $interp destroy
+} -result {bad subcommand "nonesuch": must be }
+
+test ensemble-1.7 {ensemble, 1 sub defined, 1 wrong passed} -setup {
+    set interp [smartinterp %AUTO%]
+} -body {
+    $interp ensemble root
+    $interp smartalias {root branch} "" 0 0 {}
+    $interp eval {root nonesuch}
+} -returnCodes {
+    error
+} -cleanup {
+    $interp destroy
+} -result {bad subcommand "nonesuch": must be branch}
+
+
+test ensemble-1.8 {ensemble, 2 subs defined, 1 wrong passed} -setup {
+    set interp [smartinterp %AUTO%]
+} -body {
+    $interp ensemble root
+    $interp smartalias {root branch1} "" 0 0 {}
+    $interp smartalias {root branch2} "" 0 0 {}
+    $interp eval {root nonesuch}
+} -returnCodes {
+    error
+} -cleanup {
+    $interp destroy
+} -result {bad subcommand "nonesuch": must be branch1 or branch2}
+
+test ensemble-1.9 {ensemble, 3 subs defined, 1 wrong passed} -setup {
+    set interp [smartinterp %AUTO%]
+} -body {
+    $interp ensemble root
+    $interp smartalias {root branch1} "" 0 0 {}
+    $interp smartalias {root branch2} "" 0 0 {}
+    $interp smartalias {root branch3} "" 0 0 {}
+    $interp eval {root nonesuch}
+} -returnCodes {
+    error
+} -cleanup {
+    $interp destroy
+} -result {bad subcommand "nonesuch": must be branch1, branch2 or branch3}
+
+test ensemble-1.10 {ensemble alias called with no args} -setup {
+    set interp [smartinterp %AUTO%]
+} -body {
+    $interp ensemble root
+    $interp smartalias {root branch} "x y" 2 2 {}
+    $interp eval {root branch}
+} -returnCodes {
+    error
+} -cleanup {
+    $interp destroy
+} -result {wrong # args: should be "root branch x y"}
+
+test ensemble-1.11 {double ensemble alias called with no args} -setup {
+    set interp [smartinterp %AUTO%]
+} -body {
+    $interp ensemble root
+    $interp ensemble {root branch}
+    $interp smartalias {root branch twig} "x y" 2 2 {}
+    $interp eval {root branch twig}
+} -returnCodes {
+    error
+} -cleanup {
+    $interp destroy
+} -result {wrong # args: should be "root branch twig x y"}
+
+test ensemble-1.12 {double ensemble alias called with too many args} -setup {
+    set interp [smartinterp %AUTO%]
+} -body {
+    $interp ensemble root
+    $interp ensemble {root branch}
+    $interp smartalias {root branch twig} "" 0 0 {}
+    $interp eval {root branch twig x y}
+} -returnCodes {
+    error
+} -cleanup {
+    $interp destroy
+} -result {wrong # args: should be "root branch twig"}
+
+test ensemble-2.1 {ensemble alias called correctly} -setup {
+    set interp [smartinterp %AUTO%]
+} -body {
+    $interp ensemble root
+    $interp smartalias {root branch} "name" 1 1 hello 
+    $interp eval {root branch "Sam I Am"}
+} -cleanup {
+    $interp destroy
+} -result {Hello, Sam I Am!}
+
+test ensemble-2.2 {double ensemble alias called correctly} -setup {
+    set interp [smartinterp %AUTO%]
+} -body {
+    $interp ensemble root
+    $interp ensemble {root branch}
+    $interp smartalias {root branch twig} "name" 1 1 hello
+    $interp eval {root branch twig "Sam I Am"}
+} -cleanup {
+    $interp destroy
+} -result {Hello, Sam I Am!}
+
+#-----------------------------------------------------------------------
+# Method: proc
+
+test proc-1.1 {can define procs in the interpreter} -setup {
+    set interp [smartinterp %AUTO%]
+} -body {
+    $interp proc hello {name} {
+        return "Hello, $name!"
+    }
+
+    $interp eval {hello Sam}
+} -cleanup {
+    $interp destroy
+} -result {Hello, Sam!}
+
+#-----------------------------------------------------------------------
+# Method: smartalias
+
+test smartalias-1.1 {alias with no arguments} -setup {
+    set interp [smartinterp %AUTO%]
+} -body {
+    $interp smartalias myalias "" 0 0 [list hello Sam]
+
+    $interp eval {myalias}
+} -cleanup {
+    $interp destroy
+} -result {Hello, Sam!}
+
+test smartalias-1.2 {alias with no args, prefix has whitespace} -setup {
+    set interp [smartinterp %AUTO%]
+} -body {
+    $interp smartalias myalias "" 0 0 [list hello "Sam I Am"]
+
+    $interp eval {myalias}
+} -cleanup {
+    $interp destroy
+} -result {Hello, Sam I Am!}
+
+test smartalias-1.3 {alias with 1 arg} -setup {
+    set interp [smartinterp %AUTO%]
+} -body {
+    $interp smartalias myalias "name" 1 1 hello
+
+    $interp eval {myalias Sam}
+} -cleanup {
+    $interp destroy
+} -result {Hello, Sam!}
+
+test smartalias-1.4 {alias with 1 arg, arg has whitespace} -setup {
+    set interp [smartinterp %AUTO%]
+} -body {
+    $interp smartalias myalias "name" 1 1 hello
+
+    $interp eval {myalias "Sam I Am"}
+} -cleanup {
+    $interp destroy
+} -result {Hello, Sam I Am!}
+
+test smartalias-1.5 {alias with "arg1 args"} -setup {
+    set interp [smartinterp %AUTO%]
+} -body {
+    $interp smartalias myalias "arg1 args" 1 - echo
+
+    $interp eval {myalias a b c d}
+} -cleanup {
+    $interp destroy
+} -result {echo <a><b><c><d>}
+
+
+test smartalias-2.1 {no args, too many arguments} -setup {
+    set interp [smartinterp %AUTO%]
+} -body {
+    $interp smartalias myalias "" 0 0 [list hello Sam]
+
+    $interp eval {myalias ExtraArg}
+} -returnCodes {
+    error
+} -cleanup {
+    $interp destroy
+} -result {wrong # args: should be "myalias"}
+
+test smartalias-2.2 {one arg, too many arguments} -setup {
+    set interp [smartinterp %AUTO%]
+} -body {
+    $interp smartalias myalias "name" 1 1 [list hello]
+
+    $interp eval {myalias Sam ExtraArg}
+} -returnCodes {
+    error
+} -cleanup {
+    $interp destroy
+} -result {wrong # args: should be "myalias name"}
+
+test smartalias-2.3 {one arg, too few arguments} -setup {
+    set interp [smartinterp %AUTO%]
+} -body {
+    $interp smartalias myalias "name" 1 1 [list hello]
+
+    $interp eval {myalias}
+} -returnCodes {
+    error
+} -cleanup {
+    $interp destroy
+} -result {wrong # args: should be "myalias name"}
+
+#-----------------------------------------------------------------------
+# Clean up and finish
+
+::tcltest::cleanupTests
+
+
+

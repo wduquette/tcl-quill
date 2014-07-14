@@ -20,7 +20,8 @@ namespace eval ::quill:: {
 	namespace export \
 		assert       \
         codecatch    \
-        precond
+        precond      \
+        require
 }
 
 #-------------------------------------------------------------------------
@@ -81,4 +82,22 @@ proc ::quill::precond {expression message} {
     }
 
     throw ASSERT $message
+}
+
+# require expression message ?errorCode?
+#
+# This command is used to validate user input.  Require evaluates the
+# expression, and returns silently if it is true.  If it is false,
+# require throws an error with the given message and error code,
+# which defaults to INVALID.
+#
+# This allows the user interface to distinguish between validation
+# errors and unexpected programming errors.
+
+proc ::quill::require {expression message {errorCode INVALID}} {
+    if {[uplevel 1 [list expr $expression]]} {
+        return
+    }
+
+    throw $errorCode $message
 }

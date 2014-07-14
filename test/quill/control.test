@@ -70,6 +70,27 @@ test precond-1.2 {script fails} -body {
     }
 } -result {ASSERT {Math fails}}
 
+#-------------------------------------------------------------------------
+# require
+
+test require-1.1 {requirement is met} -body {
+    codecatch {
+        require {1 + 1 == 2} "Math works"
+    }
+} -result {ok {}}
+
+test require-1.2 {requirement is not met} -body {
+    codecatch {
+        require {1 + 1 == 3} "Math fails"
+    }
+} -result {INVALID {Math fails}}
+
+test require-1.3 {can specify error code} -body {
+    codecatch {
+        require {1 + 1 == 3} "Math fails" SYNTAX
+    }
+} -result {SYNTAX {Math fails}}
+
 #---------------------------------------------------------------------
 # Clean up and finish
 
