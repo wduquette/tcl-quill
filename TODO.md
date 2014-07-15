@@ -2,6 +2,7 @@
 
 ## Next
 
+* Consider expanding templates rather than mapping them.
 * Support building man pages
   * DONE Add smartinterp to quill(n)
   * DONE Define macro(n)
