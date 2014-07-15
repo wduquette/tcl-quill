@@ -62,6 +62,9 @@ snit::type ::quillapp::shelltool {
 		# FIRST, set up the path.
 		set ::env(TCLLIBPATH) [project libpath]
 
+		# NEXT, we always start in the project root directory.
+		cd [project root]
+
 		# NEXT, set up the command.
 		lappend command \
 			[plat pathto tclsh] \
