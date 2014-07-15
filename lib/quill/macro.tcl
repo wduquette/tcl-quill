@@ -78,11 +78,11 @@ snit::type ::quill::macro {
     delegate method cpush       to exp
     delegate method cset        to exp
     delegate method cvar        to exp
-    delegate method errmode     to errmode
-    delegate method lb          to lb
-    delegate method rb          to rb
-    delegate method textcmd     to textcmd
-    delegate method where       to where
+    delegate method errmode     to exp
+    delegate method lb          to exp
+    delegate method rb          to exp
+    delegate method textcmd     to exp
+    delegate method where       to exp
 
     # To smartinterp
     delegate method eval        to interp
@@ -99,6 +99,7 @@ snit::type ::quill::macro {
         # FIRST, create the components
         install exp using textutil::expander ${selfns}::exp
         $exp setbrackets << >>
+        $exp errmode fail
 
         set interp ""
         $self reset

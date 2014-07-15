@@ -37,5 +37,6 @@ source [file join $::quill::library listutils.tcl  ]
 source [file join $::quill::library stringutils.tcl]
 source [file join $::quill::library smartinterp.tcl]
 source [file join $::quill::library macro.tcl      ]
+source [file join $::quill::library manpage.tcl    ]
 
 
