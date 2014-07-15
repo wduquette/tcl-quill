@@ -27,7 +27,12 @@ set ::quillapp::tools(version) {
 
 set ::quillapp::help(version) {
 	The "quill version" tool displays the Quill application's version
-	to the console in human-readable form.
+	to the console in human-readable form.  In addition, it lists the
+	specific helper tools being used by Quill.  
+
+	The Tcl shell is that used to execute Quill; the other applications are
+	found relative to the Tcl shell where possible, or on the path when
+	not.
 }
 
 #-------------------------------------------------------------------------
@@ -57,6 +62,29 @@ snit::type ::quillapp::versiontool {
 		puts "Home Page: [quillinfo homepage]"
 		puts ""
 		puts "Please submit bug reports to the issue tracker at the home page."
+		puts ""
+		puts "Helper Tools:"
+		DisplayPath tclsh
+		DisplayPath tkcon
+		DisplayPath teacup 
+	}
+
+	# DisplayPath tool
+	#
+	# tool - The tool name
+	#
+	# Displays the path, and whether the tool can be found or not.
+
+	proc DisplayPath {tool} {
+		set path [plat pathto $tool]
+
+		if {[file exists $path]} {
+			set flag ""
+		} else {
+			set flag " (NOT FOUND)"
+		}
+
+		puts [format "    %-8s %s%s" $tool $path $flag]
 	}
 }
 
