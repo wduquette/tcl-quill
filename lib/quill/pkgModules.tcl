@@ -21,6 +21,7 @@ package provide quill 1.0
 
 # TODO: use [quill require]
 package require snit
+package require textutil::expander 1.3.1
 
 #-----------------------------------------------------------------------
 # Get the library directory
@@ -35,5 +36,6 @@ source [file join $::quill::library fileutils.tcl  ]
 source [file join $::quill::library listutils.tcl  ]
 source [file join $::quill::library stringutils.tcl]
 source [file join $::quill::library smartinterp.tcl]
+source [file join $::quill::library macro.tcl      ]
 
 

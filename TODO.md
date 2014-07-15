@@ -2,12 +2,15 @@
 
 ## Next
 
+* Define "quill shell"
+  * This will be handy when testing manpage(n)
 * Support building man pages
   * DONE Add smartinterp to quill(n)
   * DONE Define macro(n)
-  * Test macro(n)
+  * DONE Test macro(n)
   * Use macro(n) to define manpage(n)
     * All macros?  No embedded HTML?
+    * Try different error modes and "where".
   * Define "quill docs"
 * Support building trees
 * Support building .kits

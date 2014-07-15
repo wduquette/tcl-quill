@@ -1,0 +1,154 @@
+# -*-Tcl-*-
+#-----------------------------------------------------------------------
+# TITLE:
+#    macro.test
+#
+# AUTHOR:
+#    Will Duquette
+#
+# DESCRIPTION:
+#    quill(n0: Test cases for macro.tcl
+
+#-------------------------------------------------------------------------
+# Load the tcltest package
+
+if {[lsearch [namespace children] ::tcltest] == -1} {
+    package require tcltest 2.3
+    eval ::tcltest::configure $argv
+}
+
+namespace import ::tcltest::test
+
+#-------------------------------------------------------------------------
+# Load the package to be tested
+
+package require quill
+namespace import ::quill::*
+
+#-------------------------------------------------------------------------
+# Setup
+
+variable saver {}
+
+proc setup {args} {
+    variable saver
+    set saver {}
+
+    macro mi {*}$args
+    mi alias passer ::passer
+    mi alias echo   ::echo
+}
+
+proc cleanup {} {
+    variable saver
+    set saver {}
+
+    mi destroy
+}
+
+
+proc passer {} {
+    variable saver
+    lappend saver [mi pass]
+}
+
+proc echo {args} {
+    return "<[join $args ><]>"
+}
+
+#-------------------------------------------------------------------------
+# -commands
+
+test commands-1.1 {-commands option} -setup {
+    setup
+} -body {
+    mi configure -commands none
+    mi cget -commands
+} -cleanup {
+    cleanup
+} -result {none}
+
+test commands-1.2 {invalid} -setup {
+    setup 
+} -body {
+    mi configure -commands nonesuch
+} -returnCodes {
+    error
+} -cleanup {
+    cleanup
+} -result {invalid -commands value: invalid value "nonesuch", should be one of: all, safe, none}
+
+#-------------------------------------------------------------------------
+# -brackets
+
+test brackets-1.1 {-brackets option} -setup {
+    setup
+} -body {
+    mi configure -brackets {<: :>}
+    mi cget -brackets
+} -cleanup {
+    cleanup
+} -result {<: :>}
+
+#-------------------------------------------------------------------------
+# expand
+
+test expand-1.1 {expands macros} -setup {
+    setup
+} -body {
+    mi expand {-<<echo a b c>>-}
+} -cleanup {
+    cleanup
+} -result {-<a><b><c>-}
+
+test expand-1.2 {two-pass expansion} -setup {
+    setup
+} -body {
+    mi expand {-<<passer>>-}
+    set saver
+} -cleanup {
+    cleanup
+} -result {1 2}
+
+#-------------------------------------------------------------------------
+# expandfile
+
+test expandfile-1.1 {expands macros in file} -setup {
+    setup
+    tcltest::makeFile {+<<echo one two>>+} expandfile.txt
+} -body {
+    mi expandfile expandfile.txt
+} -cleanup {
+    cleanup
+} -result {+<one><two>+
+}
+
+#-------------------------------------------------------------------------
+# pass
+
+# Tested by expand-1.2
+
+#-------------------------------------------------------------------------
+# reset
+
+test reset-1.1 {resets interpreter} -setup {
+    setup
+    mi proc hello {} { return "Howdy!" }
+} -body {
+    set a [mi eval {info proc hello}]
+    mi reset
+    set b [mi eval {info proc hello}]
+    list $a $b
+} -cleanup {
+    cleanup
+} -result {hello {}}
+
+
+
+#-------------------------------------------------------------------------
+# Clean up and finish
+
+::tcltest::cleanupTests
+
+
+

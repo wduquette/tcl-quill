@@ -45,14 +45,15 @@ snit::type ::quill::macro {
     #---------------------------------------------------------------------
     # Options
 
-    option -commands         \
-        -default         all \
-        -configuremethod ConfigureCommands
+    # -commands
+    #
+    # all | safe | none -- specifies which commands are available in the
+    # macro interpreter.  Changes take effect on reset.
 
-    method ConfigureCommands {opt val} {
-        set options($opt) $val
-        $interp configure -commands $val
-    }
+    option -commands   \
+        -default   all \
+        -type     {snit::enum -values {all safe none}}
+
 
     # -brackets pair
     #
@@ -86,22 +87,24 @@ snit::type ::quill::macro {
     delegate method where       to where
 
     # To smartinterp
-    delegate method eval        to smartinterp
-    delegate method alias       to smartinterp
-    delegate method proc        to smartinterp
-    delegate method clone       to smartinterp
-    delegate method ensemble    to smartinterp
-    delegate method smartalias  to smartinterp
+    delegate method eval        to interp
+    delegate method alias       to interp
+    delegate method proc        to interp
+    delegate method clone       to interp
+    delegate method ensemble    to interp
+    delegate method smartalias  to interp
 
     #---------------------------------------------------------------------
     # Constructor
 
     constructor {args} {
         # FIRST, create the components
-        install exp using [texutil::expander ${selfns}::exp]
+        install exp using textutil::expander ${selfns}::exp
         $exp setbrackets << >>
 
-        install interp using [smartinterp ${selfns}::interp]
+        set opts(-commands) [from args -commands all]
+        install interp using smartinterp ${selfns}::interp \
+            -commands all
 
         # NEXT, save the options
         $self configurelist $args
@@ -151,19 +154,18 @@ snit::type ::quill::macro {
     method reset {} {
         # FIRST, Recreate the smartinterp
         $interp destroy
-        install interp using [smartinterp ${selfns}::interp]
-        $interp configure -commands $opts(-commands)
+        install interp using smartinterp ${selfns}::interp \
+            -commands $options(-commands)
 
         # NEXT, redefine the macros
         $self DefineLocalMacros
-        $self DefineVocabularies
     }
 
     # DefineLocalMacros
     #
     # Defines the default macro set, which is quite small.
 
-    method RedefineLocalMacros {} {
+    method DefineLocalMacros {} {
         # do script
         #
         # Executes the script in the expansion interpreter, leaving
