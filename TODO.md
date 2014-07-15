@@ -2,8 +2,6 @@
 
 ## Next
 
-* Define "quill shell"
-  * This will be handy when testing manpage(n)
 * Support building man pages
   * DONE Add smartinterp to quill(n)
   * DONE Define macro(n)
@@ -53,7 +51,5 @@ Quill should provide the following tools.
   * Run the main app (or a given app) with a given command line.
 
 * quill shell
-  * Open Tkcon (or a similar shell) with the app's code accessible.
-  * If app, run all but main
-  * Otherwise, just set up the auto_path, and run "shell" script from
-    project.quill.
+  * Allow selecting the app loader, or no app loader.
+  * Support "shell" project.quill statement for shell initialization.

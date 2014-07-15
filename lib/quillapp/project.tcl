@@ -163,6 +163,16 @@ snit::type ::quillapp::project {
 		return $result
 	}
 
+	# app loader app
+	#
+	# app  - The app name
+	#
+	# Returns the path to the loader script.
+
+	typemethod {app loader} {app} {
+		return [project root bin $app.tcl]
+	}
+
 
 	#---------------------------------------------------------------------
 	# Loading the Project file
