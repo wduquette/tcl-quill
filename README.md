@@ -30,3 +30,9 @@ assumes the following:
   certain operations that either ActiveTcl is installed in the
   user's home directory or the user has access to the "sudo"
   command.
+
+## Porting
+
+Quill is being developed on OS X, but it is intended to be cross-platform.
+Platform-specific code is concentrated in `lib/quillapp/plat.tcl`.  If 
+Quill fails on a particular plaform, that's where to look.
