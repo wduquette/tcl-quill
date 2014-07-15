@@ -35,11 +35,9 @@ snit::type ::quill::macro {
     # Info Array
     #
     # pass   - The expansion pass, 1 or 2.
-    # vocabs - List of macro vocabulary objectx
 
     variable info -array {
         pass   1
-        vocabs {}
     }
 
     #---------------------------------------------------------------------
@@ -102,9 +100,8 @@ snit::type ::quill::macro {
         install exp using textutil::expander ${selfns}::exp
         $exp setbrackets << >>
 
-        set opts(-commands) [from args -commands all]
-        install interp using smartinterp ${selfns}::interp \
-            -commands all
+        set interp ""
+        $self reset
 
         # NEXT, save the options
         $self configurelist $args
@@ -153,9 +150,10 @@ snit::type ::quill::macro {
 
     method reset {} {
         # FIRST, Recreate the smartinterp
-        $interp destroy
+        catch {$interp destroy}
         install interp using smartinterp ${selfns}::interp \
             -commands $options(-commands)
+        $exp evalcmd [list $interp eval]
 
         # NEXT, redefine the macros
         $self DefineLocalMacros
