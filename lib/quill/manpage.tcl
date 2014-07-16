@@ -153,7 +153,15 @@ snit::type ::quill::manpage {
 
 
     #---------------------------------------------------------------------
-    # Type Variables
+    # Instance Variables
+
+    # manSections: Array of man page section titles by section directory.
+    variable manSections -array {
+        man1 "Section 1: Commands"
+        man5 "Section 5: File Formats"
+        mann "Section n: Tcl Packages"
+        mani "Section i: Tcl Interfaces"
+    }
 
     # trans array: Transient data
     #
@@ -290,13 +298,10 @@ snit::type ::quill::manpage {
     method CreateIndex {outdir} {
         set manDir [file tail $outdir]
 
-        # FIXME: The client needs to be able to set these.
-        switch -exact -- $manDir {
-            man1    {set title "Section 1: Commands"}
-            man5    {set title "Section 5: File Formats"}
-            mann    {set title "Section n: Tcl Packages"}
-            mani    {set title "Section i: Tcl Interfaces"}
-            default {set title "Index of Man Pages"}
+        if {[info exists manSections($manDir)]} {
+            set title $manSections($manDir)
+        } else {
+            set title "Man Pages"
         }
 
         set ts [clock format [clock seconds]]
@@ -361,7 +366,17 @@ snit::type ::quill::manpage {
         return $result
     }
 
+    # mansec num title
+    #
+    # num   - A section number, e.g., 1, 5, n
+    # title - The section title
+    #
+    # This command adds another manpage section and title to the 
+    # system.
 
+    method mansec {num title} {
+        set manSections(man$num) "Section $num: $title"
+    }
 
     #---------------------------------------------------------------------
     # Macro Management

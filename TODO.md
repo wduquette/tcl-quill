@@ -7,7 +7,7 @@
   * DONE Define macro(n)
   * DONE Test macro(n)
   * DONE Use macro(n) to define manpage(n)
-  * Build index.html page automatically
+  * DONE Build index.html page automatically
     * Requires basic section categories, and a mechanism for 
       defining new ones.
   * Define "quill docs" tool.
