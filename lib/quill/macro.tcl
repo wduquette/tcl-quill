@@ -119,6 +119,17 @@ snit::type ::quill::macro {
         return $info(pass)
     }
 
+    # expandonce text
+    #
+    # text - A text string
+    #
+    # Expands the text string in one pass, without affecting the
+    # the current pass.
+
+    method expandonce {text} {
+        return [$exp expand $text]
+    }
+
     # expand text
     #
     # text   - A string containing macros to expand

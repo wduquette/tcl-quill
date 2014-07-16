@@ -2,15 +2,16 @@
 
 ## Next
 
-* Consider expanding templates rather than mapping them.
 * Support building man pages
   * DONE Add smartinterp to quill(n)
   * DONE Define macro(n)
   * DONE Test macro(n)
-  * Use macro(n) to define manpage(n)
-    * All macros?  No embedded HTML?
-    * Try different error modes and "where".
-  * Define "quill docs"
+  * DONE Use macro(n) to define manpage(n)
+  * Build index.html page automatically
+    * Requires basic section categories, and a mechanism for 
+      defining new ones.
+  * Define "quill docs" tool.
+* Consider expanding templates rather than mapping them.
 * Support building trees
 * Support building .kits
 * Support requires.
