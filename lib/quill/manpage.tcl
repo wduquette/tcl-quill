@@ -165,6 +165,7 @@ snit::type ::quill::manpage {
     #   manpages        - List of toplevel manpage names processed in this 
     #                     directory.
     #   children-$name  - List of child manpages for manpage $name.
+    #   title-$name     - Title for manpage $name
     #
     # Information for the current manpage.
     #
@@ -256,14 +257,14 @@ snit::type ::quill::manpage {
             # NEXT, process this file.
             set trans(filename) [file tail $filename]
             set pagename [file rootname $trans(filename)]
-            set outpath \
-                [file join $trans(docroot) man$pagesec $pagename.html]
+            set outpath [file join $outdir $pagename.html]
 
             puts "Writing $outpath"
             writefile $outpath [$macro expandfile $filename]
         }
 
-        # TBD: Write the index
+        # NEXT, Write the index
+        $self CreateIndex $outdir
     }
 
     # GetManSection indir
@@ -281,6 +282,89 @@ snit::type ::quill::manpage {
             return n
         }
     }
+
+    # CreateIndex
+    #
+    # Creates an index of the man pages in this directory.
+
+    method CreateIndex {outdir} {
+        set manDir [file tail $outdir]
+
+        # FIXME: The client needs to be able to set these.
+        switch -exact -- $manDir {
+            man1    {set title "Section 1: Commands"}
+            man5    {set title "Section 5: File Formats"}
+            mann    {set title "Section n: Tcl Packages"}
+            mani    {set title "Section i: Tcl Interfaces"}
+            default {set title "Index of Man Pages"}
+        }
+
+        set ts [clock format [clock seconds]]
+
+        append result                                    \
+            "<html>\n"                                   \
+            "<head>\n"                                   \
+            "<title>$title</title>\n"                    \
+            "<style>\n"                                  \
+            "<!--\n"                                     \
+            $manpageCSS                                  \
+            "-->\n"                                      \
+            "</style>\n"                                 \
+            "</head>\n"                                  \
+            "<body>\n"                                   \
+            "<h1 class=\"header\">$trans(header)</h1>\n" \
+            "<h1>$title</h1>\n"                          \
+            "\n"                                         \
+            [$self LinksToChildren ""]                         \
+            "<hr class=\"outdent\">\n"                   \
+            "<span class=\"outdent\">\n"                 \
+            "<i>Generated on $ts</i>\n"                  \
+            "</span>\n"                                  \
+            "</body>\n"                                  \
+            "</html>\n"
+
+        set fname [file join $outdir index.html]
+        puts "Writing $fname"
+        writefile $fname $result
+    }
+
+    # LinksToChildren parent
+    #
+    # parent  - "", or a manpage with children
+    #
+    # Creates a bulleted list of links to child man pages, recursing if
+    # a child also has children.
+
+    method LinksToChildren {parent} {
+        set result "<ul>\n"
+
+        if {$parent eq ""} {
+            set names $trans(manpages)
+        } else {
+            set names $trans(children-$parent)
+        }
+
+        foreach name $names {
+            manref parse $name base sec
+            set title $trans(title-$name)
+
+            append result \
+               "<li><a href=\"$base.html\">$name</a></b> -- $title\n"
+
+            if {[info exists trans(children-$name)]} {
+                append result [$self LinksToChildren $manpage]
+            }
+        }
+
+        append result "</ul><p>\n"
+
+        return $result
+    }
+
+
+
+    #---------------------------------------------------------------------
+    # Macro Management
 
     # ResetMacros
     #
@@ -340,6 +424,7 @@ snit::type ::quill::manpage {
 
         $macro smartalias /manpage {} 0 0 \
             [mymethod /Manpage]
+
     }
 
     #---------------------------------------------------------------------
@@ -355,6 +440,7 @@ snit::type ::quill::manpage {
 
             # NEXT, Save the manpage name
             set trans(manpage) $name
+            set trans(title-$name) $title
 
             # NEXT, Validate the name and the parent manpage name
             manref validate $name
