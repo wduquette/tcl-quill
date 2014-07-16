@@ -1,0 +1,62 @@
+<manpage stringutils(n) "String Utilities" quill(n)>
+
+<section SYNOPSIS>
+
+<pre>
+package require quill <version>
+namespace import ::quill::*
+</pre>
+
+<itemlist>
+
+<section DESCRIPTION>
+
+stringutils(n) contains string-manipulation commands.<p>
+
+<section COMMANDS>
+
+stringutils(n) defines the following commands:<p>
+
+<deflist commands>
+
+
+<defitem outdent {outdent <i>text</i>}>
+
+This command outdents a block of text to the left margin, thus
+allowing a block of text that should have no indent to be
+indented inline with a Tcl routine.  The amount of indent to be
+removed is based on the first non-blank line.  Leading and trailing
+blank lines are deleted.  For example,<p>
+
+<pre>
+% outdent {
+    An Indented Block
+      of text that needs
+    To be Outdented.
+}
+An Indented Block
+  of text that needs
+To be Outdented.
+%
+</pre><p>
+
+
+<defitem "tighten" {tighten <i>text</i>}>
+
+Tightens up the whitespace in <i>text</i>, removing excess whitespace.
+A tightened string has no leading or trailing whitespace, and all
+internal whitespace is reduced to single space characters.<p>
+
+
+</deflist commands>
+
+
+<section AUTHOR>
+
+Will Duquette<p>
+
+<section SEE ALSO>
+
+<xref quill(n)>.
+
+</manpage>

@@ -1,0 +1,155 @@
+<manpage macro(n) "Safe Macro Processor" quill(n)>
+
+<section SYNOPSIS>
+
+<pre>
+package require quill <version>
+namespace import ::quill::*
+</pre>
+
+<itemlist>
+
+<section DESCRIPTION>
+
+The Tcllib package <b textutil::expander> is a useful too for building
+documentation; however, by default it expands macros in the main
+interpreter.  It is possible use a slave interpreter, but error messages
+for macros aliased into the slave are ugly.  In addition, one usually
+wants two-pass expansion, and <b textutil::expander>> doesn't provide
+this out-of-the-box.  This package combines <b textutil::expander> with 
+<xref smartinterp(n)> to provide a more helpful infrastructure for
+macro processing.<p>
+
+<section COMMANDS>
+
+macro(n) defines the following commands:<p>
+
+<deflist commands>
+
+<defitem macro {macro <i name> ?<i option value...>?}>
+
+This command creates a new instance of macro(n) called 
+<i name>, returning the fully-qualified name.  The following
+options are available:<p>
+
+<deflist options>
+
+<defopt {-brackets <i pair>}>
+
+This option specifies the left and right macro expansion brackets
+as a two-item list.  The default brackets are "<lb><lb>" and 
+"<rb><rb>".<p>
+
+<defopt {-commands all|safe|none}>
+
+This option determines which Tcl commands are available in the slave
+interpreter.  By default, <b all> standard Tcl commands are available.
+If <b safe> is specified, macro(n) creates a "safe" interpreter; and if
+<b none> is specified, macro(n) begins with a "safe" interpreter and
+then removes all commands from the global namespace.<p>
+
+</deflist options>
+</deflist commands>
+
+<section INSTANCE COMMANDS>
+
+An instance of macro(n) provides the following subcommands:
+
+<deflist instance>
+
+<defitem cappend {<i obj> cappend <i text>}>
+<defitem cget {<i obj> cget <i varname>}>
+<defitem cis {<i obj> cis <i cname>}>
+<defitem cname {<i obj> cname}>
+<defitem cpop {<i obj> cpop <i cname>}>
+<defitem cpush {<i obj> cpush <i cname>}>
+<defitem cset {<i obj> cset <i varname value>}>
+<defitem cvar {<i obj> cvar <i varname>}>
+<defitem errmode {<i obj> errmode <i newErrmode>}>
+<defitem lb {<i obj> lb}>
+<defitem rb {<i obj> rb}>
+<defitem textcmd {<i obj> textcmd <i newTextCmd>}>
+<defitem where {<i obj> where}>
+
+These commands are all delegated to the object's internal instance of
+<b textutil::expander>.  See the
+<xref http://tcllib.sourceforge.net/doc/expander.html textutil::expander>
+man page for details.<p>
+
+<defitem eval       {<i obj> eval <i args...>}>
+<defitem alias      {<i obj> alias <i srcCmd> ?<i targetCmd args...>?}>
+<defitem proc       {<i obj> proc <i name arglist body>}>
+<defitem clone      {<i obj> clone <i srcProc targetProc>}>
+<defitem ensemble   {<i obj> ensemble <i name>}>
+<defitem smartalias {<i obj> smartalias <i name syntax minArgs maxArgs prefix>}>
+
+These commands are all delegated to the object's internal instance of
+<xref smartinterp(n)>.  <xref #proc>, <xref #clone>, and 
+<xref #smartalias> are especially useful for defining macros.
+See the <xref smartinterp(n)> man page for details.<p>
+
+<defitem expand {<i obj> expand <i text>}>
+
+Performs a two-pass expansion of the <i text>, and returns the 
+result.<p>
+
+Neither this command nor <xref #expandfile> should be called
+by any of the macros embedded in <i text>; use 
+<xref #expandonce> instead.<p>
+
+<defitem expandfile {<i obj> expandfile <i filename>}>
+
+Performs a two-pass expansion of the text in <i filename>, and returns the 
+result.<p>
+
+Neither this command nor <xref #expand> should be called
+by any of the macros embedded in the <i filename>'s text; use 
+<xref #expandonce> instead.<p>
+
+<defitem expandonce {<i obj> expandonce <i text>}>
+
+It is sometimes useful for a macro to expand one or more of its
+arguments.  This command should be used for that purpose.<p>
+
+<defitem pass {<i obj> pass}>
+
+During macro expansion, returns the current pass number, 1 or 2.<p>
+
+<defitem reset {<i obj> reset}>
+
+Re-initializes the macro evaluation interpreter, leaving it in a clean
+state.  The client will need to redefine any macros.<p>
+
+</deflist instance>
+
+<section MACROS>
+
+macro(n) defines the following macros by default:<p>
+
+<deflist macros>
+
+<deflist do {do <i script>}>
+
+Evaluates the script in the context of the macro expansion interpreter,
+and returns nothing.  Text to be expanded can define its own macros
+using this mechanism:<p>
+
+<pre>
+...
+<lb><lb>do {
+    proc hello {name} { return "Hello, $name!" }
+}<rb><rb>
+...
+</pre>
+
+</deflist macros>
+
+<section AUTHOR>
+
+Will Duquette<p>
+
+<section SEE ALSO>
+
+<xref quill(n)>, <xref smartinterp(n)>, <xref manpage(n)>.
+
+</manpage>

@@ -1,0 +1,60 @@
+<manpage code(n) "Code Introspection and Manipulation" quill(n)>
+
+<section SYNOPSIS>
+
+<pre>
+package require quill <version>
+namespace import ::quill::*
+</pre>
+
+<itemlist>
+
+<section DESCRIPTION>
+
+code(n) contains commands for introspection and manipulation of the
+application's own code.<p>
+
+
+<section COMMANDS>
+
+code(n) defines the following commands:<p>
+
+<deflist commands>
+
+<defitem code {code <i subcommand> ?<i args...>?}>
+
+This command provides the following subcommands.
+
+<deflist subcommand>
+
+<defitem getproc {code getproc <i name>}>
+
+Given a proc <i name>, retrieves and returns the proc's definition
+(including default values for optional arguments).  If <i name>
+contains any namespaces, they are stripped; thus, any proc can be
+redefined in any namespace or interpreter by writing code 
+like this:<p>
+
+<pre>
+namespace eval ::mynamespace:: [getproc ::other::myproc]
+</pre>
+
+or<p>
+
+<pre>
+$interp eval [getproc ::other::myproc]
+</pre>
+
+</deflist subcommands>
+
+</deflist commands>
+
+<section AUTHOR>
+
+Will Duquette<p>
+
+<section SEE ALSO>
+
+<xref quill(n)>.
+
+</manpage>

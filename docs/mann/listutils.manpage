@@ -1,0 +1,46 @@
+<manpage listutils(n) "List Utilities" quill(n)>
+
+<section SYNOPSIS>
+
+<pre>
+package require quill <version>
+namespace import ::quill::*
+</pre>
+
+<itemlist>
+
+<section DESCRIPTION>
+
+listutils(n) contains a number of list-manipulation commands.<p>
+
+
+<section COMMANDS>
+
+listutils(n) defines the following commands:<p>
+
+<deflist commands>
+
+<defitem ladd {ladd <i listvar items...>}>
+
+Appends the <i items> to the named list variable only if they are
+not already present in the list.  Returns the new list.<p>
+
+<defitem lshift {lshift <i>listvar</i>}>
+
+Pops the top element off of the stack contained in <i>listvar</i>,
+i.e., removes the first element from the list contained in <i>listvar</i>,
+and returns it.<p>
+
+
+</deflist commands>
+
+
+<section AUTHOR>
+
+Will Duquette<p>
+
+<section SEE ALSO>
+
+<xref quill(n)>.
+
+</manpage>

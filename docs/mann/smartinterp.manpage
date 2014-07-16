@@ -1,9 +1,9 @@
-<manpage sample(n) "Sample Manpage">
+<manpage smartinterp(n) "Smart Tcl Interpreter" quill(n)>
 
 <section SYNOPSIS>
 
 <pre>
-package require quill 1.0
+package require quill <version>
 namespace import ::quill::*
 </pre>
 
@@ -14,8 +14,6 @@ namespace import ::quill::*
 smartinterp(n) is the object type which wraps standard Tcl
 <b>interp</b>'s and provides additional ways to define commands
 within them.<p>
-
-<subsection A Sample Subsection>
 
 <section COMMANDS>
 

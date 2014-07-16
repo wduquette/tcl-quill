@@ -1,0 +1,108 @@
+<manpage control(n) "Control Strucutres" quill(n)>
+
+<section SYNOPSIS>
+
+<pre>
+package require quill <version>
+namespace import ::quill::*
+</pre>
+
+<itemlist>
+
+<section DESCRIPTION>
+
+control(n) contains commands that affect the flow of control, 
+including commands for enforcing invariants and user input
+constraints, i.e., commands that throw errors in interesting ways.<p>
+
+
+<section COMMANDS>
+
+control(n) defines the following commands:<p>
+
+<deflist commands>
+
+<defitem assert {assert <i>expression</i>}>
+
+The <i>expression</i> is evaluated in the caller's context.  If true,
+<xref #assert> does nothing.  If false, <xref #assert> throws an
+error with error code <b>ASSERT</b> and the error message:<p>
+
+<pre>
+Assertion failed: <i>expression</i>
+</pre>
+
+An assertion is a statement that verifies an
+invariant within a module of code.  An invariant is a condition
+that must always be true within the module.  Invariants should be
+checked in complex, state-ful code to make explicit the author's
+assumptions about what should be true at each point in time:<p>
+
+<pre>
+# At this point we should have at least one page.
+assert {$pageCount &gt; 0}
+</pre><p>
+
+An assertion failure always means that the implementor of the module made
+a programming error.  Thus, assertions should not be used to check
+conditions beyond the programmer's control, such as existence of a file.<p>
+
+<defitem codecatch {codecatch <i>script</i>}>
+
+Evalutes the script in a "try" block.  If the script throws an error,
+returns a list of two items: the error code and the result string. 
+Otherwise, returns a list of "ok" and the result string.<p>
+
+The primary use for this command is in tests that verify the 
+error code.<p>
+
+<defitem precond {precond <i>expression message</i>}>
+
+The <i>expression</i> is evaluated in the caller's context   If true,
+<xref #precond> does nothing.  If false, an error is thrown with
+error code <b>ASSERT</b> and the specified <i>message</i>.<p>
+
+Where assertions protect a module from itself,
+preconditions protect modules from their callers.  A precondition is
+associated with one of the module's public entry points (i.e.,
+a command) and specifies a condition that must logically be true if
+the command is to succeed.  Preconditions should generally be checked
+at the head of the command's body, and the message should clearly
+indicate what's wrong.<p>
+
+A precondition failure always means that the caller of the module made
+a programming error.  Thus, preconditions should not be used to check
+conditions beyond the programmer's control, such as existence of a file.<p>
+
+As an example of a useful precondition, consider a database object
+that can only be queried if it has created or opened a data file.  The
+object's <b>get</b> method might use a precondition like this:
+
+<pre>
+precond {$self isopen} "No database file is open."
+</pre>
+
+
+<defitem require {require <i>expression message</i> ?<i>errorCode</i>?}>
+
+The <i>expression</i> is evaluated in the caller's context   If true,
+<xref #require> does nothing.  If false, an error is thrown with
+an <i>errorCode</i> that defaults to <b>INVALID</b>, and with
+the specified <i>message</i>.<p>
+
+Requirements are like preconditions on user input.  Because a distinct
+error code is used, the user interface can distinguish between
+unexpected application errors and errors in user input.
+
+</deflist commands>
+
+
+<section AUTHOR>
+
+Will Duquette<p>
+
+<section SEE ALSO>
+
+<xref quill(n)>.
+
+</manpage>

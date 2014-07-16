@@ -134,6 +134,14 @@ snit::type ::quillapp::project {
 	typemethod description {} { return $meta(description) }
 	typemethod {app names} {} { return $meta(apps)        }
 
+	# header
+	#
+	# Returns the project header string.
+
+	typemethod header {} {
+		return "$meta(project) $meta(version): $meta(description)"
+	}
+
 	# gotinfo
 	#
 	# Returns 1 if we've loaded the project's info, and 0 otherwise.

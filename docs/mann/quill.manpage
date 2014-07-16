@@ -1,0 +1,25 @@
+<manpage quill(n) "Quill Utilities Library">
+
+<section SYNOPSIS>
+
+<pre>
+package require quill <version>
+namespace import ::quill::*
+</pre>
+
+<itemlist>
+
+<section DESCRIPTION>
+
+quill(n) is a library of utility Tcl/Tk code used by the 
+Quill build tool and made available to other projects.<p>
+
+<section AUTHOR>
+
+Will Duquette<p>
+
+<section SEE ALSO>
+
+<link index.html "Man page index"><p>
+
+</manpage>

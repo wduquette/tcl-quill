@@ -137,11 +137,18 @@ snit::type ::quill::macro {
     # Does a two-pass expansion and returns the result.
 
     method expand {text} {
-        set info(pass) 1
-        $exp expand $text
-        set info(pass) 2
-        set output [$exp expand $text]
-        set info(pass) 1
+        try {
+            set info(pass) 1
+            $exp expand $text
+            set info(pass) 2
+            set output [$exp expand $text]
+            set info(pass) 1
+        } on error {result eopts} {
+            if {[string match "Error in macro*" $result]} {
+                throw SYNTAX $result
+            }
+            return {*}$eopts $result
+        }
 
         return $output
     }

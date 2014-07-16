@@ -157,7 +157,7 @@ snit::type ::quill::manpage {
 
     # manSections: Array of man page section titles by section directory.
     variable manSections -array {
-        man1 "Section 1: Commands"
+        man1 "Section 1: Applications"
         man5 "Section 5: File Formats"
         mann "Section n: Tcl Packages"
         mani "Section i: Tcl Interfaces"
@@ -225,6 +225,7 @@ snit::type ::quill::manpage {
     #
     # Options:
     #    -header  - Header text for all manpages
+    #    -version - Project version string for packages.
     #    -outdir  - Output directory; defaults to input directory.
     #
     # Processes all *.manpage files in the current directory,
@@ -233,14 +234,16 @@ snit::type ::quill::manpage {
     method format {indir args} {
         # FIRST, get the options
         set trans(header) "Software Man Page"
+        set trans(version) 0.0.0
         set outdir $indir
 
         while {[llength $args] > 0} {
             set opt [lshift args]
             switch -exact -- $opt {
-                -header { set trans(header) [lshift args]  }
-                -outdir { set outdir [lshift args]         }
-                default { error "Unknown option: \"$opt\"" }
+                -header  { set trans(header) [lshift args]  }
+                -outdir  { set outdir [lshift args]         }
+                -version { set trans(version) [lshift args]        }
+                default  { error "Unknown option: \"$opt\"" }
             }
         }
 
@@ -249,18 +252,18 @@ snit::type ::quill::manpage {
         set trans(docroot)  [file dirname $outdir]
         set trans(manpages) [list]
         
-        # NEXT, set up the transient data for this page
-        set trans(manpage)      ""
-        set trans(section)      ""
-        set trans(anchors)      [list]
-        set trans(sections)     [list]
-        set trans(items)        [list]
-        set trans(deflistLevel) -1
-
         # NEXT, process the files
         foreach filename [glob -nocomplain [file join $indir *.manpage]] {
             # FIRST, reset the macro processor for each file.
             $self ResetMacros
+
+            # NEXT, set up the transient data for this page
+            set trans(manpage)      ""
+            set trans(section)      ""
+            set trans(anchors)      [list]
+            set trans(sections)     [list]
+            set trans(items)        [list]
+            set trans(deflistLevel) -1
 
             # NEXT, process this file.
             set trans(filename) [file tail $filename]
@@ -357,7 +360,7 @@ snit::type ::quill::manpage {
                "<li><a href=\"$base.html\">$name</a></b> -- $title\n"
 
             if {[info exists trans(children-$name)]} {
-                append result [$self LinksToChildren $manpage]
+                append result [$self LinksToChildren $name]
             }
         }
 
@@ -405,8 +408,12 @@ snit::type ::quill::manpage {
             $self StyleTag $tag
         }
 
-        $self Identity p
-        $self Identity /p
+        foreach tag {
+            p ul ol li
+        } {
+            $self Identity $tag
+            $self Identity /$tag
+        }
 
         # NEXT, define brackets
         $macro proc lb {} { return "&lt;"}
@@ -439,6 +446,16 @@ snit::type ::quill::manpage {
 
         $macro smartalias /manpage {} 0 0 \
             [mymethod /Manpage]
+
+        $macro proc link {url {text ""}} {
+            if {$text eq ""} {
+                set text $url
+            }
+
+            return "<a href=\"$url\">$text</a>"
+        }
+
+        $macro alias version $self Version
 
     }
 
@@ -618,6 +635,8 @@ snit::type ::quill::manpage {
     # the command's full signature.
 
     method Defitem {name text} {
+        set text [$macro expandonce $text]
+
         # pass 1: Catalog the item
         if {[$macro pass] == 1} {
             $self AnchorSave $name
@@ -629,11 +648,10 @@ snit::type ::quill::manpage {
         }
         
         # pass 2: Format the item.
-        set text [$macro expandonce $text]
         return "<dt><b><a name=\"$name\">$text</a></b><dd>\n"
     }
 
-    # defopt text
+    # Defopt text
     #
     # text   - The text used to document the option.
     #
@@ -781,6 +799,15 @@ snit::type ::quill::manpage {
         } else {
             return "<a href=\"$url\">$text</a>"
         }
+    }
+
+    # Version
+    #
+    # Returns the project version number, as given by the -version
+    # option.
+
+    method Version {} {
+        return $trans(version)
     }
 
     #---------------------------------------------------------------------

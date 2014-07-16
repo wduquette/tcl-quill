@@ -8,9 +8,13 @@
   * DONE Test macro(n)
   * DONE Use macro(n) to define manpage(n)
   * DONE Build index.html page automatically
-    * Requires basic section categories, and a mechanism for 
-      defining new ones.
-  * Define "quill docs" tool.
+    * DONE Requires basic section categories
+    * DONE A manpage(n) mechanism for defining new ones.
+    * A project.quill mechanism for defining new ones.
+  * DONE Define "quill docs" tool.
+  * DONE Provide project version for use in man pages.
+  * Convert manpage(5) manpage
+    * Add <version> macro to manpage(5).
 * Consider expanding templates rather than mapping them.
 * Support building trees
 * Support building .kits

@@ -1,0 +1,122 @@
+<manpage manpage(n) "Man Page Processor" quill(n)>
+
+<section SYNOPSIS>
+
+<pre>
+package require quill <version>
+namespace import ::quill::*
+</pre>
+
+<itemlist>
+
+<section DESCRIPTION>
+
+The manpage(n) module provides formatting for software man pages written
+in <xref manpage(5)> format.  <xref manpage(5)> is an HTML-like format
+in which the "tags" are <xref macro(n)> macros.  manpage(n) formats the
+man pages nicely, adds tables of contents, links, and so forth.<p>
+
+At present, manpage(n) produces HTML output only; however, there is
+no reason why it could not be provided with multiple back-ends, each
+supporting a different output format.<p>
+
+<subsection Man Page Directories>
+
+manpage(n) assumes the same kind of manpage naming as Unix man pages, 
+and supports the following man page sections:<p>
+
+<ul>
+<li> Section (1): Applications
+<li> Section (5): File Formats
+<li> Section (n): Tcl Commands
+<li> Section (i): Tcl Interfaces
+</ul>
+
+manpage(n) assumes that the formatted man pages will end up in 
+sibling directories, all named according to the pattern 
+"man<i num>", e.g., "man1", "mann".  This allows manpage(n) to
+build links from man pages in one section to man pages in another
+section.<p>
+
+<section COMMANDS>
+
+manpage(n) defines the following commands:<p>
+
+<deflist commands>
+
+<defitem manpage {manpage <i name>}>
+
+This command creates a new instance of manpage(n) called 
+<i name>, returning the fully-qualified name.<p>
+
+</deflist commands>
+
+<section INSTANCE COMMANDS>
+
+An instance of manpage(n) provides the following subcommands:
+
+<deflist instance>
+
+<defitem eval   {<i obj> eval <i args...>}>
+<defitem expand {<i obj> expand <i text>}>
+<defitem lb     {<i obj> lb}>
+<defitem rb     {<i obj> rb}>
+
+These commands are all delegated to the object's internal instance of
+<xref macro(n)>.  <xref #eval> and <xref #expand> are primarily useful
+for debugging.<p>
+
+<defitem format {<i obj> format <i indir> ?<i options>?}>
+
+Formats all "*.manpage" files found in directory <i indir>, which is
+assumed to be named according to the usual naming convention; see
+<xref "#Man Page Directories">.  Each input page produces a matching
+".html" file; in addition, manpage(n) produces an "index.html" file 
+that provides an index for the entire directory.<p>
+
+The following options may be used:<p>
+
+<deflist options>
+<defopt {-header <i text>}>
+Specifies the text for the man page header. This text should usually
+identify the project name and version.<p>
+
+<defopt {-version <i version>}>
+Specifies the project version number.  It can be accessed using the
+<xref manpage(5)#version> macro.<p>
+
+<defopt {-outdir <i dirname>}>
+By default, the output files are written to the directory containing
+the input files.  If this option is given, the output is written to the
+specified directory.<p>
+
+</deflist options>
+
+
+<defitem mansec {<i obj> mansec <i num title>}>
+
+Defines an additional man page section with number <i num> and the
+given <i title>.  For example,
+
+<pre><i>obj</i> mansec 3 "C Libraries"</pre>
+
+defines a man page section for C library man pages.<p>
+
+</deflist instance>
+
+<section MACROS>
+
+The macros used to write man pages are defined in the
+<xref manpage(5)> man page.<p>
+
+</deflist macros>
+
+<section AUTHOR>
+
+Will Duquette<p>
+
+<section SEE ALSO>
+
+<xref quill(n)>, <xref manpage(5)>, <xref macro(n)>.
+
+</manpage>
