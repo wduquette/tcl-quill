@@ -53,7 +53,7 @@ $interp eval [getproc ::other::myproc]
 
 Will Duquette<p>
 
-<section SEE ALSO>
+<section "SEE ALSO">
 
 <xref quill(n)>.
 

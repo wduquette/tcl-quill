@@ -23,7 +23,7 @@ translate the format into other kinds of output.<p>
 This section explains how to prepare man page files for use with
 <xref manpage(n)>.
 
-<subsection Manual Sections>
+<subsection "Manual Sections">
 
 Following Unix conventions, it is pretended that the manual pages
 written using manpage(5) fall into one of the standard Unix manual
@@ -56,7 +56,7 @@ section number in parentheses.  Thus, "manpage(5)" is the
 documents the "manpage" module that produces formatted HTML output
 from manpage(5) input.<p>
 
-<subsection Directory Layout>
+<subsection "Directory Layout">
 
 <xref manpage(n)> can create links to the other man pages defined in
 the same project, provided that the following directory tree is used
@@ -71,7 +71,7 @@ for all man pages:<p>
 That is, there are sibling subdirectories for each section called
 <tt man1>, <tt man5>, <tt mann>, and <tt mani> respectively.<p>
 
-<subsection Man Page Names and Files>
+<subsection "Man Page Names and Files">
 
 Further, <xref manpage(n)> assumes that each man page file has the
 same bare file name as its man page name.  For example, this man page
@@ -79,7 +79,7 @@ is manpage(5).  The source for this page is
 <tt docs/man5/manpage.manpage>, and the formatted page is
 <tt docs/man5/manpage.html>.<p>
 
-<subsection Man Page Sections>
+<subsection "Man Page Sections">
 
 Each man page is divided into sections, and possibly into
 subsections, using the <xref #section> and <xref #subsection>
@@ -113,7 +113,7 @@ Links to related man pages and other documents.<p>
 
 Other sections may be defined as needed.<p>
 
-<subsection Man Page Items>
+<subsection "Man Page Items">
 
 A single man page will often document a series of "items".  A section
 n man page will document the Tcl commands in a library, for example,
@@ -124,7 +124,7 @@ using the <xref #defitem> macro.  Each <xref #defitem> macro is
 followed by prose documenting the item.  Each definition list is
 concluded by a <xref #/deflist> macro.<p>
 
-<subsection Cross-References>
+<subsection "Cross-References">
 
 The <xref #xref> macro creates cross-reference links to sections within
 the same manpage or to other manpages or, in fact, to arbitrary web
@@ -152,7 +152,7 @@ are supported.  E.g., "<tt http://my.sample.url>"<p>
 
 </topiclist xrefs>
 
-<subsection Man Page Skeleton>
+<subsection "Man Page Skeleton">
 
 A man page file defines a single man page.<p>
 
@@ -369,7 +369,7 @@ I've written in the past in other contexts.<p>
 
 <section AUTHOR>
 
-WHD.<p>
+Will Duquette.<p>
 
 <section "SEE ALSO">
 

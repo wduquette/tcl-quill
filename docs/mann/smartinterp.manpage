@@ -42,7 +42,7 @@ all.  This option is read-only after the object is created.<p>
 
 </deflist commands>
 
-<section INSTANCE COMMAND>
+<section "INSTANCE COMMAND">
 
 Each instance of smartinterp(n) has the following subcommands.<p>
 

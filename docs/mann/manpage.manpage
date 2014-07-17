@@ -20,7 +20,7 @@ At present, manpage(n) produces HTML output only; however, there is
 no reason why it could not be provided with multiple back-ends, each
 supporting a different output format.<p>
 
-<subsection Man Page Directories>
+<subsection "Man Page Directories">
 
 manpage(n) assumes the same kind of manpage naming as Unix man pages, 
 and supports the following man page sections:<p>
@@ -51,7 +51,7 @@ This command creates a new instance of manpage(n) called
 
 </deflist commands>
 
-<section INSTANCE COMMANDS>
+<section "INSTANCE COMMANDS">
 
 An instance of manpage(n) provides the following subcommands:
 
@@ -115,7 +115,7 @@ The macros used to write man pages are defined in the
 
 Will Duquette<p>
 
-<section SEE ALSO>
+<section "SEE ALSO">
 
 <xref quill(n)>, <xref manpage(5)>, <xref macro(n)>.
 

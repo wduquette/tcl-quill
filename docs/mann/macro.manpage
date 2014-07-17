@@ -51,7 +51,7 @@ then removes all commands from the global namespace.<p>
 </deflist options>
 </deflist commands>
 
-<section INSTANCE COMMANDS>
+<section "INSTANCE COMMANDS">
 
 An instance of macro(n) provides the following subcommands:
 
@@ -148,7 +148,7 @@ using this mechanism:<p>
 
 Will Duquette<p>
 
-<section SEE ALSO>
+<section "SEE ALSO">
 
 <xref quill(n)>, <xref smartinterp(n)>, <xref manpage(n)>.
 

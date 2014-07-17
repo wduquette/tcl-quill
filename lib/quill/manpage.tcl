@@ -424,10 +424,10 @@ snit::type ::quill::manpage {
         $macro smartalias manpage {name title ?parent?} 2 3 \
             [mymethod Manpage]
 
-        $macro smartalias section {title...} 1 - \
+        $macro smartalias section {title} 1 1 \
             [mymethod Section]
 
-        $macro smartalias subsection {title...} 1 - \
+        $macro smartalias subsection {title} 1 1 \
             [mymethod Subsection]
 
         $macro alias deflist $self Deflist
@@ -582,15 +582,13 @@ snit::type ::quill::manpage {
     #---------------------------------------------------------------------
     # Man Page Sections and Subsections
 
-    # Macro: section title...
+    # Macro: section title
     #
     # title   - The section title
     #
     # Produces the section header, and provides for cross-references
 
-    method Section {args} {
-        set title $args
-
+    method Section {title} {
         # Pass 1: Catalog this section.
         if {[$macro pass] == 1} {
             $self AnchorSave $title
@@ -605,15 +603,13 @@ snit::type ::quill::manpage {
         return "<h2><a name=\"$title\">$title</a></h2>\n"
     }
 
-    # Macro: subsection title...
+    # Macro: subsection title
     #
     # title - The subsection title
     #
     # Produces the subsection header, and provides for cross-references
 
-    method Subsection {args} {
-        set title $args
-
+    method Subsection {title} {
         # Pass 1: Catalog this section.
         if {[$macro pass] == 1} {
             $self AnchorSave $title
