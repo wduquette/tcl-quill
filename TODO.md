@@ -14,7 +14,10 @@
   * DONE Define "quill docs" tool.
   * DONE Provide project version for use in man pages.
   * Convert manpage(5) manpage
-    * Add <version> macro to manpage(5).
+    * Document all current manpage(n) macros.
+    * <section> and <subsection> macros should take a single argument,
+      not an arbitrarily long list.
+      * Aaaargh.
 * Consider expanding templates rather than mapping them.
 * Support building trees
 * Support building .kits

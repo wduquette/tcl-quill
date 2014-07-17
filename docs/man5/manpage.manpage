@@ -1,0 +1,378 @@
+<manpage manpage(5) "Man Page Documentation Syntax">
+
+<section SYNOPSIS>
+
+<itemlist>
+
+<section DESCRIPTION>
+
+This is the format used to produce man pages for Quill's internal
+libraries; it is also available to other Quill projects.  manpage(5)
+is an HTML like format in which the tags are actually 
+<i macros>: Tcl commands which return text.  The tags are replaced
+by the returned text.<p>
+
+manpage(5) defines a number of macros suitable for formatting the
+content of man pages.  Individual man pages can define additional
+macros as needed.<p>
+
+The <xref manpage(n)> processor translates manpage(5) files into
+HTML; in principle, however, additional back-ends could be defined to
+translate the format into other kinds of output.<p>
+
+This section explains how to prepare man page files for use with
+<xref manpage(n)>.
+
+<subsection Manual Sections>
+
+Following Unix conventions, it is pretended that the manual pages
+written using manpage(5) fall into one of the standard Unix manual
+sections.  At present, manpage(5) supports sections:<p>
+
+<topiclist>
+<topic "Section 1: Applications">
+I.e., commands that can be entered at the command-line.<p>
+
+<topic "Section 5: File formats">
+E.g., this man page.<p>
+
+<topic "Section n: Tcl commands">
+For some reason Tcl documents its commands in section "n", and 
+so we will follow suit.<p>
+
+<topic "Section i: Tcl interfaces">
+This is a new section, used to define standard Tcl interfaces that 
+are shared by many different objects.<p>
+</topiclist>
+
+Most man pages written with manpage(5) will fit into one of these
+sections; however, <xref manpage(n)> allows the client to define 
+additional sections as needed.<p>
+
+Also by convention, man pages have a short name, usually followed by
+section number in parentheses.  Thus, "manpage(5)" is the
+"manpage" man page in section 5; it is the page that documents the
+"manpage" file format.  <xref manpage(n)>, on the other hand,
+documents the "manpage" module that produces formatted HTML output
+from manpage(5) input.<p>
+
+<subsection Directory Layout>
+
+<xref manpage(n)> can create links to the other man pages defined in
+the same project, provided that the following directory tree is used
+for all man pages:<p>
+
+<ul>
+  <li> <tt><i docRoot>/man1/</tt>
+  <li> <tt><i docRoot>/man5/</tt>
+  <li> <tt><i docRoot>/mann/</tt>
+</ul><p>
+
+That is, there are sibling subdirectories for each section called
+<tt man1>, <tt man5>, <tt mann>, and <tt mani> respectively.<p>
+
+<subsection Man Page Names and Files>
+
+Further, <xref manpage(n)> assumes that each man page file has the
+same bare file name as its man page name.  For example, this man page
+is manpage(5).  The source for this page is
+<tt docs/man5/manpage.manpage>, and the formatted page is
+<tt docs/man5/manpage.html>.<p>
+
+<subsection Man Page Sections>
+
+Each man page is divided into sections, and possibly into
+subsections, using the <xref #section> and <xref #subsection>
+macros.  The standard sections are as follows:<p>
+
+<topiclist sections>
+<topic "SYNOPSIS">
+A brief statement of the calling sequence of the application
+(section 1) or library (section n), possibly followed by a list
+of <xref "#Man Page Items"> defined in the man page.<p>
+
+<topic "DESCRIPTION">
+An overview of the documented command, format, or library,
+possibly with subsections describing its background or use.<p>
+
+<topic "COMMANDS">
+For section n, Tcl commands defined by the man page.<p>
+
+<topic "BUGS">
+Any known bugs.<p>
+
+<topic "HISTORY">
+The module's history.<p>
+
+<topic "AUTHOR">
+The man page/module's author.<p>
+
+<topic "SEE ALSO">
+Links to related man pages and other documents.<p>
+</topiclist sections>
+
+Other sections may be defined as needed.<p>
+
+<subsection Man Page Items>
+
+A single man page will often document a series of "items".  A section
+n man page will document the Tcl commands in a library, for example,
+and this man page documents a collection of <xref #MACROS> used to
+write man pages.  Items are documented in definition lists using
+the <xref #deflist> macro; each item in a definition list is defined
+using the <xref #defitem> macro.  Each <xref #defitem> macro is
+followed by prose documenting the item.  Each definition list is
+concluded by a <xref #/deflist> macro.<p>
+
+<subsection Cross-References>
+
+The <xref #xref> macro creates cross-reference links to sections within
+the same manpage or to other manpages or, in fact, to arbitrary web
+pages.  Cross-reference links may be specified in a number of ways.
+
+<topiclist xrefs>
+<topic "<tt>#<i section></tt>">
+<topic "<tt>#<i item></tt>">
+References a section or subsection, given its title, or an
+item, given its name, within the current man page.  E.g.,
+"<tt #DESCRIPTION>" or "<tt #xref>".<p>
+
+<topic "<tt><i name>(<i sec>)</tt>">
+References the named man page, e.g., "<tt manpage(5)>"<p>
+
+<topic "<tt><i name>(<i sec>)#<i section></tt>">
+<topic "<tt><i name>(<i sec>)#<i item></tt>">
+References a section by its title or an item by its name within
+the named man page.   E.g.,
+"<tt manpage(5)#DESCRIPTION>" or "<tt manpage(5)#xref>".<p>
+
+<topic "<tt><i url></tt>">
+References a web page by its URL.  At present, only "http" URLs
+are supported.  E.g., "<tt http://my.sample.url>"<p>
+
+</topiclist xrefs>
+
+<subsection Man Page Skeleton>
+
+A man page file defines a single man page.<p>
+
+Each man page file begins with a <xref #manpage> macro which names and
+titles the man page.  This is followed by one or sections and
+subsections, each introduced by the <xref #section> or
+<xref #subsection> macro.  The "SYNOPSIS" section will frequently
+contain an <xref #itemlist> macro, which expands to a list of links
+to each of the items defined in the body of the web page.<p>
+
+Other sections may contain definition lists, which
+define one or more items (i.e, commands, macros, etc.).  Each
+definition list begins with a <xref #deflist> macro and ends with a
+<xref #/deflist> macro; individual items begin with
+the <xref #defitem> macro, followed by prose which documents the
+item.<p>
+
+Prose may contain cross-references, defined using the
+<xref #xref> macro.<p>
+
+Each man page file ends with the <xref #/manpage> macro.<p>
+
+<section MACROS>
+
+The following macros may be used in man pages.<p>
+
+<deflist macros>
+
+<defitem manpage {manpage <i>name title</i> ?<i>parent</i>?}>
+
+This macro should be the first to appear in every man page file.
+The <i>name</i> is the man page's name.
+The <i>title</i> is a short description of the documented module.
+For example,<p>
+
+<pre>
+<lb>manpage manpage(1) "manpage(5) formatting tool"<rb>
+</pre>
+
+If the documented module is part of a larger package, then
+<i parent> should be the name of that package's overall man page.<p>
+
+
+<defitem section {section <i>title</i>}>
+
+Defines a major section within the man page; the section title will be
+added to the table of contents, and can be used as an
+<xref #xref> reference.  By convention, section titles are in
+ALL CAPS.  For example,<p>
+
+<pre>
+<lb>section DESCRIPTION<rb>
+   .
+   .
+   .
+<lb>section "SEE ALSO"<rb>
+</pre>
+
+<defitem subsection {subsection <i>title</i>}>
+
+Defines a subsection of a major section.  The subsection title will be
+added to the table of contents, and can be used as an
+<xref #xref> reference.  By convention, subsection titles are in
+Mixed Case.  For example,<p>
+
+<pre>
+<lb>section DESCRIPTION<rb>
+   .
+   .
+   .
+<lb>subsection "The Specifics"<rb>
+</pre>
+
+<defitem deflist {deflist <i>args...</i>}>
+
+Begins a definition list.  The <i>args</i> are ignored.  By
+convention, each <xref #deflist> macro includes arguments which
+indicate the kind of thing being listed; the <xref #/deflist> macro
+repeats them.  This avoids confusion when definition lists are nested.
+For example,<p>
+
+<pre>
+<lb>section COMMANDS<rb>
+
+This module defines the following commands:<lb>p<rb>
+
+<lb>deflist commands<rb>
+    .
+    .
+    .
+<lb>/deflist commands<rb>
+</pre>
+
+Items are defined within a definition list using <xref #defitem>.<p>
+
+<defitem defitem {defitem <i>name text</i>}>
+
+Begins the documentation of an item in a definition list.  The
+<i>name</i> is the item's name, by which it will be linked.  In a list
+of commands, for example, <i>name</i> is the command name.  The
+<i>text</i> is the complete representation of the item.  For a
+command, <i>text</i> would be the signature of the command.  For example,<p>
+
+<pre>
+<lb>defitem section {section <lb>i<rb>title<lb>/i<rb>}<rb>
+</pre>
+
+Tcl conventions are followed for command signatures.  Literal text is
+in normal type, dummy arguments are in <i>italics</i>, optional
+arguments are bracketed by question marks, and arguments which can be
+repeated include "...".  In this example,<p>
+
+<pre>
+<lb>defitem xref {xref <lb>i<rb>ref<lb>/i<rb> ?<lb>i<rb>text<lb>/i<rb>?}<rb>
+</pre>
+
+"xref" is the literal macro name, "<lb>i<rb>ref<lb>/i<rb>" is a dummy argument,
+and "?<lb>i<rb>text<lb>/i<rb>?" is an optional argument.<p>
+
+<defitem defopt {defopt <i>option text</i>}>
+
+Begins the documentation of an option in a definition list of options.
+For example,<p>
+
+<pre>
+<lb>defopt -myoption {-myoption <i>value</i>}<rb>
+</pre>
+
+<defitem /deflist {/deflist <i>args...</i>}>
+
+Ends a definition list.  As with <xref #deflist>, the <i>args</i>
+are ignored.<p>
+
+<defitem itemlist {itemlist}>
+
+This macro returns a list of links to the items defined in the page.
+It's usually placed in the "SYNOPSIS" section.<p>
+
+<defitem xref {xref <i>ref</i> ?<i>text</i>?}>
+
+Creates a cross-reference link to the page/anchor identified by
+<i>ref</i>; see <xref #Cross-References> for the many kinds of
+reference understood by <xref #xref>.<p>
+
+If <i>text</i> is given, it is used as the link text.  Otherwise,
+if <i>ref</i> explicitly names an anchor, i.e., a section title or
+item name, the anchor is used; otherwise, the page name is used.<p>
+
+This reference links to the named man page, and uses the man page name
+as the link text:<p>
+
+<pre>
+<lb>xref manpage(1)<rb>
+</pre>
+
+This reference links to the "COMMANDS" section and uses the section
+title as the link text:<p>
+
+<pre>
+<lb>xref #COMMANDS<rb>
+</pre>
+
+This reference links to the "xref" item in "manpage(5)", and uses the
+item name as the link text:<p>
+
+<pre>
+<lb>xref manpage(5)#xref<rb>
+</pre>
+
+This reference links to the "xref" item, but uses "cross-reference"
+as the link text:<p>
+
+<pre>
+<lb>xref #xref "cross-reference"<rb>
+</pre>
+
+<defitem swallow {swallow <i>script</i>}>
+
+The <i>script</i> is evaluated in the global context, and any return
+value is thrown away.  Use this to load required packages and define
+module-specific macros.<p>
+
+<defitem tclsh {tclsh <i>command</i>}>
+
+The <xref #tclsh> macro evaluates <i>command</i> in the global
+context, and outputs HTML of both the command and its return value
+simulating a dialog with a Tcl shell.  The <xref #tclsh> macro
+should be wrapped in <b><lb>pre<rb>...<lb>/pre<rb></b><p>
+
+
+<defitem /manpage {/manpage}>
+
+This macro ends the man page, and should be the final macro in the file.<p>
+
+</deflist macros>
+
+<section BUGS>
+
+<ul>
+  <li> Section titles and item names are in the same namespace, and so
+       can conflict.  As item names are usually lower case and titles
+       are usually mixed case with initial caps, this isn't generally
+       a problem.<p>
+
+  <li> <xref #defopt> options are not included in the itemlist.<p>
+
+  <li> <xref #defopt> options cannot be linked to!<p>
+</ul>
+
+<section HISTORY>
+
+This is a new format and macro set, based loosely on many similar efforts
+I've written in the past in other contexts.<p>
+
+<section AUTHOR>
+
+WHD.<p>
+
+<section "SEE ALSO">
+
+<xref manpage(1)>.
+
+</manpage>

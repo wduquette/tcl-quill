@@ -420,6 +420,7 @@ snit::type ::quill::manpage {
         $macro proc rb {} { return "&gt;"}
 
         # NEXT, manpage-specific macros
+        # FIXME: All aliases should be smartaliases.
         $macro smartalias manpage {name title ?parent?} 2 3 \
             [mymethod Manpage]
 
@@ -441,6 +442,14 @@ snit::type ::quill::manpage {
 
         $macro alias itemlist $self Itemlist
 
+        $macro alias topiclist $self Topiclist
+
+        $macro smartalias topic {text} 1 1 \
+            [mymethod Topic]
+
+        $macro alias /topiclist $self /Topiclist
+
+
         $macro smartalias xref {pageref ?text?} 1 2 \
             [mymethod Xref]
 
@@ -461,6 +470,15 @@ snit::type ::quill::manpage {
 
     #---------------------------------------------------------------------
     # Manpage Macros
+
+    # macro: manpage name title ?parent?
+    #
+    # name   - The man page name, e.g., quill(n)
+    # title  - The man page title
+    # parent - A parent man page, or "".
+    #
+    # Begins a man page, and sets up the metadata for the subsequent
+    # macros.
 
     method Manpage {name title {parent ""}} {
         # Pass 1: Catalog the page and return.
@@ -531,7 +549,40 @@ snit::type ::quill::manpage {
         return $result
     }
 
-    # Section title...
+    # Macro: /manpage
+    #
+    # Terminates a man page, and provides the footer.
+
+    method /Manpage {} {
+        # Pass 1: Make sure we've got a <<manpage>>.
+        if {[$macro pass] == 1} {
+            # FIRST, have we set the page's name?
+            if {$trans(manpage) eq ""} {
+                error "encountered </manpage> before <manpage> in this file"
+            }
+
+            return
+        }
+
+        # Pass 2: Format the Output
+        set ts [clock format [clock seconds]]
+        set fname [file tail $trans(filename)]
+
+        append result \
+            "<hr class=\"outdent\">\n"                \
+            "<span class=\"outdent\">\n"              \
+            "<i>Generated from $fname on $ts</i>\n"   \
+            "</span>\n"                               \
+            "</body>\n"                               \
+            "</html>\n"
+
+        return $result
+    }
+
+    #---------------------------------------------------------------------
+    # Man Page Sections and Subsections
+
+    # Macro: section title...
     #
     # title   - The section title
     #
@@ -554,7 +605,7 @@ snit::type ::quill::manpage {
         return "<h2><a name=\"$title\">$title</a></h2>\n"
     }
 
-    # Subsection title...
+    # Macro: subsection title...
     #
     # title - The subsection title
     #
@@ -582,7 +633,8 @@ snit::type ::quill::manpage {
 
     # Contents
     #
-    # Formats the section/subsection table of contents
+    # Formats the section/subsection table of contents.  This is
+    # used automatically by Manpage.
 
     method Contents {} {
         # Pass 1: do nothing
@@ -609,7 +661,10 @@ snit::type ::quill::manpage {
         return $result
     }
 
-    # Deflist args...
+    #---------------------------------------------------------------------
+    # Definition Lists
+
+    # Macro: deflist args...
     #
     # args   - Arbitrary text identifying the deflist.
     #
@@ -623,7 +678,7 @@ snit::type ::quill::manpage {
         return "<dl>\n"
     }
 
-    # Defitem name text
+    # Macro: defitem name text
     #
     # name  - The item's name, e.g., "section"
     # text  - The text used to document the item.
@@ -651,7 +706,7 @@ snit::type ::quill::manpage {
         return "<dt><b><a name=\"$name\">$text</a></b><dd>\n"
     }
 
-    # Defopt text
+    # Macro: defopt text
     #
     # text   - The text used to document the option.
     #
@@ -668,7 +723,7 @@ snit::type ::quill::manpage {
         return "<dt><b>$text</b><dd>\n"
     }
 
-    # /Deflist args...
+    # Macro: /deflist args...
     #
     # args  - Arbitrary text identifying the deflist.
     #
@@ -682,7 +737,7 @@ snit::type ::quill::manpage {
         return "</dl>\n"
     }
 
-    # Itemlist
+    # Macro: itemlist
     #
     # Returns a formatted list of links for the SYNOPSIS section.
 
@@ -704,31 +759,54 @@ snit::type ::quill::manpage {
         return $result
     }
 
-    method /Manpage {} {
-        # Pass 1: Make sure we've got a <<manpage>>.
-        if {[$macro pass] == 1} {
-            # FIRST, have we set the page's name?
-            if {$trans(manpage) eq ""} {
-                error "encountered </manpage> before <manpage> in this file"
-            }
+    #---------------------------------------------------------------------
+    # Topic Lists
 
+    # Macro: topiclist args...
+    #
+    # args   - Arbitrary text identifying the topiclist.
+    #
+    # Begins a topic list.  The args are ignored,
+    # but are convenient for matching up the topiclist with
+    # its /topiclist.
+
+    method Topiclist {args} {
+        return "<dl class=\"topiclist\">\n"
+    }
+
+    # Macro: topic text
+    #
+    # text  - The topic text
+    #
+    # States the topic and begins the description of it.
+    # The "text" is expanded, so can contain macros.
+
+    method Topic {text} {
+        # pass 1: do nothing
+        if {[$macro pass] == 1} {
             return
         }
+        
+        # pass 2: Format the item.
+        set text [$macro expandonce $text]
 
-        # Pass 2: Format the Output
-        set ts [clock format [clock seconds]]
-        set fname [file tail $trans(filename)]
-
-        append result \
-            "<hr class=\"outdent\">\n"                \
-            "<span class=\"outdent\">\n"              \
-            "<i>Generated from $fname on $ts</i>\n"   \
-            "</span>\n"                               \
-            "</body>\n"                               \
-            "</html>\n"
-
-        return $result
+        return "<dt class=\"topic\"><b>$text</b><dd class=\"description\">\n"
     }
+
+    # Macro: /topiclist args...
+    #
+    # args  - Arbitrary text identifying the topiclist.
+    #
+    # Ends a topic list.  The args are ignored,
+    # but are convenient for matching up the topiclist with
+    # its /topiclist, especially when topiclists are nested.
+
+    method /Topiclist {args} {
+        return "</dl>\n"
+    }
+
+    #---------------------------------------------------------------------
+    # Cross-References
 
     # Xref pageref ?text?
     #
@@ -801,7 +879,10 @@ snit::type ::quill::manpage {
         }
     }
 
-    # Version
+    #---------------------------------------------------------------------
+    # Other Macros
+
+    # Macro: version
     #
     # Returns the project version number, as given by the -version
     # option.
