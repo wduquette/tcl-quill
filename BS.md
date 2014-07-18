@@ -43,4 +43,70 @@ calls could be very useful:
 * A given project tree or element could define any number of templates
   of its own, and also use the basic ones.
 
-I think this is the way to do it.
+**BUT!** Because template(n) uses Tcl syntax for the interpolated variables
+and commands, it's lousy for creating Tcl code files.  Quoting Hell!  So
+that isn't going to work.
+
+### What's wanted
+
+Here are the requirements so far:
+
+* Each file template should be a Tcl command whose arguments flow into the
+  template string.
+
+* The template should produce a string; writing it to disk is orthogonal.
+
+* The template command should be defined by a template(n)-like
+  definition command, using some kind of outdenting.
+
+It will have to use one of the following substitution mechanisms:
+
+* `subst`
+* `tsubst`
+* `format`
+* `string map`
+* `macro(n)`
+
+Of these, `subst` and `tsubst` are out because of quoting hell.  The 
+`format` command is also out because the replacements are indicated
+positionally, which doesn't translate well to something like a template
+proc.
+
+It would possible to use `string map` with `proc` and `outdent` to do 
+something like this:
+
+```Tcl
+template pkgIndex {project package version} {
+    # %project
+    package ifneeded %package %version ...
+}
+```
+
+Any replaceable parameter can be used multiple times.  This would
+answer the mail; the only problem is that there's no error checking.
+If the template string contains "%pkg", it simply won't be replaced.
+
+We could build a similar feature on top of macro(n); but we'd need a
+way to map in variables for replacement.  For example, we could use
+an unknown handler to let "%variable" map to the given variable.
+
+```Tcl
+template pkgIndex {project package version} {
+    # <<%project>>
+    package ifneeded <<%package>> <<%version>> ...
+}
+```
+
+This option has the advantage that we can make package metadata
+available directly via pre-defined macros. However, it is much more
+complex.
+
+One problem both of these schemes have is that it's hard to provide an 
+"initbody" as template(n)'s `template` does.  For `template`, the template
+string is `tsubst`'d in the caller's context, and all defined variables 
+are simply present.  However, we could conceivably use `info locals` to
+retrieve all local variables in the initbody, and package them up as a
+dict.
+
+
+

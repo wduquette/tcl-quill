@@ -1,0 +1,128 @@
+<manpage maptemplate(n) "String Map Templates" quill(n)>
+
+<section SYNOPSIS>
+
+<pre>
+package require quill 1.0
+namespace import ::quill::*
+</pre>
+
+<itemlist>
+
+<section DESCRIPTION>
+
+maptemplate(n) contains commands for creating text templates
+based on Tcl's <code string map> command.  These commands are similar
+to those defined in <xref template(n)>, but because they do not
+use Tcl interpolation syntax they are much better suited to the
+generation of Tcl code.<p>
+
+The <xref #maptemplate> command define a template.  A template is a
+like a Tcl proc, but its body is a template string into which
+values can be substituted.  Replacement arguments are specified
+by the arguments to the template, and are placed in the body string
+with a "%" prefix.  For example<p>
+
+<pre>
+% maptemplate greeting {name} {Hello, %name!}
+::greeting
+% greeting World
+Hello, World!
+%
+</pre>
+
+The template shown is equivalent to this Tcl proc:<p>
+
+<pre>
+proc greeting {name} {
+    return [mapsubst {Hello, %name}]
+}
+</pre>
+
+Sometimes a <xref #maptemplate> requires
+some initialization of variables or other processing that can't
+conveniently be done in the template string itself.  Consequently,
+<xref #maptemplate> allows the caller to define an "initialization" body.
+This is just a block of Tcl code that's called just before the
+template is expanded.  It usually defines variables that are then
+substituted into the template.<p>
+
+Suppose, for example, a template argument should be converted to 
+upper case.  Compare<p>
+
+<pre>
+maptemplate greeting {name} {Hello, [string toupper %name]}
+</pre>
+
+with<p>
+
+<pre>
+maptemplate greeting {name} {
+  set name [string toupper $name]
+} {Hello, %name!}
+</pre>
+
+The second separates the data processing from the template string, and so
+is clearer.<p>
+
+<b Two Caveats:> First, only <b local scalar> variables are available
+for interpolation.  Arrays and globals are not.  Second, when generating
+Tcl code, it is up to the caller to make sure that interpolated lists
+and other values containing white space are quoted properly in the 
+template.<p>
+
+It's normal when using templates to indent the template string
+according to the logic of the code.  This sometimes results in extra
+whitespace at the beginning of each line.  Since
+<xref #maptemplate> is usually used to produce blocks of Tcl code,
+the template string is always passed through the
+<xref stringutils(n)#outdent> command.<p>
+
+<section COMMANDS>
+
+maptemplate(n) defines the following commands:<p>
+
+<deflist commands>
+
+<defitem maptemplate {maptemplate <i name arglist> ?<i initbody>? <i template>}>
+
+Defines a new command with the specified <i>name</i> and
+<i>arglist</i>.  The <i>template</i> argument is a string
+which may contain "%<i var>" conversions.  When the new command 
+is called, the <i>template</i> is passed to <xref #mapsubst>, and
+the result is returned.<p>
+
+If the <i>initbody</i> is specified, it contains Tcl code to
+be executed before the <i>template</i> is expanded.         
+Normally, the only variables which will be in scope when the
+template string is expanded are the template command's
+arguments; the <i>initbody</i> is used to initialize
+other local scalar variables for inclusion in the <i>template</i>.<p>
+
+
+<defitem mapsubst {mapsubst <i template>}>
+
+The <xref #mapsubst> command interpolates local scalar variable values
+into the <i template> string.  It retrieves the names and values
+of all local variables in its caller's context and builds a 
+<code string map> dictionary, first prefixing the variable names
+with "%".  Then it calls <code string map> on the template using
+the dictionary, replacing "%<i var>" with the value of variable
+<i var>.<p>
+
+Note that only <b local> (procedure arguments and local variables) 
+<b scalar> variables are substituted.
+Array variables could be supported, if necessary.<p>
+
+</deflist commands>
+
+
+<section AUTHOR>
+
+Will Duquette<p>
+
+<section "SEE ALSO">
+
+<xref quill(n)>.<p>
+
+</manpage>

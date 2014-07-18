@@ -2,16 +2,11 @@
 
 ## Next
 
+* Implement project tree and project element templates as procs rather
+  than files.
+  * gentree.tcl contains the normal ones.
+  * Infrastructure?
 * Add tests for manpage(n), including the macros.
-* Use template(n) to build project tree templates
-  * Add template(n) to quill(n)
-    * DONE Code
-    * DONE Test
-    * DONE Man page
-  * Use template(n) to do the quillinfo(n) templating, replacing
-    `genfile`.
-  * Add an overall command for each kind of project and element
-    to the gentree module.
 * Support building trees
 * Support building .kits
 * Support requires.
