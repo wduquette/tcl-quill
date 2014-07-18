@@ -9,14 +9,106 @@
 #    Quill: Project build system for Tcl/TK
 #
 # DESCRIPTION:
-#    Project tree ensemble: project trees are rooted here.
+#    Project tree ensemble: manages registered project trees.
 #
 #-------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------
 # Exported Commands
 
-namespace eval ::quillapp::tree {
-    namespace ensemble create
+namespace eval ::quillapp:: {
+    namespace export tree
 }
 
+snit::type ::quillapp::tree {
+    # pragma -hasinstances no -hastypedestroy no
+
+    #---------------------------------------------------------------------
+    # Type Variables
+
+    # Registry of tree details
+    #
+    # trees        - Names of registered trees
+    # tdict-$name  - tree dictionary for this tree
+    #
+    #    name    - tree name
+    #    usage   - Usage string (arguments)
+    #    min     - Min number of arguments
+    #    max     - Max number of arguments (or "-")
+    #    command - The tree command
+
+    typevariable registry -array {
+        trees {}
+    }
+
+    #---------------------------------------------------------------------
+    # Registration of tree Commands
+
+    # register name usage min max command
+    #
+    # name     - An tree name
+    # usage    - A usage string for the tree arguments.
+    # min      - Minimum number of arguments.
+    # max      - Maximum number of arguments, or "-"
+    # command  - The command that produces the tree.
+    # help     - Help text
+
+    typemethod register {name usage min max command help} {
+        dict set tdict name    $name
+        dict set tdict usage   $usage
+        dict set tdict min     $min
+        dict set tdict max     $max
+        dict set tdict command $command
+        dict set tdict help    $help
+
+        set registry(trees) $name
+        set registry(tdict-$name) $tdict
+    }
+
+    # names
+    #
+    # Returns a list of the registered project tree names.
+
+    typemethod names {} {
+        return $registry(trees)
+    }
+
+    # get name ?parm?
+    #
+    # name - The tree name
+    # parm - A tree parameter
+    #
+    # Returns the value of the named parameter, or the entire
+    # tree dict.
+
+    typemethod get {name {parm ""}} {
+        if {$parm ne ""} {
+            return [dict get $registry(edict-$name) $parm]
+        } else {
+            return $registry(edict-$name)
+        }
+    }
+
+    #---------------------------------------------------------------------
+    # tree Execution
+
+    # Delegate tree names to Registeredtree
+    delegate typemethod * using {%t Registeredtree %m}
+
+    # Registeredtree name args...
+    #
+    # name   - An tree name.
+    # args   - tree arguments.
+    #
+    # Calls the registered tree's code given the args.
+
+    typemethod Registeredtree {name args} {
+        if {![info exists registry(tdict-$name)]} {
+            throw FATAL "Unknown project tree: \"$name\""
+        }
+
+        set command [dict get $registry(tdict-$name) command]
+
+        {*}$command {*}$args
+    }
+}
