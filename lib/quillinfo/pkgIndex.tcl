@@ -13,4 +13,3 @@
 #-------------------------------------------------------------------------
 
 package ifneeded quillinfo 1.0 [list source [file join $dir pkgModules.tcl]]
-

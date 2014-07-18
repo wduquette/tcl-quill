@@ -19,11 +19,7 @@ namespace eval ::quillinfo {
     variable meta
     array set meta {apps quill description {Quill Project Build System for Tcl/Tk} homepage http://github.com/wduquette/tcl-quill version 0.1a0 url http://my.home.page project tcl-quill}
 
-    namespace export \
-        project      \
-        description  \
-        version      \
-        homepage
+    namespace export  project       description   version       homepage
 
     namespace ensemble create
 }

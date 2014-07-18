@@ -18,9 +18,7 @@ package provide quillinfo 1.0
 # Get the library directory
 
 namespace eval ::quillinfo:: {
-	variable library [file dirname [info script]]
+    variable library [file dirname [info script]]
 }
 
 source [file join $::quillinfo::library quillinfo.tcl]
-
-

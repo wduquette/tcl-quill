@@ -348,13 +348,7 @@ snit::type ::quillapp::project {
 
 		# FIRST, save the info to quillinfo.
 		if {[$type gotapp]} {
-			gentree {
-				quillinfo_pkgIndex   lib/quillinfo/pkgIndex.tcl
-				quillinfo_pkgModules lib/quillinfo/pkgModules.tcl
-				quillinfo_quillinfo  lib/quillinfo/quillinfo.tcl
-			} %project     $meta(project)          \
-			  %description $meta(description)      \
-			  %meta        [list [array get meta]]
+			elementQuillinfo [array get meta]
 		}
 	}
 }
