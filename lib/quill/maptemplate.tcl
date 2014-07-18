@@ -44,6 +44,9 @@ proc ::quill::mapsubst {template} {
         dict set mapping %$var [uplevel 1 [list set $var]]
     }
 
+    # Allow backslashes in input
+    dict set mapping \\\\ \\
+
     return [string map $mapping $template]
 }
 

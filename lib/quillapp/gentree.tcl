@@ -152,10 +152,10 @@ proc ::quillapp::elementQuillinfo {meta} {
         variable meta
         array set meta %meta
 
-        namespace export \
-            project      \
-            description  \
-            version      \
+        namespace export \\
+            project      \\
+            description  \\
+            version      \\
             homepage
 
         namespace ensemble create

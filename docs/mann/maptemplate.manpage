@@ -17,6 +17,8 @@ to those defined in <xref template(n)>, but because they do not
 use Tcl interpolation syntax they are much better suited to the
 generation of Tcl code.<p>
 
+<subsection "Defining Templates">
+
 The <xref #maptemplate> command define a template.  A template is a
 like a Tcl proc, but its body is a template string into which
 values can be substituted.  Replacement arguments are specified
@@ -38,6 +40,8 @@ proc greeting {name} {
     return [mapsubst {Hello, %name}]
 }
 </pre>
+
+<subsection "Initialization Bodies">
 
 Sometimes a <xref #maptemplate> requires
 some initialization of variables or other processing that can't
@@ -65,17 +69,47 @@ maptemplate greeting {name} {
 The second separates the data processing from the template string, and so
 is clearer.<p>
 
-<b Two Caveats:> First, only <b local scalar> variables are available
+<subsection "Backslash Substitution">
+
+Templates for Tcl code will often contain backslashes as a line
+continuation character.  Tcl's parser does the line continuation
+processing when the template is defined, meaning that the continued
+lines will appear in the output all on one single line.  For example,
+the template string<p>
+
+<pre>
+list \
+   one \
+   two \
+   thre
+</pre>
+
+will product the output
+
+<pre>list     one    two    three</pre>
+
+This can be avoided by doubling the backslashes in the input:<p>
+
+<pre>
+list \\
+    one \\
+    two \\
+    three
+</pre>
+
+<subsection "Two Caveats">
+
+First, only <b local scalar> variables are available
 for interpolation.  Arrays and globals are not.  Second, when generating
 Tcl code, it is up to the caller to make sure that interpolated lists
 and other values containing white space are quoted properly in the 
 template.<p>
 
-It's normal when using templates to indent the template string
-according to the logic of the code.  This sometimes results in extra
-whitespace at the beginning of each line.  Since
-<xref #maptemplate> is usually used to produce blocks of Tcl code,
-the template string is always passed through the
+<subsection "Templates are Outdented">
+
+It's normal when using templates to indent the template string,
+but the output code block should usually be at the left margin.
+Consequently, <xref #mapsubst> always passes the template through the
 <xref stringutils(n)#outdent> command.<p>
 
 <section COMMANDS>
@@ -109,6 +143,9 @@ of all local variables in its caller's context and builds a
 with "%".  Then it calls <code string map> on the template using
 the dictionary, replacing "%<i var>" with the value of variable
 <i var>.<p>
+
+Double backslashes in the <i template> are replaced with single 
+backslashes.  See <xref "#Backslash Substitution">.<p>
 
 Note that only <b local> (procedure arguments and local variables) 
 <b scalar> variables are substituted.

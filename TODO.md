@@ -2,10 +2,10 @@
 
 ## Next
 
-* Implement project tree and project element templates as procs rather
-  than files.
-  * gentree.tcl contains the normal ones.
-  * Infrastructure?
+* Need architecture for project trees and elements.  We don't want to
+  put them all into gentree.tcl.
+  * Maptemplates work nicely
+  * How to prevent "\" translation?
 * Add tests for manpage(n), including the macros.
 * Support building trees
 * Support building .kits
