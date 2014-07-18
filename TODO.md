@@ -54,6 +54,7 @@ Quill should provide the following tools.
 
 * quill replace
   * Project search and replace command
+  * ?
 
 * quill run
   * Run the main app (or a given app) with a given command line.

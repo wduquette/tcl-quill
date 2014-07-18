@@ -179,7 +179,12 @@ Each man page file ends with the <xref #/manpage> macro.<p>
 
 The following macros may be used in man pages.<p>
 
-<deflist macros>
+<subsection "Structural Macros">
+
+These macros are used to define the structure of the man page.
+They are presented in the order in which they are ordinarily used.
+
+<deflist structural>
 
 <defitem manpage {manpage <i>name title</i> ?<i>parent</i>?}>
 
@@ -194,7 +199,6 @@ For example,<p>
 
 If the documented module is part of a larger package, then
 <i parent> should be the name of that package's overall man page.<p>
-
 
 <defitem section {section <i>title</i>}>
 
@@ -225,6 +229,23 @@ Mixed Case.  For example,<p>
    .
 <lb>subsection "The Specifics"<rb>
 </pre>
+
+<defitem /manpage {/manpage}>
+
+This macro ends the man page, and should be the final macro in the 
+file.<p>
+
+</deflist structural>
+
+<subsection "Definition List Macros">
+
+Definition lists are the primary means of documenting items of code:
+Tcl commands and subcommands, macros, and anything else that should be
+listed in the "SYNOPSIS" section.<p>
+
+The following macros are used to define definition lists.
+
+<deflist definition lists>
 
 <defitem deflist {deflist <i>args...</i>}>
 
@@ -281,6 +302,9 @@ For example,<p>
 <lb>defopt -myoption {-myoption <i>value</i>}<rb>
 </pre>
 
+At present options are not listed in the <xref #itemlist>, but that may
+change in the future.<p>
+
 <defitem /deflist {/deflist <i>args...</i>}>
 
 Ends a definition list.  As with <xref #deflist>, the <i>args</i>
@@ -290,6 +314,52 @@ are ignored.<p>
 
 This macro returns a list of links to the items defined in the page.
 It's usually placed in the "SYNOPSIS" section.<p>
+
+</deflist definition lists>
+
+<subsection "Topic List Macros">
+
+Topic lists are similar to 
+<xref "#Definition List Macros" "definition lists"> 
+but do not define items for inclusion in the "SYNOPSIS" 
+section.<p>
+
+<deflist topic lists>
+
+<defitem topiclist {topiclist <i>args...</i>}>
+
+Begins a topic list.  As with definition lists, the <i>args</i> 
+are ignored.  By convention, each <xref #topiclist> macro 
+includes arguments which indicate the kind of thing being listed; 
+the <xref #/topiclist> macro repeats them.  This avoids confusion when
+topic lists are nested. For example,<p>
+
+<pre>
+<lb>topiclist man page section types<rb>
+    .
+    .
+    .
+<lb>/topiclist man page section types<rb>
+</pre>
+
+Topics are defined within a topic list using <xref #topic>.<p>
+
+<defitem topic {topic <i>text</i>}>
+
+Begins the documentation of a topic in a topic list.  The
+<i>text</i> is the complete representation of the topic; it may
+include nested macros.<p>
+
+<defitem /topiclist {/topiclist <i>args...</i>}>
+
+Ends a topic list.  As with <xref #topiclist>, the <i>args</i>
+are ignored.<p>
+
+</deflist topic lists>
+
+<subsection "Cross-Reference Macros">
+
+<deflist cross-references>
 
 <defitem xref {xref <i>ref</i> ?<i>text</i>?}>
 
@@ -329,25 +399,75 @@ as the link text:<p>
 <lb>xref #xref "cross-reference"<rb>
 </pre>
 
-<defitem swallow {swallow <i>script</i>}>
+</deflist cross-references>
+
+<subsection "HTML Equivalent Macros">
+
+manpage(5) format was designed to translate easily to HTML, but also to
+support other back-end translations.  Thus, it defines a number of macros that have direct HTML equivalents.<p>
+
+<deflist html macros>
+
+<defitem li {<lb>li<rb>...<lb>/li<rb>}>
+<defitem ol {<lb>ol<rb>...<lb>/ol<rb>}>
+<defitem p  {<lb>p<rb>...<lb>/p<rb>}>
+<defitem ul {<lb>ul<rb>...<lb>/ul<rb>}>
+
+These macros map directly to their HTML namesakes.<p>
+
+<defitem b {<lb>b<rb>...<lb>/b<rb> or <lb>b <i text>...<rb>}>
+<defitem code {<lb>code<rb>...<lb>/code<rb> or <lb>code <i text>...<rb>}>
+<defitem em {<lb>em<rb>...<lb>/em<rb> or <lb>em <i text>...<rb>}>
+<defitem i {<lb>i<rb>...<lb>/i<rb> or <lb>i <i text>...<rb>}>
+<defitem pre {<lb>pre<rb>...<lb>/pre<rb> or <lb>pre <i text>...<rb>}>
+<defitem strong {<lb>strong<rb>...<lb>/strong<rb> or <lb>strong <i text>...<rb>}>
+<defitem tt {<lb>tt<rb>...<lb>/tt<rb> or <lb>tt <i text>...<rb>}>
+
+These style tags have two forms, an HTML-like form and a convenience
+form.  For example,<p>
+
+<pre><lb>i this is italics<rb></pre>
+
+is identical to<p>
+
+<pre><lb>i<rb>this is italics<lb>/i<rb></pre>
+
+Note that when convenience form is used, the <i text...> may not contain nested macros.  For example, the following will not yield bold italic
+text:<p>
+
+<pre><lb>b <lb>i this is not bold italics<rb><rb></pre>
+
+</deflist html macros>
+
+<subsection "Other Macros">
+
+<deflist other macros>
+
+<defitem do {do <i>script</i>}>
 
 The <i>script</i> is evaluated in the global context, and any return
 value is thrown away.  Use this to load required packages and define
 module-specific macros.<p>
 
-<defitem tclsh {tclsh <i>command</i>}>
+<defitem lb {lb}>
 
-The <xref #tclsh> macro evaluates <i>command</i> in the global
-context, and outputs HTML of both the command and its return value
-simulating a dialog with a Tcl shell.  The <xref #tclsh> macro
-should be wrapped in <b><lb>pre<rb>...<lb>/pre<rb></b><p>
+Returns the left macro expansion bracket, "<lb>".<p>
 
+<defitem link {link <i url> ?<i text>?}>
 
-<defitem /manpage {/manpage}>
+Returns a link to the given <i url>.  If <i text> is given, 
+it is used as the link text; otherwise, the <i url> is displayed.<p>
 
-This macro ends the man page, and should be the final macro in the file.<p>
+<defitem rb {rb}>
 
-</deflist macros>
+Returns the right macro expansion bracket, "<rb>".<p>
+
+<defitem version {version}>
+
+Returns the version number string given to the 
+<xref manpage(n)> object's <xref manpage(n)#format> subcommand.<p>
+
+</deflist other macros>
 
 <section BUGS>
 
@@ -373,6 +493,6 @@ Will Duquette.<p>
 
 <section "SEE ALSO">
 
-<xref manpage(1)>.
+<xref macro(n)>, <xref manpage(n)>.<p>
 
 </manpage>

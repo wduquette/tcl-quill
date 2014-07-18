@@ -93,6 +93,11 @@ snit::type ::quill::manpage {
             left: -0.4in;
         }
 
+        h3 {
+            position: relative;
+            left: -0.2in;
+        }
+
         /* Preformatted text has a special background */
         pre {
             border: 1px solid blue;
