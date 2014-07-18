@@ -2,9 +2,10 @@
 
 ## Next
 
-* Need architecture for project trees and elements.  We don't want to
-  put them all into gentree.tcl.
-  * Maptemplates work nicely
+* Elements exposed for "quill add" and Trees exposed for "quill new"
+  will need an interface to communicate their arguments to Quill.
+  Probably this should be part of the "element register" and 
+  "tree register" commands.  Ponder.
 * Add tests for manpage(n), including the macros.
 * Support building trees
 * Support building .kits
