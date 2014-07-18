@@ -7,7 +7,7 @@
 #    Will Duquette
 #
 # DESCRIPTION:
-#    quill(n0: Test cases for macro.tcl
+#    quill(n): Test cases for macro.tcl
 
 #-------------------------------------------------------------------------
 # Load the tcltest package

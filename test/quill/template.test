@@ -1,0 +1,94 @@
+# -*-Tcl-*-
+#-----------------------------------------------------------------------
+# TITLE:
+#    template.test
+#
+# AUTHOR:
+#    Will Duquette
+#
+# DESCRIPTION:
+#    Test cases for template(n)
+
+#-------------------------------------------------------------------------
+# Load the tcltest package
+
+if {[lsearch [namespace children] ::tcltest] == -1} {
+    package require tcltest 2.3
+    eval ::tcltest::configure $argv
+}
+
+namespace import ::tcltest::test
+
+#-------------------------------------------------------------------------
+# Load the package to be tested
+
+package require quill
+namespace import ::quill::*
+
+
+#---------------------------------------------------------------------
+# template
+
+test template-1.1 {constant template} -body {
+    template const {} {const}
+    const
+} -result {const}
+
+test template-1.2 {template with arguments} -body {
+    template withargs {a b} {---$a---$b---}
+    withargs hello world
+} -result {---hello---world---}
+
+test template-1.3 {template with initbody} -body {
+    template withinit {} {
+        set a hello
+        set b world
+    } {---$a---$b---}
+    withinit
+} -result {---hello---world---}
+
+test template-1.4 {templates are defined in caller's namespace} -body {
+    namespace eval ::foo:: {
+        template infoo {} {[namespace current]}
+    }
+    list [info commands infoo] [info commands ::foo::infoo]
+} -result {{} ::foo::infoo}
+
+
+#---------------------------------------------------------------------
+# tsubst
+
+test tsubst-1.1 {constant tsubst} -body {
+    tsubst {const}
+} -result {const}
+
+test tsubst-1.2 {variable substitution} -body {
+    set var Howdy
+    tsubst {---$var---}
+} -result {---Howdy---}
+
+test tsubst-1.3 {command substitution} -body {
+    proc cmd {} {return "Howdy"}
+    tsubst {---[cmd]---}
+} -result {---Howdy---}
+
+test tsubst-1.4 {backslash substitution} -body {
+    set var howdy
+    tsubst {---\$var---}
+} -result {---$var---}
+
+test tsubst-1.5 {margin indicator} -body {
+    tsubst {
+        |<--
+        ---Howdy---
+    }
+} -result {---Howdy---
+    }
+
+#---------------------------------------------------------------------
+# Clean up and finish
+
+::tcltest::cleanupTests
+
+
+

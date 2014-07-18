@@ -4,7 +4,10 @@
 
 * Add tests for manpage(n), including the macros.
 * Use template(n) to build project tree templates
-  * Add template(n) to quill(n), and test and document it.
+  * Add template(n) to quill(n)
+    * DONE Code
+    * DONE Test
+    * manpage
   * Use template(n) to do the quillinfo(n) templating, replacing
     `genfile`.
   * Add an overall command for each kind of project and element
