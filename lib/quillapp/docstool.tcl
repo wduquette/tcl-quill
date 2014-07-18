@@ -83,8 +83,7 @@ snit::type ::quillapp::docstool {
 
 			set dirnames [list $fulldir]
 		} else {
-			# TODO: Add [project globdirs]
-			set dirnames [glob -nocomplain [project root docs man*]]
+			set dirnames [project globdirs docs man*]
 		}
 
 		if {[llength $dirnames] == 0} {

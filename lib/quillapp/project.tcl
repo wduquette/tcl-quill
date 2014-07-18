@@ -126,6 +126,59 @@ snit::type ::quillapp::project {
 		return [file normalize [file join $info(root) {*}$args]]
 	}
 
+	# glob pattern...
+	#
+	# pattern... - One or more pattern components
+	#
+	# The pattern components are [file join]'d to the 
+	# [project root] and passed to [glob].  The result is returned.
+
+	typemethod glob {args} {
+		set pattern [project root {*}$args]
+
+		set result [list]
+		foreach fname [glob -nocomplain $pattern] {
+			lappend result [file normalize $fname]
+		}
+		return $result
+	} 
+
+	# globfiles pattern...
+	#
+	# pattern... - One or more pattern components
+	#
+	# The pattern components are [file join]'d to the 
+	# [project root] and passed to [glob].  All normal files
+	# from the result are returned.
+
+	typemethod globfiles {args} {
+		set result [list]
+		foreach fname [project glob {*}$args] {
+			if {[file isfile $fname]} {
+				lappend result $fname
+			}
+		}
+		return $result
+	} 
+
+	# globdirs pattern...
+	#
+	# pattern... - One or more pattern components
+	#
+	# The pattern components are [file join]'d to the 
+	# [project root] and passed to [glob].  All directory names
+	# from the result are returned.
+
+	typemethod globdirs {args} {
+		set result [list]
+		foreach fname [project glob {*}$args] {
+			if {[file isdirectory $fname]} {
+				lappend result $fname
+			}
+		}
+		return $result
+	} 
+
 	#---------------------------------------------------------------------
 	# Metadata Queries
 

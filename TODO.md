@@ -2,22 +2,6 @@
 
 ## Next
 
-* Support building man pages
-  * DONE Add smartinterp to quill(n)
-  * DONE Define macro(n)
-  * DONE Test macro(n)
-  * DONE Use macro(n) to define manpage(n)
-  * DONE Build index.html page automatically
-    * DONE Requires basic section categories
-    * DONE A manpage(n) mechanism for defining new ones.
-    * A project.quill mechanism for defining new ones.
-  * DONE Define "quill docs" tool.
-  * DONE Provide project version for use in man pages.
-  * Convert manpage(5) manpage
-    * Document all current manpage(n) macros.
-    * DONE <section> and <subsection> macros should take a single argument,
-      not an arbitrarily long list.
-* Consider expanding templates rather than mapping them.
 * Support building trees
 * Support building .kits
 * Support requires.
@@ -42,7 +26,7 @@ Quill should provide the following tools.
 
 * quill docs
   * Build documentation
-    * Man pages
+    * DONE Man pages in manpage(5) format
     * Markdown?
     * A fancier format with section numbers?
 
@@ -52,9 +36,8 @@ Quill should provide the following tools.
 * quill new
   * Create a new project tree given a template
 
-* quill replace
+* quill replace (?)
   * Project search and replace command
-  * ?
 
 * quill run
   * Run the main app (or a given app) with a given command line.
