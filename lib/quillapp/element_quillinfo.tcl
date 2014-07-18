@@ -16,7 +16,7 @@
 #-------------------------------------------------------------------------
 # Quillinfo Templates
 
-::quillapp::element register quillinfo ::quillapp::quillinfoElement
+::quillapp::element private quillinfo ::quillapp::quillinfoElement
 
 # quillinfo meta
 #
