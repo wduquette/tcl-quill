@@ -1,0 +1,167 @@
+<manpage template(n) "Text Templates" quill(n)>
+
+<section SYNOPSIS>
+
+<pre>
+package require quill 1.0
+namespace import ::quill::*
+</pre>
+
+<itemlist>
+
+<section DESCRIPTION>
+
+template(n) contains commands for creating text templates.
+The <xref #template> command defines templates.  A template is a
+like a Tcl proc, but its body is a template string into which
+variables and commands are substituted, instead of one or more Tcl
+commands to execute.  For example, the following template returns a
+familiar greeting.<p>
+
+<pre>
+% template greeting {name} {Hello, $name!}
+::greeting
+% greeting World
+Hello, World!
+%
+</pre>
+
+The template shown is equivalent to this Tcl proc:<p>
+
+<pre>
+proc greeting {name} {
+    return [tsubst {Hello, $name}]
+}
+</pre>
+
+Or, since a proc automatically returns the value of the last command
+executed in its body, we could simplify it as so:<p>
+
+<pre>
+proc greeting {name} {
+    tsubst {Hello, $name}
+}
+</pre>
+
+Either way, the <xref #template> version is simpler and more
+expressive, especially as the template string gets larger.<p>
+
+Sometimes a <xref #template> requires
+some initialization of variables or other processing that can't
+conveniently be done in the template string itself.  Consequently,
+<xref #template> allows the caller to define an "initialization" body.
+This is just a block of Tcl code that's called just before the
+template is expanded.  It usually defines variables that are then
+substituted into the template.<p>
+
+Suppose, for example, a template argument should be converted to 
+upper case.  Compare<p>
+
+<pre>
+template greeting {name} {Hello, [string toupper $name]}
+</pre>
+
+with<p>
+
+<pre>
+template greeting {name} {
+  set name [string toupper $name]
+} {Hello, $name!}
+</pre>
+
+The second separates the data processing from the template string, and so
+is clearer.<p>
+
+It's normal when using templates to indent the template string
+according to the logic of the code.  This sometimes results in extra
+whitespace at the beginning of each line.  If this is troublesome, the
+the whitespace can be removed by the caller, or the 
+<b>|<lb>--</b> marker can be used to mark the left margin:
+
+<pre>
+% template greeting {name} {
+    |<lb>--
+    Hello, $name!
+    How are you?
+}
+::greeting
+% greeting World
+Hello, World!
+How are you?
+%
+</pre>
+    
+The <b>|<lb>--</b> must be the first token in the template string; the
+vertical bar indicates the left margin of the template.  All
+whitespace to the left of that will be removed automatically.
+Processing of <b>|<lb>--</b> is done by the <xref #tsubst> command, so
+<b>|<lb>--</b> can be used at the beginning of both <xref #template>
+and <xref #tsubst> strings.<p>
+
+<section COMMANDS>
+
+template(n) defines the following commands:<p>
+
+<deflist commands>
+
+
+<defitem template {template <i name arglist> ?<i initbody>? <i template>}>
+
+Defines a new command with the specified <i>name</i> and
+<i>arglist</i>.  The <i>template</i> argument is a string
+which may contain embedded Tcl commands and variable
+references.  When the new command is called, the
+<i>template</i> is passed to <xref #tsubst>, which
+does command, variable, and backslash substitution of the kind
+done by the standard Tcl <b>subst</b> command, and the result is
+returned.<p>
+
+If the <i>initbody</i> is specified, it contains Tcl code to
+be executed before the <i>template</i> is expanded.         
+Normally, the only variables which will be in scope when the
+template string is expanded are the template command's
+arguments; the <i>initbody</i> is usually used to initialize
+other variables for inclusion in the <i>template</i>.<p>
+
+See <xref #tsubst> for information on how <xref #tsubst>
+differs from the standard Tcl <b>subst</b> command.<p>
+
+
+<defitem tsubst {tsubst <i>template</i>}>
+
+This is a replacement for the standard Tcl <b>subst</b> command.
+It has the following differences:<p>
+
+<ul>
+  <li> All variables, commands, and backslashes will always be
+       substituted into the template; that is, tsubst doesn't support
+       the <b>subst</b> command's <b>-no</b> options.<p>
+
+  <li> Because of the way in which <xref #tsubst> is used by
+       <xref #template>,
+       there is often excess whitespace at the beginning of
+       each line of the <i>template</i> string.<p>
+       
+       If the first non-whitespace token in <i>template</i> is
+       <b>|<lb>--</b> (a vertical bar, followed by a left angle
+       bracket, followed by two hyphens), then the vertical
+       bar marks the left margin of the template string.  All
+       whitespace to the left of the vertical bar will be
+       deleted before the substitution is done.  The line on
+       which the <b>|<lb>--</b> appears will also be deleted, along
+       with any blank lines which precede it.<p>
+</ul>
+
+
+</deflist commands>
+
+
+<section AUTHOR>
+
+Will Duquette<p>
+
+<section "SEE ALSO">
+
+<xref quill(n)>.<p>
+
+</manpage>

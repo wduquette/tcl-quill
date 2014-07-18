@@ -7,7 +7,7 @@
   * Add template(n) to quill(n)
     * DONE Code
     * DONE Test
-    * manpage
+    * DONE Man page
   * Use template(n) to do the quillinfo(n) templating, replacing
     `genfile`.
   * Add an overall command for each kind of project and element
