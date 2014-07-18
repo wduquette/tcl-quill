@@ -23,6 +23,8 @@ package provide quillapp 1.0
 package require snit
 package require quill
 
+namespace import quill::*
+
 #-----------------------------------------------------------------------
 # Get the library directory
 
@@ -30,15 +32,18 @@ namespace eval ::quillapp:: {
 	variable library [file dirname [info script]]
 }
 
-source [file join $::quillapp::library plat.tcl       ]
-source [file join $::quillapp::library misc.tcl       ]
-source [file join $::quillapp::library gentree.tcl    ]
-source [file join $::quillapp::library project.tcl    ]
-source [file join $::quillapp::library docstool.tcl   ]
-source [file join $::quillapp::library helptool.tcl   ]
-source [file join $::quillapp::library infotool.tcl   ]
-source [file join $::quillapp::library shelltool.tcl  ]
-source [file join $::quillapp::library testtool.tcl   ]
-source [file join $::quillapp::library versiontool.tcl]
+source [file join $::quillapp::library misc.tcl             ]
+source [file join $::quillapp::library plat.tcl             ]
+source [file join $::quillapp::library gentree.tcl          ]
+source [file join $::quillapp::library element.tcl          ]
+source [file join $::quillapp::library element_quillinfo.tcl]
+source [file join $::quillapp::library tree.tcl             ]
+source [file join $::quillapp::library project.tcl          ]
+source [file join $::quillapp::library docstool.tcl         ]
+source [file join $::quillapp::library helptool.tcl         ]
+source [file join $::quillapp::library infotool.tcl         ]
+source [file join $::quillapp::library shelltool.tcl        ]
+source [file join $::quillapp::library testtool.tcl         ]
+source [file join $::quillapp::library versiontool.tcl      ]
 
 

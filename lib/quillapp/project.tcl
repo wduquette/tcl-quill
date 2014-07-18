@@ -348,7 +348,7 @@ snit::type ::quillapp::project {
 
 		# FIRST, save the info to quillinfo.
 		if {[$type gotapp]} {
-			elementQuillinfo [array get meta]
+			element quillinfo [array get meta]
 		}
 	}
 }

@@ -4,7 +4,25 @@ Nothing in this file should be presumed to be reflective of anything
 in the project.  Everything in this file is either incomplete, obsolete, 
 or wrong.
 
+## Q: How to structure project tree templates.
+
+Two kinds of thing: elements and trees.
+
+A project tree is a collection of elements created by "quill new".
+
+A project element is a collection of files created using 
+maptemplate(n) and the gentree command.
+
+Define two ensembles: element and tree.  Element creates elements.
+tree creates trees.
+
+Both ensembles are normal namespace ensembles, ::quillapp::element
+and ::quillapp::tree.  That way, elements and trees can be added 
+after the fact.
+
 ## Q: Is there a better way to do project file templates?
+
+**Nut shell: Defined maptemplate(n).**
 
 At present I use a file with string map parameters.  Quill has to know
 what the parameters are, because there's no easy way to extract them 
