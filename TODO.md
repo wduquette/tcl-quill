@@ -2,14 +2,13 @@
 
 ## Next
 
-* Update version in appropriately marked lib packages.
-* Support building .kits
 * Support requires.
+  * State them in project.quill.
+  * Then, update "package require" blocks in project libs so that versions
+    match requires in project.quill.
+  * Then write code to check local teapot and update it using teacup.
+* Support building .kits and .exes
 * Add tests for manpage(n), including the macros.
-* Idea:
-  * Define quillinfo(n) in all projects.
-  * quillinfo(n) can be used in test scripts for libraries, i.e.,
-    to get version number.
 
 ## To Find Out
 
