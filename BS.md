@@ -22,7 +22,7 @@ after the fact.
 
 ## Q: Is there a better way to do project file templates?
 
-**Nut shell: Defined maptemplate(n).**
+**Nutshell: Defined maptemplate(n).**
 
 At present I use a file with string map parameters.  Quill has to know
 what the parameters are, because there's no easy way to extract them 

@@ -2,6 +2,7 @@
 
 ## Next
 
+* Complete work on the application tree.
 * Add tests for manpage(n), including the macros.
 * Support building trees
 * Support building .kits
