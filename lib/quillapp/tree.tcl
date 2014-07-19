@@ -52,14 +52,20 @@ snit::type ::quillapp::tree {
     # max      - Maximum number of arguments, or "-"
     # command  - The command that produces the tree.
     # help     - Help text
+    #
+    # Registers a new tree create command.
 
     typemethod register {name usage min max command help} {
+        precond {$min >= 1} "At least one argument is required"
+        precond {[lindex $usage 0] eq "project"} \
+            "The first tree argument must be \"project\""
+
         dict set tdict name    $name
         dict set tdict usage   $usage
         dict set tdict min     $min
         dict set tdict max     $max
         dict set tdict command $command
-        dict set tdict help    $help
+        dict set tdict help    [outdent $help]
 
         set registry(trees) $name
         set registry(tdict-$name) $tdict
@@ -83,9 +89,9 @@ snit::type ::quillapp::tree {
 
     typemethod get {name {parm ""}} {
         if {$parm ne ""} {
-            return [dict get $registry(edict-$name) $parm]
+            return [dict get $registry(tdict-$name) $parm]
         } else {
-            return $registry(edict-$name)
+            return $registry(tdict-$name)
         }
     }
 

@@ -29,8 +29,8 @@ namespace eval ::quill:: {
 # first.
 
 proc ::quill::mapsubst {template} {
-    # FIRST, outdent the template
-    set template [::quill::outdent $template]
+    # FIRST, outdent the template, retaining a closing newline.
+    set template "[::quill::outdent $template]\n"
 
     # NEXT, get a dictionary of the local variables in the 
     # caller's context.

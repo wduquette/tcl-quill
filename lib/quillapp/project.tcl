@@ -110,6 +110,23 @@ snit::type ::quillapp::project {
 		return $info(intree)
 	}
 
+	# newroot project
+	#
+	# project - Project name
+	#
+	# Creates a new project root directory in the current working
+	# directory.  After this, the project root will be set, but other
+	# project metadata will not be; this is simply to bootstrap a 
+	# new project tree.
+
+	typemethod newroot {project} {
+		assert {![project intree]}
+
+		# TODO: Validate project name
+		set info(root) [file join [pwd] $project]
+		file mkdir $info(root)
+	}
+
 	#---------------------------------------------------------------------
 	# Queries
 
