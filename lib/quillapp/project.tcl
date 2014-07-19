@@ -110,21 +110,21 @@ snit::type ::quillapp::project {
 		return $info(intree)
 	}
 
-	# newroot project
+	# newroot rootdir
 	#
-	# project - Project name
+	# rootdir - Project root directory name
 	#
-	# Creates a new project root directory in the current working
-	# directory.  After this, the project root will be set, but other
-	# project metadata will not be; this is simply to bootstrap a 
-	# new project tree.
+	# Creates a new project root directory, and positions Quill within
+	# it as though findroot had succeeded.  This is for use in bootstrapping
+	# new projects.
 
-	typemethod newroot {project} {
+	typemethod newroot {rootdir} {
 		assert {![project intree]}
 
-		# TODO: Validate project name
-		set info(root) [file join [pwd] $project]
+		set info(root) $rootdir
 		file mkdir $info(root)
+		cd $info(root)
+		set info(intree) 1
 	}
 
 	#---------------------------------------------------------------------
@@ -199,6 +199,7 @@ snit::type ::quillapp::project {
 	#---------------------------------------------------------------------
 	# Metadata Queries
 
+	typemethod metadata    {} { return [array get meta]   }
 	typemethod name        {} { return $meta(project)     }
 	typemethod version     {} { return $meta(version)     }
 	typemethod description {} { return $meta(description) }
@@ -365,7 +366,7 @@ snit::type ::quillapp::project {
 
 		# FIRST, save the info to quillinfo.
 		if {[$type gotapp]} {
-			element quillinfo [array get meta]
+			element quillinfo
 		}
 	}
 }

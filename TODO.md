@@ -2,11 +2,14 @@
 
 ## Next
 
-* Complete work on the application tree.
-* Add tests for manpage(n), including the macros.
-* Support building trees
+* Update version in appropriately marked lib packages.
 * Support building .kits
 * Support requires.
+* Add tests for manpage(n), including the macros.
+* Idea:
+  * Define quillinfo(n) in all projects.
+  * quillinfo(n) can be used in test scripts for libraries, i.e.,
+    to get version number.
 
 ## To Find Out
 

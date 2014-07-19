@@ -18,17 +18,15 @@
 
 ::quillapp::element private quillinfo ::quillapp::quillinfoElement
 
-# quillinfo meta
+# quillinfo
 #
-# meta - project metadata dictionary
-# 
 # Saves the quillinfo element tree.
 
-proc ::quillapp::quillinfoElement {meta} {
+proc ::quillapp::quillinfoElement {} {
     gentree \
         lib/quillinfo/pkgIndex.tcl   [quillinfoPkgIndex]        \
         lib/quillinfo/pkgModules.tcl [quillinfoPkgModules]      \
-        lib/quillinfo/quillinfo.tcl  [quillinfoQuillinfo $meta]
+        lib/quillinfo/quillinfo.tcl  [quillinfoQuillinfo]
 }
 
 # quillinfoPkgIndex
@@ -91,16 +89,14 @@ maptemplate ::quillapp::quillinfoPkgModules {} {
     source [file join $::quillinfo::library quillinfo.tcl]
 }
 
-# quillinfoQuillinfo meta
-#
-# meta - The project metadata dictionary
+# quillinfoQuillinfo
 #
 # quillinfo.tcl file for the quillinfo(n) package.
 
-maptemplate ::quillapp::quillinfoQuillinfo {meta} {
+maptemplate ::quillapp::quillinfoQuillinfo {} {
     set project     [project name]
     set description [project description]
-    set meta        [list $meta]
+    set meta        [list [project metadata]]
 } {
     #-------------------------------------------------------------------------
     # TITLE: 

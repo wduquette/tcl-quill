@@ -97,13 +97,15 @@ snit::type ::quillapp::newtool {
 			}]
 		}
 
-		# NEXT, if there's already a tree here, that's a problem.
-		set dir [lindex $argv 0]
+		# NEXT, validate the new project name
+		set project [lindex $argv 0]
+		# TODO
 
-		if {[file exists $dir]} {
-			throw FATAL "A directory called \"$dir\" already exists here."
+		# NEXT, if there's already a tree here, that's a problem.
+		if {[file exists $project]} {
+			throw FATAL "A directory called \"$project\" already exists here."
 		}
-		
+
 		# NEXT, create the project tree
 		tree $ttype {*}$argv
 	}

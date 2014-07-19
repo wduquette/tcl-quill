@@ -37,20 +37,20 @@
 # That way, elements can rely on [project *] as well as arguments.
 
 proc ::quillapp::appTree {project appname} {
-    puts "Creating an \"app\" tree at"
-    puts "[file join [pwd] $project]/..."
+    set proot [file join [pwd] $project]
 
-    project newroot $project
+    puts "Creating an \"app\" tree at $proot/..."
 
+    # FIRST, bootstrap the project file.
+    project newroot $proot
     gentree project.quill [projectQuill $project $appname]
-    gentree README.md     [projectREADME $project]
+    project loadinfo
 
-    element package $project $appname
-
-    # TBD: bin/appname.tcl
-    # TBD: test/$appname
-    # TBD: docs/index.html
-    # TBD: quillinfo
+    # NEXT, create files and elements.
+    gentree README.md        [projectREADME] \
+            docs/index.html  [projectDocsIndex]
+    element quillinfo
+    element app $appname
 }
 
 # projectQuill
@@ -67,8 +67,134 @@ maptemplate ::quillapp::projectQuill {project appname} {
 #
 # Default README.md file for a Quill project.
 
-maptemplate ::quillapp::projectREADME {project} {
+maptemplate ::quillapp::projectREADME {} {
+    set project [project name]
+} {
     # %project
 
     A description of your new project.
+}
+
+# projectDocsIndex
+#
+# Default index.html file for the project documentation.
+
+maptemplate ::quillapp::projectDocsIndex {} {
+    set project     [project name]
+    set description [project description]
+} {
+    <html>
+    <head>
+    <title>%project Documentation</title>
+    <style>
+    <!--
+            /* Links should be displayed with no underline */
+            :link {
+                text-decoration: none;
+            }
+
+            :visited {
+                text-decoration: none;
+            }
+
+            /* Body is black on white, and indented. */
+            body {
+                color: black;
+                background-color: white;
+                margin-left: 0.5in;
+                margin-right: 0.5in;
+            }
+
+            /* For the page header */
+            h1.header {
+                position: relative;
+                left: -0.4in;
+                background-color: red;
+                color: black;
+            }
+
+            /* The title and section headers are outdented. */
+            h1 {
+                position: relative;
+                left: -0.4in;
+            }
+
+            h2 {
+                position: relative;
+                left: -0.4in;
+            }
+
+            /* Preformatted text has a special background */
+            pre {
+                border: 1px solid blue;
+                background-color: #FFFF66;
+                padding: 2px;
+            }
+
+            /* Use for indenting */
+            .indent0 { }
+            .indent1 {
+                position: relative;
+                left: 0.4in
+            }
+            .indent2 {
+                position: relative;
+                left: 0.8in
+            }
+            .indent3 {
+                position: relative;
+                left: 1.2in
+            }
+            .indent4 {
+                position: relative;
+                left: 1.6in
+            }
+            .indent5 {
+                position: relative;
+                left: 2.0in
+            }
+            .indent6 {
+                position: relative;
+                left: 2.4in
+            }
+            .indent7 {
+                position: relative;
+                left: 2.8in
+            }
+            .indent8 {
+                position: relative;
+                left: 3.2in
+            }
+            .indent9 {
+                position: relative;
+                left: 3.6in
+            }
+
+            /* Outdent to margin */
+            .outdent {
+                position: relative;
+                left: -0.4in;
+            }
+        -->
+    </style>
+    </head>
+    <body>
+    <h1 class="header">%project Documentation</h1>
+
+    <h1>General Documents</h1>
+
+    TBD<p>
+
+    <h1>Man Pages</h1>
+
+    <ul>
+    <li><a href="man1/index.html">Section (1): Applications</a>
+    <li><a href="man5/index.html">Section (5): File Formats</a>
+    <li><a href="mann/index.html">Section (n): Tcl Packages</a>
+    <li><a href="mani/index.html">Section (i): Tcl Interfaces</a>
+    </ul><p>
+
+    </body>
+    </html>
+
 }
