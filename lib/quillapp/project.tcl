@@ -356,6 +356,9 @@ snit::type ::quillapp::project {
 	# For projects with an "app", Quill saves the project metadata into
 	# a package called "quillinfo", thus giving the application access
 	# to the information.
+	#
+	# In addition, Quill updates lib/<package> files with the 
+	# project version.
 
 	# quillinfo save
 	#
@@ -368,5 +371,86 @@ snit::type ::quillapp::project {
 		if {[$type gotapp]} {
 			element quillinfo
 		}
+
+		# NEXT, update each lib.
+		foreach libdir [project globdirs lib *] {
+			UpdatePkgIfneeded $libdir
+			UpdatePkgProvide $libdir
+		}
 	}
+
+	# UpdatePkgIfneeded libdir
+	#
+	# libdir    - A project lib directory
+	#
+	# Looks for the pkgIndex file and updates the 
+	# "package ifneeded" line.
+
+	proc UpdatePkgIfneeded {libdir} {
+		# FIRST, get the file to update
+		set package [file tail $libdir]
+		set pkgIndex [file join $libdir pkgIndex.tcl]
+
+		# NEXT, if there isn't one, we don't need to update this package.
+		if {![file isfile $pkgIndex]} {
+			return
+		}
+
+		# NEXT, get the text and split it on the tag.
+		set text [readfile $pkgIndex]
+		set pieces [tagsplit ifneeded $text]
+
+		# NEXT, if the tag isn't present, we don't need to update this
+		# package.
+		if {[llength $pieces] == 0} {
+			return
+		}
+
+		# NEXT, update the ifneeded block.
+		lassign $pieces before block after
+		lappend nblock [format [tighten {
+		    package ifneeded %s %s 
+		    [list source [file join $dir pkgModules.tcl]]
+		}] $package [project version]]
+
+		# NEXT, output the updated file if the text has changed.
+		writefile $pkgIndex [join [concat $before $nblock $after] \n]
+	}
+
+	# UpdatePkgProvide libdir
+	#
+	# libdir    - A project lib directory
+	#
+	# Looks for the pkgModules file and updates the 
+	# "package provide" line.
+
+	proc UpdatePkgProvide {libdir} {
+		# FIRST, get the file to update
+		set package [file tail $libdir]
+		set pkgModules [file join $libdir pkgModules.tcl]
+
+		# NEXT, if there isn't one, we don't need to update this package.
+		if {![file isfile $pkgModules]} {
+			return
+		}
+
+		# NEXT, get the text and split it on the tag.
+		set text [readfile $pkgModules]
+		set pieces [tagsplit provide $text]
+
+		# NEXT, if the tag isn't present, we don't need to update this
+		# package.
+		if {[llength $pieces] == 0} {
+			return
+		}
+
+		# NEXT, update the provide block.
+		lassign $pieces before block after
+		lappend nblock [format {package provide %s %s} \
+			$package [project version]]
+
+		# NEXT, output the updated file if the text has changed.
+		writefile $pkgModules [join [concat $before $nblock $after] \n]
+	}
+
 }
