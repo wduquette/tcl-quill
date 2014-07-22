@@ -55,10 +55,16 @@ snit::type ::quillapp::project {
 	# version       - The project version number
 	# description   - The project description
 	# homepage      - URL of the project home page.
+    #
 	# apps          - List of application names
+	# apptype-$app  - Type of application $name: kit, uberkit, exe
+	# gui-$app      - Flag, 0 or 1: does package require Tk?
 	#
-	# app-$name     - Dictionary of application metadata
-	#   TBD
+	# requires      - List of required package names
+	# local-$req    - Flag, 0 or 1: is package local?
+	#
+	# provides      - List of names of exported library packages.
+
 
 	typevariable meta -array {
 		project     ""
@@ -66,6 +72,8 @@ snit::type ::quillapp::project {
 		description ""
 		url         "http://my.home.page"
 		apps        {}
+		provides    {}
+		requires    {}
 	}
 
 	#---------------------------------------------------------------------
@@ -199,11 +207,13 @@ snit::type ::quillapp::project {
 	#---------------------------------------------------------------------
 	# Metadata Queries
 
-	typemethod metadata    {} { return [array get meta]   }
-	typemethod name        {} { return $meta(project)     }
-	typemethod version     {} { return $meta(version)     }
-	typemethod description {} { return $meta(description) }
-	typemethod {app names} {} { return $meta(apps)        }
+	typemethod metadata        {} { return [array get meta]   }
+	typemethod name            {} { return $meta(project)     }
+	typemethod version         {} { return $meta(version)     }
+	typemethod description     {} { return $meta(description) }
+	typemethod {app names}     {} { return $meta(apps)        }
+	typemethod {provide names} {} { return $meta(provides)    }
+	typemethod {require names} {} { return $meta(requires)    }
 
 	# header
 	#
@@ -252,6 +262,46 @@ snit::type ::quillapp::project {
 		return [project root bin $app.tcl]
 	}
 
+	# app apptype app
+	#
+	# app  - The app name
+	#
+	# Returns the application type, kit, uberkit, or exe
+
+	typemethod {app apptype} {app} {
+		return $meta(apptype-$app)
+	}
+
+	# app gui app
+	#
+	# app - The app name
+	#
+	# Returns 1 if the app is a GUI, and 0 otherwise.
+
+	typemethod {app gui} {app} {
+		return $meta(gui-$app)
+	}
+
+	# require version pkg
+	#
+	# pkg - The package name
+	#
+	# Returns the required version of the package.
+
+	typemethod {require version} {pkg} {
+		return $meta(version-$pkg)
+	}
+
+	# require local pkg
+	#
+	# pkg - The package name
+	#
+	# Returns 1 if the required package is locally developed, and
+	# 0 otherwise.
+
+	typemethod {require local} {pkg} {
+		return $meta(local-$pkg)
+	}
 
 	#---------------------------------------------------------------------
 	# Loading the Project file
@@ -271,6 +321,7 @@ snit::type ::quillapp::project {
 		$interp alias project  [myproc ProjectCmd]
 		$interp alias homepage [myproc HomepageCmd]
 		$interp alias app      [myproc AppCmd]
+		$interp alias provide  [myproc ProvideCmd]
 		$interp alias require  [myproc RequireCmd]
 
 		# NEXT, try to parse the file.  The commands will throw
@@ -336,18 +387,51 @@ snit::type ::quillapp::project {
 	# Specifies that this project builds an application called $name.
 
 	proc AppCmd {name} {
-		ladd meta(apps) $name
+		ladd meta(apps)          $name
+		set  meta(apptype-$name) uberkit
+		set  meta(gui-$name)     0
 	}
 
-	# RequireCmd name version
+	# ProvideCmd name
+	#
+	# name - The library package name.
+	#
+	# Specifies that this project provides a package called $name.
+
+	proc ProvideCmd {name} {
+		ladd meta(provides) $name
+	}
+
+	# RequireCmd name version ?options?
 	#
 	# name    - The package name.
 	# version - The package's version number
+	# options - Requirement options
+	#
+	#    -local  - The package is locally developed.  Do not try to
+	#              retrieve it from ActiveState's teapot.
 	#
 	# Specifies that this project requires the named package.
 
-	proc RequireCmd {name version} {
-		# TODO: Add relevant code
+	proc RequireCmd {name version args} {
+		# FIRST, options
+		set local 0
+		while {[llength $args] > 0} {
+			set opt [lshift args] 
+
+			switch -exact -- {
+				-local  { set local 1}
+				default { error "Unknown option: \"$opt\"" }
+			}
+		}
+
+		# NEXT, validate version
+		# TODO
+
+		# NEXT, save the data
+		ladd meta(requires)      $name
+		set  meta(version-$name) $version
+		set  meta(local-$name)   $local
 	}
 
 	#---------------------------------------------------------------------

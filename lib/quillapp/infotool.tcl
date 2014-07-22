@@ -58,7 +58,34 @@ snit::type ::quillapp::infotool {
 		puts ""
 
 		foreach app [project app names] {
-			puts "App: $app"
+			if {[project app gui $app]} {
+				puts -nonewline "GUI App: $app "				
+			} else {
+				puts -nonewline "Console App: $app "
+			}
+
+			set apptype [project app apptype $app]
+			switch $apptype {
+				kit     { puts "(.kit)"                          }
+				uberkit { puts "(uber .kit)"                     }
+				exe     { puts "(standalone executable)"         }
+				default { error "Unknown app type: \"$apptype\"" }
+			}
+		}
+
+		foreach lib [project provide names] {
+			puts "Provides: $lib"
+		}
+
+		foreach pkg [project require names] {
+			set ver   [project require version $pkg]
+			set local [project require local $pkg]
+			puts -nonewline "Requires: $pkg $ver"
+			if {$local} {
+				puts " (local)"
+			} else {
+				puts ""
+			}
 		}
 	}
 }

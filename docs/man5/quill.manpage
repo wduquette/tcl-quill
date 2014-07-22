@@ -23,7 +23,7 @@ A typical <tt project.quill> file consists of:
      the project version number.
 <li> A <xref #homepage> statement, which gives the URL of the project's
      home page.
-<li> One or more <xref #app> and <xref #lib> statements, which name 
+<li> One or more <xref #app> and <xref #provide> statements, which name 
      and characterize the build targets.
 <li> Any number of <xref #require> statements, which name external
      dependencies. 
@@ -67,8 +67,8 @@ in the project file is called the <i primary> application.<p>
 
 Every application will have a loader script 
 "<tt><i root>/bin/<i name>.tcl</tt>", and will probably have an
-associated Tcl package, <i name>, whose code is found in
-"<tt><i root>/lib/<i name>/</tt>".  The application can be executed
+associated Tcl package, <tt><i name>app</tt>, whose code is found in
+"<tt><i root>/lib/<i name>app/</tt>".  The application can be executed
 in development via the "<tt quill run>" command, or by executing
 the loader script directly.<p>
 
@@ -102,7 +102,7 @@ upon which it is built (e.g., Windows).<p>
 
 </deflist options>
 
-<defitem lib {lib <i name>}>
+<defitem provide {provide <i name>}>
 
 States that the project exports a Tcl library package called
 <i name>, whose code is found in the directory

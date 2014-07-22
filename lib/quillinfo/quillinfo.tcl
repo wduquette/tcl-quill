@@ -17,7 +17,7 @@
 
 namespace eval ::quillinfo {
     variable meta
-    array set meta {apps quill description {Quill Project Build System for Tcl/Tk} homepage http://github.com/wduquette/tcl-quill version 0.1a0 url http://my.home.page project tcl-quill}
+    array set meta {gui-quill 0 url http://my.home.page description {Quill Project Build System for Tcl/Tk} provides quill homepage http://github.com/wduquette/tcl-quill apptype-quill uberkit requires {snit textutil::expander} version-textutil::expander 1.3.1 version-snit 2.3 apps quill local-textutil::expander 0 version 0.1a0 local-snit 0 project tcl-quill}
 
     namespace export \
         project      \

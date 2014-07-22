@@ -1,6 +1,7 @@
 project tcl-quill 0.1a0 "Quill Project Build System for Tcl/Tk"
 homepage http://github.com/wduquette/tcl-quill
 app quill
+provide quill
 
 require snit 2.3
 require textutil::expander 1.3.1
