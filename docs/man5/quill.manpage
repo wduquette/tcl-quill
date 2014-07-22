@@ -1,0 +1,150 @@
+<manpage quill(5) "Quill Project File Syntax">
+
+<section SYNOPSIS>
+
+<itemlist>
+
+<section DESCRIPTION>
+
+The Quill project file, <tt project.quill>, describes a Tcl project, its
+build targets, and its dependencies, and thereby allows Quill to work 
+its magic.  This man page documents the statements that can appear in 
+<tt project.quill>.<p>
+
+The <tt project.quill> file is usually created automatically by 
+Quill via the "<tt quill new>" command, and several statements 
+can be added by the "<tt quill add>" command.  Other changes 
+can be made by the user.<p>
+
+A typical <tt project.quill> file consists of:
+
+<ul>
+<li> A <xref #project> statement, which names the project and states
+     the project version number.
+<li> A <xref #homepage> statement, which gives the URL of the project's
+     home page.
+<li> One or more <xref #app> and <xref #lib> statements, which name 
+     and characterize the build targets.
+<li> Any number of <xref #require> statements, which name external
+     dependencies. 
+</ul>
+
+
+<section STATEMENTS>
+
+The following statements may appear in <tt project.quill>.<p>
+
+<deflist statements>
+
+<defitem project {project <i>project version description</i>}>
+
+<b Required.>  This statement must appear in every 
+<tt project.quill> file, and should be the first statement in
+the file.  The <i project> should be the name of the project:
+a brief name, containing no whitespace; often it will be the
+name of the project at a site like 
+<xref http://github.com GitHub>.<p>
+
+The <i version> is the version of the project; it will also be used
+as the version number for any library packages exported by the 
+project.  It must take a form acceptable to Tcl's 
+<xref http://www.tcl.tk/man/tcl8.6/TclCmd/package.htm "package require">
+command.<p>
+
+The <i description> is a brief one-line description of the project.  It
+is included in generated documentation.<p>
+
+<defitem homepage {homepage <i url>}>
+
+Sets the URL of the project's home page.  This URL is included in 
+generated project documentation.<p>
+
+<defitem app {app <i name> ?<i options...>?}>
+
+States that the project contains an application called <i name>.
+A project may define multiple applications; the first to appear
+in the project file is called the <i primary> application.<p>
+
+Every application will have a loader script 
+"<tt><i root>/bin/<i name>.tcl</tt>", and will probably have an
+associated Tcl package, <i name>, whose code is found in
+"<tt><i root>/lib/<i name>/</tt>".  The application can be executed
+in development via the "<tt quill run>" command, or by executing
+the loader script directly.<p>
+
+By default, the application will be built as a console-oriented
+"uberkit".  The following options may be used to customize how
+the application is built:<p>
+
+<deflist options>
+<defopt {-gui <i flag>}>
+If <i flag> is true, the application is a GUI application and the
+Tk package will be required automatically.  When built as an "exe",
+a Tk basekit will be used.<p>
+
+<defopt {-type kit | uberkit | exe}>
+
+An application can be built as a Starkit or a Starpack.<p>
+
+If the type is <b kit>, it will be built as a Starkit; however, only
+the application's own code will be included in the <tt .kit> file.  The
+application will assume that all external dependencies will be available
+from the environment.<p>
+
+If the type is <b uberkit>, the application is built as a Starkit; however,
+all external dependencies are pulled into the <tt .kit> file.  It will 
+a <tt tclsh> to run against, but will not expect other external
+dependencies to be pre-installed.<p>
+
+If the type is <b exe>, the application is built as a Starpack: a 
+completely stand-alone executable.  It will be built for the platform
+upon which it is built (e.g., Windows).<p>  
+
+</deflist options>
+
+<defitem lib {lib <i name>}>
+
+States that the project exports a Tcl library package called
+<i name>, whose code is found in the directory
+<tt><i root>/lib/<i name></tt>.  A project may export any number of
+library packages.<p>
+
+<defitem require {require <i package version> ?-local?}>
+
+States that the project has an external dependency upon the given
+<i version> of the named <i package>.  The package and version should
+be stated in the same form as you would give to Tcl's
+<xref http://www.tcl.tk/man/tcl8.6/TclCmd/package.htm "package require">
+command.<p>
+
+Given this information, Quill will:<p>
+
+<ul>
+<li> Verify that the package is locally available.
+<li> Attempt to install it from ActiveState's teapot repository if it is
+     not.
+<li> Include it when building <b uberkit> and <b exe> applications.
+<li> Use the version information to update the project's packages.
+</ul>
+
+Note that Quill does not automatically <tt package require> the 
+packages into Tcl; a project may contain multiple applications and
+exported library packags, and each may have slightly different 
+dependency requirements.  Instead, the user adds the relevant
+<tt package require> statements to each build target's 
+<tt pkgModules.tcl> file, and Quill will then endeavor to 
+keep the version numbers up to date.<p>
+
+If the <b -local> option is included, then Quill assumes the 
+dependency is a locally-developed package, and will not attempt
+to retrieve it from ActiveState's teapot repository.<p>
+
+
+</deflist statements>
+
+<section AUTHOR>
+
+Will Duquette.<p>
+
+
+</manpage>

@@ -2,10 +2,36 @@
 
 ## Next
 
+* Things I can do on the plane, without wifi:
+  * Document project.quill
+  * project.quill updates (parse and document):
+    * app options
+    * require statements
+    * lib statements
+  * quill shell enhancements
+    * Support when no app defined
+    * Support for "plain" shell when app defined
+    * project.quill "shell" script, for plain shells.
+  * Tests
+    * manpage(n)
+    * quillapps packages
+
+
+* Support app options
+  * -gui - Makes it a Tk app
+  * -apptype - One of "kit", "uberkit", "exe".
+    * kit: Just the app's own files.  Other packages are loaded from
+      the environment. (i.e., from the local teapot)  Cross-platform.
+    * uberkit: The app's own files plus all required packages.
+      Cross-platform, provided that no non-Tcl packages are included.
+    * exe: starpack, using basekit for the current platform.
 * Support requires.
   * State them in project.quill.
   * Then, update "package require" blocks in project libs so that versions
     match requires in project.quill.
+    * Instead of simply replacing the block, Quill reads lines in block
+      looking for "package require <package>" and rewrites them with the
+      version spec from project.quill.
   * Then write code to check local teapot and update it using teacup.
 * Support building .kits and .exes
 * Add tests for manpage(n), including the macros.
