@@ -38,7 +38,7 @@ proc ::quillapp::appElement {appname} {
     file attributes [project root bin $appname.tcl] \
         -permissions u+x
 
-    element package $appname
+    element package ${appname}app
 }
 
 # appLoader appname
@@ -48,6 +48,7 @@ proc ::quillapp::appElement {appname} {
 maptemplate ::quillapp::appLoader {appname} {
     set project     [project name]
     set description [project description]
+    set pkgname     ${appname}app
 } {
     #!/bin/sh
     # -*-tcl-*-
@@ -79,10 +80,10 @@ maptemplate ::quillapp::appLoader {appname} {
     # metadata.
     package require quillinfo
 
-    # %appname(n) is the package containing the bulk of the 
+    # %pkgname(n) is the package containing the bulk of the 
     # %appname code.
-    package require %appname
-    namespace import %appname::*
+    package require %pkgname
+    namespace import %pkgname::*
 
     #-------------------------------------------------------------------------
     # Main Routine

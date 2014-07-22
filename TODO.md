@@ -2,8 +2,6 @@
 
 ## Next
 
-* Make sure "quill new" creates a "<app>app" package, not just
-  an <app> package.
 * Things I can do on the plane, without wifi:
   * project.quill updates (parse and document):
     * app options
