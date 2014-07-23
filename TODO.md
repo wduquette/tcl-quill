@@ -4,7 +4,6 @@
 
 * Things I can do on the plane, without wifi:
   * project.quill updates (parse and document):
-    * Improved validation
     * Implement parsing of app options
   * quill shell enhancements
     * Support when no app defined

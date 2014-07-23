@@ -316,13 +316,22 @@ snit::type ::quillapp::project {
 
 		# FIRST, set up the slave interpreter to parse this.
 		# TODO: Use a smart interpreter
-		set interp [interp create -safe]
+		set interp [smartinterp %AUTO% -commands safe]
 
-		$interp alias project  [myproc ProjectCmd]
-		$interp alias homepage [myproc HomepageCmd]
-		$interp alias app      [myproc AppCmd]
-		$interp alias provide  [myproc ProvideCmd]
-		$interp alias require  [myproc RequireCmd]
+		$interp smartalias project {project version description} 3 3 \
+			[myproc ProjectCmd]
+
+		$interp smartalias homepage {url} 1 1 \
+			[myproc HomepageCmd]
+
+		$interp smartalias app {name} 1 1 \
+			[myproc AppCmd]
+
+		$interp smartalias provide {name} 1 1 \
+			[myproc ProvideCmd]
+
+		$interp smartalias require {name version ?options?} 2 - \
+			[myproc RequireCmd]
 
 		# NEXT, try to parse the file.  The commands will throw
 		# SYNTAX errors if they detect a problem.
@@ -344,6 +353,8 @@ snit::type ::quillapp::project {
 				Please add a \"project\" statement.
 			}]
 		}
+
+		$interp destroy
 	}
 
 
