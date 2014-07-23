@@ -315,7 +315,6 @@ snit::type ::quillapp::project {
 		assert {$info(intree)}
 
 		# FIRST, set up the slave interpreter to parse this.
-		# TODO: Use a smart interpreter
 		set interp [smartinterp %AUTO% -commands safe]
 
 		$interp smartalias project {project version description} 3 3 \
@@ -324,7 +323,7 @@ snit::type ::quillapp::project {
 		$interp smartalias homepage {url} 1 1 \
 			[myproc HomepageCmd]
 
-		$interp smartalias app {name} 1 1 \
+		$interp smartalias app {name ?options...?} 1 - \
 			[myproc AppCmd]
 
 		$interp smartalias provide {name} 1 1 \
@@ -393,18 +392,40 @@ snit::type ::quillapp::project {
 		set meta(homepage) $url
 	}
 
-	# AppCmd name
+	# AppCmd name ?options...?
 	#
 	# name - The application name.
 	#
+	# -gui           - The application should be a GUI
+	# -apptype type  - One of kit, uberkit, exe
+	#
 	# Specifies that this project builds an application called $name.
 
-	proc AppCmd {name} {
+	proc AppCmd {name args} {
+		# FIRST, get the option values
+		set gui     0
+		set apptype uberkit
+
+		while {[llength $args] > 0} {
+			set opt [lshift args]
+
+			switch -exact -- $opt {
+				-gui {
+					set gui 1
+				}
+
+				-apptype {
+					set apptype [lshift args]
+					prepare apptype -oneof {kit uberkit exe}
+				}
+			}
+		}
+
 		prepare name -required -file
 
 		ladd meta(apps)          $name
-		set  meta(apptype-$name) uberkit
-		set  meta(gui-$name)     0
+		set  meta(apptype-$name) $apptype
+		set  meta(gui-$name)     $gui
 	}
 
 	# ProvideCmd name

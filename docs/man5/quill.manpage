@@ -76,13 +76,13 @@ in development via the "<tt quill run>" command, or by executing
 the loader script directly.<p>
 
 By default, the application will be built as a console-oriented
-"uberkit".  The following options may be used to customize how
+<b uberkit>.  The following options may be used to customize how
 the application is built:<p>
 
 <deflist options>
-<defopt {-gui <i flag>}>
-If <i flag> is true, the application is a GUI application and the
-Tk package will be required automatically.  When built as an "exe",
+<defopt {-gui}>
+If the <b -gui> option is specified, the application is a GUI application 
+and the Tk package will be required automatically.  When built as an "exe",
 a Tk basekit will be used.<p>
 
 <defopt {-type kit | uberkit | exe}>

@@ -104,6 +104,7 @@ proc ::quillapp::tagsplit {tag text} {
 # Options:
 #    -file      - Value must make a good file name (no special characters
 #                 or internal whitespace).
+#    -oneof     - A list of valid values
 #    -required  - Value must be non-empty
 #    -tighten   - Condenses internal whitespace
 #    -toupper   - Converts value to upper case
@@ -126,6 +127,15 @@ proc ::quillapp::prepare {var args} {
                 if {![regexp {^[-[:alnum:]_]+$} $theVar]} {
                     throw INVALID \
                         "Input \"$var\" contains illegal characters or whitespace: \"$theVar\""
+                }
+            }
+
+            -oneof {
+                set values [lshift args]
+
+                if {$theVar ni $values} {
+                    throw INVALID \
+                        "Input \"$var\" is not one of ([join $values {, }]): \"$theVar\""
                 }
             }
 
