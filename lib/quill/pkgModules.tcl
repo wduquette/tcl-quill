@@ -13,15 +13,19 @@
 #
 #-----------------------------------------------------------------------
 
-# TODO: Need to set this to project version.
-package provide quill 1.0
+# -quill-provide-begin DO NOT EDIT BY HAND
+package provide quill 0.1a0
+# -quill-provide-end
+
 
 #-----------------------------------------------------------------------
 # Required Packages
 
-# TODO: use [quill require]
-package require snit
+# -quill-require-begin INSERT PACKAGE REQUIRES HERE
+package require snit 2.3
 package require textutil::expander 1.3.1
+# -quill-require-end
+
 
 #-----------------------------------------------------------------------
 # Get the library directory

@@ -13,5 +13,7 @@
 #
 #-------------------------------------------------------------------------
 
-package ifneeded quillapp 1.0 [list source [file join $dir pkgModules.tcl]]
+# -quill-ifneeded-begin DO NOT EDIT BY HAND
+package ifneeded quillapp 0.1a0 [list source [file join $dir pkgModules.tcl]]
+# -quill-ifneeded-end
 

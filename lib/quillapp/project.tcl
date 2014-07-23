@@ -460,6 +460,7 @@ snit::type ::quillapp::project {
 		foreach libdir [project globdirs lib *] {
 			UpdatePkgIfneeded $libdir
 			UpdatePkgProvide $libdir
+			UpdatePkgRequire $libdir
 		}
 	}
 
@@ -537,4 +538,59 @@ snit::type ::quillapp::project {
 		writefile $pkgModules [join [concat $before $nblock $after] \n]
 	}
 
+	# UpdatePkgRequire libdir
+	#
+	# libdir    - A project lib directory
+	#
+	# Looks for the pkgModules file and updates the 
+	# "package require" block.
+
+	proc UpdatePkgRequire {libdir} {
+		# FIRST, get the file to update
+		set package [file tail $libdir]
+		set pkgModules [file join $libdir pkgModules.tcl]
+
+		# NEXT, if there isn't one, we don't need to update this package.
+		if {![file isfile $pkgModules]} {
+			return
+		}
+
+		# NEXT, get the text and split it on the tag.
+		set text [readfile $pkgModules]
+		set pieces [tagsplit require $text]
+
+		# NEXT, if the tag isn't present, we don't need to update this
+		# package.
+		if {[llength $pieces] == 0} {
+			return
+		}
+
+		# NEXT, update the require block.
+		lassign $pieces before block after
+
+		set nblock [list]
+		foreach line $block {
+			if {[string match "package require *" [tighten $line]]} {
+				set package [lindex $line 2]
+
+				if {$package in [project require names]} {
+					set ver [project require version $package]
+					lappend nblock "package require $package $ver"
+				} else {
+					puts [outdent "
+						Warning: $pkgModules 
+						requires package \"$package\", but \"$package\" is
+						not required in project.quill.
+					"]
+					puts ""
+					lappend nblock $line
+				}
+
+			} else {
+				lappend nblock line
+			}
+		}
+		# NEXT, output the updated file if the text has changed.
+		writefile $pkgModules [join [concat $before $nblock $after] \n]
+	}
 }

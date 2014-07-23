@@ -13,14 +13,17 @@
 #
 #-----------------------------------------------------------------------
 
-# TODO: Need to set this to project version.
-package provide quillapp 1.0
+# -quill-provide-begin DO NOT EDIT BY HAND
+package provide quillapp 0.1a0
+# -quill-provide-end
 
 #-----------------------------------------------------------------------
 # Required Packages
 
-# TODO: use [quill require]
-package require snit
+# -quill-require-begin INSERT PACKAGE REQUIRES HERE
+package require snit 2.3
+# -quill-require-end
+
 package require quill
 
 namespace import quill::*
