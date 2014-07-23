@@ -3,8 +3,7 @@
 ## Next
 
 * Things I can do on the plane, without wifi:
-  * project.quill updates (parse and document):
-    * Implement parsing of app options
+  * Consider moving "main" into the app package
   * quill shell enhancements
     * Support when no app defined
     * Support for "plain" shell when app defined
@@ -13,8 +12,7 @@
     * manpage(n)
     * quillapps packages
 
-
-* Support app options
+* Implement effects of app options
   * -gui - Makes it a Tk app
   * -apptype - One of "kit", "uberkit", "exe".
     * kit: Just the app's own files.  Other packages are loaded from

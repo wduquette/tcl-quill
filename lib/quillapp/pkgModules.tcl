@@ -53,5 +53,6 @@ source [file join $::quillapp::library newtool.tcl          ]
 source [file join $::quillapp::library shelltool.tcl        ]
 source [file join $::quillapp::library testtool.tcl         ]
 source [file join $::quillapp::library versiontool.tcl      ]
+source [file join $::quillapp::library main.tcl             ]
 
 
