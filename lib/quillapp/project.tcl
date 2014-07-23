@@ -329,6 +329,8 @@ snit::type ::quillapp::project {
 
 		try {
 			$interp eval [readfile [project root $projectFile]]
+		} trap INVALID {result} {
+			throw FATAL "Error in $projectFile: $result"
 		} trap SYNTAX {result} {
 			throw FATAL "Error in $projectFile: $result"
 		} trap {TCL WRONGARGS} {result} {
@@ -354,20 +356,19 @@ snit::type ::quillapp::project {
 	# 
 	# Defines the project's identity.  The version must be a valid
 	# [package provide] version string.
-	#
-	# TODO: Add [prepare] command.
-	# TODO: Validate project name.
-	# TODO: Validate version string
-	# TODO: Validate that there's a description.
 
 	proc ProjectCmd {project version description} {
 		if {$meta(project) ne ""} {
 			throw SYNTAX "Multiple \"project\" statements in file"
 		}
 
+		prepare project      -required -file
+		prepare version      -type ::quillapp::version
+		prepare description  -required -tighten
+
 		set meta(project)     $project
 		set meta(version)     $version
-		set meta(description) [tighten $description]
+		set meta(description) $description
 	}
 
 	# HomepageCmd url
@@ -377,6 +378,7 @@ snit::type ::quillapp::project {
 	# Specifies that this project's home page is at the given URL.
 
 	proc HomepageCmd {url} {
+		prepare url
 		set meta(homepage) $url
 	}
 
@@ -387,6 +389,8 @@ snit::type ::quillapp::project {
 	# Specifies that this project builds an application called $name.
 
 	proc AppCmd {name} {
+		prepare name -required -file
+
 		ladd meta(apps)          $name
 		set  meta(apptype-$name) uberkit
 		set  meta(gui-$name)     0
@@ -399,6 +403,7 @@ snit::type ::quillapp::project {
 	# Specifies that this project provides a package called $name.
 
 	proc ProvideCmd {name} {
+		prepare name -required -file
 		ladd meta(provides) $name
 	}
 
@@ -425,8 +430,9 @@ snit::type ::quillapp::project {
 			}
 		}
 
-		# NEXT, validate version
-		# TODO
+		# NEXT, validate data
+		prepare name -required
+		prepare version -type {::quillapp::version rqmt}
 
 		# NEXT, save the data
 		ladd meta(requires)      $name

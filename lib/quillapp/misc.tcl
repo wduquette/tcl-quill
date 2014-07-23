@@ -96,3 +96,67 @@ proc ::quillapp::tagsplit {tag text} {
         return [list $before $block $after]
     }
 }
+
+# prepare var options...
+#
+# var   - A variable name
+#
+# Options:
+#    -file      - Value must make a good file name (no special characters
+#                 or internal whitespace).
+#    -required  - Value must be non-empty
+#    -tighten   - Condenses internal whitespace
+#    -toupper   - Converts value to upper case
+#    -tolower   - Converts value to lower case
+#    -type      - A validation type; the value must be valid.
+#
+# Prepares a variable's content for validation, and in some cases
+# does the validation.  In particular, values are "trimmed" automatically.
+
+proc ::quillapp::prepare {var args} {
+    upvar 1 $var theVar
+
+    set theVar [string trim $theVar]
+
+    while {[llength $args] > 0} {
+        set opt [lshift args]
+
+        switch -exact -- $opt {
+            -file {
+                if {![regexp {^[-[:alnum:]_]+$} $theVar]} {
+                    throw INVALID \
+                        "Input \"$var\" contains illegal characters or whitespace: \"$theVar\""
+                }
+            }
+
+            -required {
+                if {$theVar eq ""} {
+                    throw INVALID \
+                        "Input \"$var\" requires a non-empty value."
+                }
+            }
+
+            -tighten {
+                set theVar [tighten $theVar]
+            }
+
+            -toupper {
+                set theVar [string toupper $theVar]
+            }
+
+            -tolower {
+                set theVar [string tolower $theVar]
+            }
+
+            -type {
+                set theType [lshift args]
+
+                set theVar [{*}$theType validate $theVar]
+            }
+
+            default {
+                error "Unknown option: \"$opt\""
+            }
+        }
+    }
+}

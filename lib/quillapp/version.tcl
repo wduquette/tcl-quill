@@ -24,7 +24,7 @@ namespace eval ::quillapp {
 #-------------------------------------------------------------------------
 # Singleton
 
-snit::type version {
+snit::type ::quillapp::version {
     pragma -hasinstances no -hastypedestroy no
 
     # validate version
@@ -38,5 +38,34 @@ snit::type version {
         }
 
         throw INVALID "Invalid version string: \"$version\""
+    }
+
+    # rqmt validate rqmt
+    #
+    # rqmt   - A [package require] version requirement.
+    #
+    # Validates the requirement string.
+
+    typemethod {rqmt validate} {rqmt} {
+        # The requirement can have one of three forms, per
+        # [package vsatisfies]:
+        #
+        #    ver
+        #    ver-
+        #    ver-ver
+
+        set components [split $rqmt -]
+        lassign $components min max
+
+        # Case 1
+        if {[llength $components] < 2} {
+            return [version validate $min]
+        } elseif {[llength $components] > 2} {
+            throw INVALID "Invalid version requirement: \"$rqmt\""
+        } elseif {$max eq ""} {
+            return "[version validate $min]-"
+        } else {
+            return "[version validate $min]-[version validate $max]"
+        }
     }
 }
