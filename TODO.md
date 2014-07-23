@@ -12,7 +12,6 @@
     * quillapps packages
 
 * Implement effects of app options
-  * -gui - Makes it a Tk app
   * -apptype - One of "kit", "uberkit", "exe".
     * kit: Just the app's own files.  Other packages are loaded from
       the environment. (i.e., from the local teapot)  Cross-platform.
