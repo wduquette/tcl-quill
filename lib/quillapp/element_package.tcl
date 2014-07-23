@@ -19,19 +19,25 @@
 ::quillapp::element public package {package} 1 1 \
      ::quillapp::packageElement
 
-# package package
+# package package mainflag
 #
 # package - The package name
+# mainflag - If true, generate a "main" procedure
 # 
 # Saves the package element tree.
 
-proc ::quillapp::packageElement {package} {
+proc ::quillapp::packageElement {package {mainflag 0}} {
     gentree \
-        lib/$package/pkgIndex.tcl    [pkgIndex $package]    \
-        lib/$package/pkgModules.tcl  [pkgModules $package]  \
-        lib/$package/$package.tcl    [pkgFile $package]     \
-        test/$package/all_tests.test [allTests $package]    \
+        lib/$package/pkgIndex.tcl    [pkgIndex $package]              \
+        lib/$package/pkgModules.tcl  [pkgModules $package $mainflag]  \
+        test/$package/all_tests.test [allTests $package]              \
         test/$package/$package.test  [testFile $package]
+
+    if {$mainflag} {
+        gentree lib/$package/main.tcl [mainFile $package]
+    } else {
+        gentree lib/$package/$package.tcl [pkgFile $package]
+    }
 }
 
 # pkgIndex package
@@ -62,14 +68,20 @@ maptemplate ::quillapp::pkgIndex {package} {
     # -quill-ifneeded-end
 }
 
-# pkgModules package
+# pkgModules package mainflag
 #
 # pkgModules.tcl file for the $package(n) package.
 
-maptemplate ::quillapp::pkgModules {package} {
+maptemplate ::quillapp::pkgModules {package mainflag} {
     set project     [project name]
     set description [project description]
     set version     [project version]
+
+    if {$mainflag} {
+        set module main
+    } else {
+        set module $package
+    }
 } {
     #-------------------------------------------------------------------------
     # TITLE: 
@@ -105,7 +117,7 @@ maptemplate ::quillapp::pkgModules {package} {
         variable library [file dirname [info script]]
     }
 
-    source [file join $::%package::library %package.tcl]
+    source [file join $::%package::library %module.tcl]
 }
 
 # pkgFile package
@@ -146,6 +158,48 @@ maptemplate ::quillapp::pkgFile {package} {
     proc ::%package::hello {arglist} {
         puts "Hello, world!"
         puts "Args: <$arglist>"
+    }
+}
+
+# mainFile package
+#
+# main.tcl file for the $package(n) package.
+
+maptemplate ::quillapp::mainFile {package} {
+    set project     [project name]
+    set description [project description]
+} {
+    #-------------------------------------------------------------------------
+    # TITLE: 
+    #    main.tcl
+    #
+    # PROJECT:
+    #    %project: %description
+    #
+    # DESCRIPTION:
+    #    %package(n): main procedure
+    #
+    #-------------------------------------------------------------------------
+
+    #-------------------------------------------------------------------------
+    # Exported Commands
+
+    namespace eval ::%package {
+        namespace export \\
+            main
+    }
+
+    #-------------------------------------------------------------------------
+    # Commands
+
+    # main argv
+    #
+    # Dummy procedure
+
+    proc ::%package::main {argv} {
+        puts "[quillinfo project] [quillinfo version]"
+        puts ""
+        puts "Args: <$argv>"
     }
 }
 

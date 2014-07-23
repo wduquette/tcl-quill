@@ -38,7 +38,7 @@ proc ::quillapp::appElement {appname} {
     file attributes [project root bin $appname.tcl] \
         -permissions u+x
 
-    element package ${appname}app
+    element package ${appname}app true
 }
 
 # appLoader appname
@@ -81,22 +81,10 @@ maptemplate ::quillapp::appLoader {appname} {
     package require quillinfo
 
     # %pkgname(n) is the package containing the bulk of the 
-    # %appname code.
+    # %appname code.  In particular, this package defines the
+    # "main" procedure.
     package require %pkgname
     namespace import %pkgname::*
-
-    #-------------------------------------------------------------------------
-    # Main Routine
-
-    # main argv
-    #
-    # argv - Command line arguments
-
-    proc main {argv} {
-        puts "[quillinfo project] [quillinfo version]"
-        puts ""
-        hello $argv
-    }
 
     #-------------------------------------------------------------------------
     # Invoke the application
