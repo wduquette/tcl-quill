@@ -123,7 +123,8 @@ maptemplate ::quillapp::quillinfoQuillinfo {} {
             project      \\
             description  \\
             version      \\
-            homepage
+            homepage     \\
+            isgui
 
         namespace ensemble create
     }
@@ -165,5 +166,21 @@ maptemplate ::quillapp::quillinfoQuillinfo {} {
     proc ::quillinfo::homepage {} {
         variable meta
         return $meta(homepage)
+    }
+
+    # isgui app
+    #
+    # app   - An app name for this project.
+    #
+    # Returns true if the app is a GUI and false otherwise.
+
+    proc ::quillinfo::isgui {app} {
+        variable meta
+
+        if {[info exists meta(gui-$app)]} {
+            return $meta(gui-$app)
+        } else {
+            return 0
+        }
     }
 }

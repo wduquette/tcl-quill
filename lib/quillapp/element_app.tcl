@@ -49,6 +49,7 @@ maptemplate ::quillapp::appLoader {appname} {
     set project     [project name]
     set description [project description]
     set pkgname     ${appname}app
+    set tclversion  [set ::tcl_version]
 } {
     #!/bin/sh
     # -*-tcl-*-
@@ -74,11 +75,16 @@ maptemplate ::quillapp::appLoader {appname} {
 
     set auto_path [linsert $auto_path 0 $libdir]
 
-    package require Tcl 8.6
+    package require Tcl %tclversion
 
     # quillinfo(n) is a generated package containing this project's 
     # metadata.
     package require quillinfo
+
+    # If it's a gui, load Tk.
+    if {[quillinfo isgui %appname]} {
+        package require Tk %tclversion
+    }
 
     # %pkgname(n) is the package containing the bulk of the 
     # %appname code.  In particular, this package defines the
