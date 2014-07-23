@@ -4,9 +4,8 @@
 
 * Things I can do on the plane, without wifi:
   * project.quill updates (parse and document):
-    * app options
-    * require statements
-    * lib statements
+    * Improved validation
+    * Implement parsing of app options
   * quill shell enhancements
     * Support when no app defined
     * Support for "plain" shell when app defined
@@ -25,9 +24,9 @@
       Cross-platform, provided that no non-Tcl packages are included.
     * exe: starpack, using basekit for the current platform.
 * Support requires.
-  * State them in project.quill.
+  * State them in project.quill. DONE.
   * Then, update "package require" blocks in project libs so that versions
-    match requires in project.quill.
+    match requires in project.quill.  DONE.
     * Instead of simply replacing the block, Quill reads lines in block
       looking for "package require <package>" and rewrites them with the
       version spec from project.quill.

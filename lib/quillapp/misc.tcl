@@ -96,4 +96,3 @@ proc ::quillapp::tagsplit {tag text} {
         return [list $before $block $after]
     }
 }
-
