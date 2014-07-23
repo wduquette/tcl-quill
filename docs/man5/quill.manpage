@@ -40,19 +40,20 @@ The following statements may appear in <tt project.quill>.<p>
 
 <b Required.>  This statement must appear in every 
 <tt project.quill> file, and should be the first statement in
-the file.  The <i project> should be the name of the project:
-a brief name, containing no whitespace; often it will be the
-name of the project at a site like 
-<xref http://github.com GitHub>.<p>
+the file.  The <i project> should be the name of the project; often it 
+will be the name of the project at a site like 
+<xref http://github.com GitHub>.  It may contain letters, digits, 
+underscores, and hyphens.<p>
 
 The <i version> is the version of the project; it will also be used
 as the version number for any library packages exported by the 
 project.  It must take a form acceptable to Tcl's 
-<xref http://www.tcl.tk/man/tcl8.6/TclCmd/package.htm "package require">
+<xref http://www.tcl.tk/man/tcl8.6/TclCmd/package.htm "package provide">
 command.<p>
 
 The <i description> is a brief one-line description of the project.  It
-is included in generated documentation.<p>
+is included in generated documentation.  It may not be the empty
+string.<p>
 
 <defitem homepage {homepage <i url>}>
 
@@ -64,6 +65,8 @@ generated project documentation.<p>
 States that the project contains an application called <i name>.
 A project may define multiple applications; the first to appear
 in the project file is called the <i primary> application.<p>
+
+The <i name> may contain letters, digits, underscores, and hyphens.<p>
 
 Every application will have a loader script 
 "<tt><i root>/bin/<i name>.tcl</tt>", and will probably have an
@@ -108,6 +111,8 @@ States that the project exports a Tcl library package called
 <i name>, whose code is found in the directory
 <tt><i root>/lib/<i name></tt>.  A project may export any number of
 library packages.<p>
+
+The <i name> may contain letters, digits, underscores, and hyphens.<p>
 
 <defitem require {require <i package version> ?-local?}>
 
