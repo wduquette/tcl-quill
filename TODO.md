@@ -2,7 +2,6 @@
 
 ## Next
 
-* Things I can do on the plane, without wifi:
   * quill shell enhancements
     * Support when no app defined
     * Support for "plain" shell when app defined

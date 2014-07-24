@@ -31,8 +31,16 @@ assumes the following:
   user's home directory or the user has access to the "sudo"
   command.
 
-## Porting
+## Ways to Help
 
-Quill is being developed on OS X, but it is intended to be cross-platform.
-Platform-specific code is concentrated in `lib/quillapp/plat.tcl`.  If 
-Quill fails on a particular plaform, that's where to look.
+I'm developing Quill on OS X, but I'm trying to write it so that will work 
+on OS X, Linux, and Windows, and on Unix in general.  For Windows, I'm 
+using that Quill is being used from a MinGW bash shell.
+
+However, for personal work I only have access to OS X.  Thus, it would be 
+a great help to me to have users try it out on other platforms and submit
+bug reports and patches.
+
+Note that platform-specific code is concentrated in `lib/quillapp/plat.tcl`.
+That's where Quill finds external programs like `tkcon` and `teacup`, for
+example.

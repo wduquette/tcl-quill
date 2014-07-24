@@ -67,6 +67,7 @@ snit::type ::quillapp::versiontool {
 		DisplayPath tclsh
 		DisplayPath tkcon
 		DisplayPath teacup 
+		DisplayPath tclapp
 	}
 
 	# DisplayPath tool
