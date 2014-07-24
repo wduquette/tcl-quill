@@ -26,6 +26,26 @@ namespace eval ::quillapp:: {
 snit::type ::quillapp::plat {
     pragma -hasinstances no -hastypedestroy no
 
+    #---------------------------------------------------------------------
+    # Type Variables
+
+    # pathto - Array of normalized paths to tool executables.
+    typevariable pathto -array {
+        tclsh  ""
+        tkcon  ""
+        teacup ""
+        tclapp ""
+    }
+
+    # pathof - Array of normalized paths to important directories
+    typevariable pathof -array {
+        teapot ""
+    }
+
+
+    #---------------------------------------------------------------------
+    # Public Typemethods
+
     # id
     #
     # Returns the platform ID.  Quill doesn't care (at present)
@@ -42,19 +62,39 @@ snit::type ::quillapp::plat {
         }
     }
 
-    # pathto tclsh
+    # pathto tool ?-force?
+    #
+    # tool   - Name of a tool we need, e.g., teacup.
+    #
+    # Returns the normalized path to the tool's executable.  If the path
+    # is unknown, or -force is given, finds the executable first, and
+    # caches the result.  Returns "" if the tool cannot be found.
+
+    typemethod pathto {tool {flag ""}} {
+        if {$flag eq "-force"} {
+            set pathto($tool) ""
+        }
+
+        if {$pathto($tool) eq ""} {
+            set pathto($tool) [$type GetPathTo $tool]
+        }
+
+        return $pathto($tool)
+    }
+
+    # GetPathTo tclsh
     #
     # Returns the path to the tclsh.
 
-    typemethod {pathto tclsh} {} {
+    typemethod {GetPathTo tclsh} {} {
         return [file normalize [info nameofexecutable]]
     }
 
-    # pathto tkcon
+    # GetPathTo tkcon
     #
     # Returns the path to the tkcon executable.
 
-    typemethod {pathto tkcon} {} {
+    typemethod {GetPathTo tkcon} {} {
         set shelldir [file dirname [info nameofexecutable]]
 
         switch [$type id] {
@@ -73,22 +113,22 @@ snit::type ::quillapp::plat {
         return [file normalize $path]
     }
 
-    # pathto teacup
+    # GetPathTo teacup
     #
     # Returns the path to the teacup executable.
 
-    typemethod {pathto teacup} {} {
+    typemethod {GetPathTo teacup} {} {
         set shelldir [file dirname [info nameofexecutable]]
         set path [file join $shelldir teacup]
 
         return [file normalize $path]
     }
 
-    # pathto tclapp
+    # GetPathTo tclapp
     #
     # Returns the path to the tclapp executable.
 
-    typemethod {pathto tclapp} {} {
+    typemethod {GetPathTo tclapp} {} {
         switch [$type id] {
             linux -
             osx   {
@@ -103,6 +143,39 @@ snit::type ::quillapp::plat {
         }
 
         return $path
+    }
+
+    #---------------------------------------------------------------------
+    # Directory Paths
+
+    # pathof dir ?-force?
+    #
+    # dir   - Symbolic name of a dir we need, e.g., teapot.
+    #
+    # Returns the normalized path to the resource directory.  If the path
+    # is unknown, or -force is given, finds the directory first, and
+    # caches the result.  Returns "" if the directory cannot be found.
+
+    typemethod pathof {dir {flag ""}} {
+        if {$flag eq "-force"} {
+            set pathof($dir) ""
+        }
+
+        if {$pathof($dir) eq ""} {
+            set pathof($dir) [$type GetPathOf $dir]
+        }
+
+        return $pathof($dir)
+    }
+
+
+    # GetPathOf teapot
+    #
+    # Returns the path of the local teapot repository.
+
+    typemethod {GetPathOf teapot} {} {
+        set teacup [$type pathto teacup]
+        return [file normalize [exec $teacup default]]
     }
 
     #---------------------------------------------------------------------

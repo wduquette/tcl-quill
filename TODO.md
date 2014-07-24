@@ -2,13 +2,16 @@
 
 ## Next
 
-  * quill shell enhancements
-    * Support when no app defined
-    * Support for "plain" shell when app defined
-    * project.quill "shell" script, for plain shells.
-  * Tests
-    * manpage(n)
-    * quillapps packages
+* Write INSTALL.md
+# Write BUILD.md
+* quill build
+* quill shell enhancements
+  * Support when no app defined
+  * Support for "plain" shell when app defined
+  * project.quill "shell" script, for plain shells.
+* Tests
+  * manpage(n)
+  * quillapps packages
 
 * Implement effects of app options
   * -apptype - One of "kit", "uberkit", "exe".
@@ -42,6 +45,8 @@ Quill should provide the following tools.
 
 * quill build
   * Build some or all of the build projects.
+    * Apps
+    * Libs (as teapot .zips)
 
 * quill deps
   * Check external dependencies, and retrieve missing ones.
@@ -57,6 +62,8 @@ Quill should provide the following tools.
 
 * quill new
   * Create a new project tree given a template
+    * DONE app tree
+    * lib tree
 
 * quill replace (?)
   * Project search and replace command

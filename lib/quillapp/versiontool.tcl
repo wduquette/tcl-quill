@@ -64,10 +64,14 @@ snit::type ::quillapp::versiontool {
 		puts "Please submit bug reports to the issue tracker at the home page."
 		puts ""
 		puts "Helper Tools:"
+
 		DisplayPath tclsh
 		DisplayPath tkcon
 		DisplayPath teacup 
 		DisplayPath tclapp
+
+		puts ""
+		puts "Local Teapot: [plat pathof teapot]"
 	}
 
 	# DisplayPath tool
@@ -79,7 +83,7 @@ snit::type ::quillapp::versiontool {
 	proc DisplayPath {tool} {
 		set path [plat pathto $tool]
 
-		if {[file exists $path]} {
+		if {[file isfile $path]} {
 			set flag ""
 		} else {
 			set flag " (NOT FOUND)"
