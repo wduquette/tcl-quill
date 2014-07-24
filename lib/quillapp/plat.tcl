@@ -62,6 +62,21 @@ snit::type ::quillapp::plat {
         }
     }
 
+    # appfile app
+    #
+    # app  - The app name, e.g., "quill"
+    #
+    # Returns the full application file name, i.e., adds a ".exe"
+    # on Windows.
+
+    typemethod appfile {app} {
+        if {[$type id] eq "windows"} {
+            return $app.exe
+        } else {
+            return $app
+        }
+    }
+
     # pathto tool ?-force?
     #
     # tool   - Name of a tool we need, e.g., teacup.

@@ -1,5 +1,7 @@
 # Quill output
 /docs/man*/*.html
+/.quill
+*.kit
 
 # SublimeText files
 *.sublime-*

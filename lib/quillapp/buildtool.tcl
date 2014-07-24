@@ -75,7 +75,77 @@ snit::type ::quillapp::buildtool {
 	# Builds the application using tclapp.
 
 	proc BuildTclApp {app} {
-		
+		# FIRST, get relevant data
+		set guiflag [project app gui $app]
+		set apptype [project app apptype $app]
+
+		# NEXT, tell the user what we are doing.
+		if {$guiflag} {
+			puts "Building GUI app $app as '$apptype'..."
+		} else {
+			puts "Building Console app $app as '$apptype'..."
+		}
+
+		# NEXT, build up the command
+		set command [list]
+
+		# tclapp, app loader script, lib directories
+		lappend command \
+			[plat pathto tclapp] \
+			[project root bin $app.tcl] \
+			[project root lib * *]
+
+		# Lib subdirectories?
+		if {[llength [project glob lib * * *]] > 0} {
+			lappend command \
+				[project root lib * * *]
+		}
+
+		# Archive
+		lappend command \
+			-archive [plat pathof teapot]
+
+		# Output file
+		if {$apptype eq "exe"} {
+			set outfile [project root bin [plat appfile $app]]
+		} else {
+			set outfile [project root bin $app.kit]
+		}
+
+		lappend command \
+			-out $outfile
+
+		# Prefix
+		if {$apptype eq "exe"} {
+			# TODO: add the -prefix and basekit
+			throw FATAL "exe apps not yet supported"
+		}
+
+		# Required packages
+		if {$apptype ne "kit"} {
+			foreach pkg [project require names] {
+				set ver [project require version $pkg]
+				lappend command \
+					-pkgref "$pkg $ver"
+			}
+		}
+
+		# Logging
+		set log [project quilldir build_$app.log]
+		lappend command \
+			>& $log
+
+		# TODO: verbose puts
+		puts "Command: $command"
+
+		try {
+			eval exec $command
+		} on error {result eopt} {
+			throw FATAL [outdent "
+			    Error building app $app: $result
+			    See $log for details.
+			"]
+		}
 	}
 }
 

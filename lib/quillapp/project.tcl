@@ -204,6 +204,19 @@ snit::type ::quillapp::project {
 		return $result
 	} 
 
+	# quilldir ?path...?
+	#
+	# path  - Path components
+	# 
+	# Returns a normalized path into the root/.quill/ directory,
+	# creating the directory if need be.  The .quill directory is 
+	# used for project-specific Quill artifacts, such as log files.
+
+	typemethod quilldir {args} {
+		file mkdir [$type root .quill]
+		return [project root .quill {*}$args]
+	}
+
 	#---------------------------------------------------------------------
 	# Metadata Queries
 
