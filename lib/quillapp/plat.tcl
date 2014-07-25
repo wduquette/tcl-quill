@@ -31,10 +31,12 @@ snit::type ::quillapp::plat {
 
     # pathto - Array of normalized paths to tool executables.
     typevariable pathto -array {
-        tclsh  ""
-        tkcon  ""
-        teacup ""
-        tclapp ""
+        tclsh       ""
+        tkcon       ""
+        teacup      ""
+        tclapp      ""
+        tcl-basekit ""
+        tk-basekit  ""
     }
 
     # pathof - Array of normalized paths to important directories
@@ -159,6 +161,71 @@ snit::type ::quillapp::plat {
 
         return $path
     }
+
+    # GetPathTo tcl-basekit
+    #
+    # Returns the path to the non-GUI basekit for this platform,
+    # or "".
+
+    typemethod {GetPathTo tcl-basekit} {} {
+        $type GetBaseKit false
+    }
+
+    # GetPathTo tk-basekit
+    #
+    # Returns the path to the GUI basekit for this platform,
+    # or "".
+
+    typemethod {GetPathTo tk-basekit} {} {
+        $type GetBaseKit true
+    }
+
+    # GetBaseKit tkflag
+    #
+    # tkflag  - True for Tk basekit, false for non-Tk basekit.
+    #
+    # Retrieves the path to the basekit, or "" if it can't find it.
+    #
+    # TODO: Consider getting the basekit from the teapot.
+
+    typemethod GetBaseKit {tkflag} {
+        # FIRST, get the basekit prefix given the tkflag
+        if {$tkflag} {
+            set prefix "base-tk[info tclversion]-thread*"
+        } else {
+            set prefix "base-tcl[info tclversion]-thread*"
+        }
+
+        # NEXT, get the likely location given the platform.
+        switch [$type id] {
+            osx {
+                set basedir "/Library/Tcl/basekits"
+                set pattern [file join $basedir $prefix]
+            }
+            windows {
+                set basedir [file dirname [$type tclsh]]
+                set pattern [file join $basedir $prefix].exe
+            }
+            linux   -
+            default {
+                set basedir [file dirname [$type tclsh]]
+                set pattern [file join $basedir $prefix]
+            }
+        }
+
+        # NEXT, there are usually library files alongside the
+        # executables.  Get all of the files, and discard the
+        # libraries.
+        foreach fname [glob -nocomplain $pattern] {
+            if {[file extension $fname] in {.dll .dylib .so}} {
+                continue
+            }
+
+            return [file normalize $fname]
+        }
+
+        return ""
+    } 
 
     #---------------------------------------------------------------------
     # Directory Paths

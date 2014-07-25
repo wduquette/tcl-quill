@@ -69,6 +69,8 @@ snit::type ::quillapp::versiontool {
 		DisplayPath tkcon
 		DisplayPath teacup 
 		DisplayPath tclapp
+		DisplayPath tcl-basekit
+		DisplayPath tk-basekit
 
 		puts ""
 		puts "Local Teapot: [plat pathof teapot]"
@@ -89,7 +91,7 @@ snit::type ::quillapp::versiontool {
 			set flag " (NOT FOUND)"
 		}
 
-		puts [format "    %-8s %s%s" $tool $path $flag]
+		puts [format "    %-12s %s%s" $tool $path $flag]
 	}
 }
 
