@@ -4,7 +4,12 @@ This is the official list of work to be done.
 
 ## Next
 
-* Manage local teapot
+* quill teapot - Manage local teapot
+  * quill teapot - Display status: which teapot is in use, is it linked,
+    and like that.
+  * quill teapot create - Creates ~/.quill/teapot, and makes it the default.
+  * quill teapot link - Links ~/.quill/teapot to default tclsh.
+  * quill teapot unlink - Unlinks ~/.quill/teapot.
 
 ## Before First Release
 

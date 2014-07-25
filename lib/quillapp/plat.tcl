@@ -257,6 +257,11 @@ snit::type ::quillapp::plat {
 
     typemethod {GetPathOf teapot} {} {
         set teacup [$type pathto teacup]
+
+        if {$teacup eq ""} {
+            throw FATAL "Cannot locate \"teacup\" tool."
+        }
+
         return [file normalize [exec $teacup default]]
     }
 
