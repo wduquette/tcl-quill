@@ -20,8 +20,8 @@
 set ::quillapp::tools(teapot) {
 	command     "teapot"
 	description "Manages local teapot repository."
-	argspec     {0 1 "subcommand"}
-	intree      true
+	argspec     {0 1 "?subcommand?"}
+	intree      false
 	ensemble    ::quillapp::teapottool
 }
 

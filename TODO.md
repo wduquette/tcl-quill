@@ -4,17 +4,12 @@ This is the official list of work to be done.
 
 ## Next
 
-* quill teapot - Manage local teapot
-  * quill teapot - Display status: which teapot is in use, is it linked,
-    and like that.
-  * quill teapot create - Creates ~/.quill/teapot, and makes it the default.
-  * quill teapot link - Links ~/.quill/teapot to default tclsh.
-  * quill teapot unlink - Unlinks ~/.quill/teapot.
+* quill deps
+  * Test explicit names on update, refresh
+* Add test for ::quill::interleave
 
 ## Before First Release
 
-* Manage local teapot in ~/.quill/teapot
-* quill deps: pull teapot packages into local teapot as needed.
 * quill new: "lib" tree
 * quill build: build libs as teapot .zips
 * quill build: support the same app|lib syntax as "quill install".
@@ -49,6 +44,9 @@ Quill's existing tools should provide the following additional features:
   * Provide a format for non-manpage docs?
   * Provide other back-ends for manpage(5).
 
+* quill install
+  * Install provided libs into local teapot
+
 * quill new
   * Create "lib" tree
 
@@ -76,13 +74,6 @@ Quill should provide the following tools.
 * quill deploy
   * Upload project libraries to remote repository
     * TBD: Which repository?  By what mechanism?
-
-* quill deps
-  * Check external dependencies, and retrieve missing ones.
-
-* quill install
-  * Install executables into ~/bin
-  * Install provided libs into local teapot
 
 * quill editing tools (?)
   * Project search and replace commands.

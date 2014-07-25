@@ -33,7 +33,7 @@ snit::type ::quillapp::teapot {
 	# Type Variables
 
 	#---------------------------------------------------------------------
-	# Queries
+	# Teapot Queries
 
 	# quillpath
 	#
@@ -42,6 +42,20 @@ snit::type ::quillapp::teapot {
 
 	typemethod quillpath {} {
 		return [file normalize [file join ~ .quill teapot]]
+	}
+
+	# ok
+	#
+	# Returns 1 if the teapot configuration is OK, and 0 otherwise.
+	# The configuration is OK if the default teapot is writable and the 
+	# teapot and shell are linked to each other.
+
+	typemethod ok {} {
+		expr {
+			[teapot writable]              && 
+			[teapot islinked teapot2shell] &&
+			[teapot islinked shell2teapot]
+		}
 	}
 
 	# writable
@@ -88,5 +102,89 @@ snit::type ::quillapp::teapot {
 
 		return 0
 	}
+
+	# installed pkg ver
+	#
+	# pkg   - A package name
+	# ver   - A version string
+	#
+	# Returns 1 if the named package is installed in the local
+	# repository, and 0 otherwise.
+
+	typemethod installed {pkg ver} {
+		set items [teapot list --at-default --is package $pkg]
+
+		foreach item $items {
+			set p [dict get $item name]
+			set v [dict get $item version]
+
+			if {$pkg eq $p && [package vsatisfies $v $ver]} {
+				return 1
+			}
+		}
+
+		return 0
+	}
+
+	# list args...
+	#
+	# Calls "teacup list --as csv" with the other arguments, and
+	# converts the result into a list of dictionaries.
+
+	typemethod list {args} {
+		set teacup [plat pathto teacup -require]
+
+		set output [exec $teacup list --as csv {*}$args]
+
+		# Get the column headers
+		set lines [split $output \n]
+		set headers [split [lshift lines] ,]
+
+		set result [list]
+
+		foreach line $lines {
+			set values [split $line ,]
+			lappend result [interleave $headers [split $line ,]]
+		}
+
+		return $result
+	}
+
+	#---------------------------------------------------------------------
+	# Low-level Tools
+
+	# install pkg ver
+	#
+	# pkg    - a package name
+	# ver    - A version number
+	#
+	# Removes the specified package from the default teapot.
+
+	typemethod install {pkg ver} {
+		set teacup [plat pathto teacup -require]
+
+		puts [exec $teacup install $pkg $ver]
+	}
+
+	# remove pkg ver
+	#
+	# pkg    - a package name
+	# ver    - A version number
+	#
+	# Removes the specified package from the default teapot.
+
+	typemethod remove {pkg ver} {
+		set teacup [plat pathto teacup -require]
+
+		foreach item [teapot list --at-default --is package $pkg] {
+			set p [dict get $item name]
+			set v [dict get $item version]
+
+			if {$p eq $pkg && [package vsatisfies $v $ver]} {
+				puts [exec $teacup remove --is package $p $v]
+			}
+		}
+	}
+
 }
 

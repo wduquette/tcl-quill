@@ -79,21 +79,38 @@ snit::type ::quillapp::plat {
         }
     }
 
-    # pathto tool ?-force?
+    # pathto tool ?-force? ?-require?
     #
     # tool   - Name of a tool we need, e.g., teacup.
     #
     # Returns the normalized path to the tool's executable.  If the path
     # is unknown, or -force is given, finds the executable first, and
-    # caches the result.  Returns "" if the tool cannot be found.
+    # caches the result.  Returns "" if the tool cannot be found, or
+    # if -require is given throws a fatal error.
 
-    typemethod pathto {tool {flag ""}} {
-        if {$flag eq "-force"} {
+    typemethod pathto {tool args} {
+        set force   0
+        set require 0
+
+        while {[llength $args] > 0} {
+            set opt [lshift args]
+            switch -exact -- $opt {
+                -force   { set force 1   }
+                -require { set require 1 }
+                default  { error "Unknown option: \"$opt\"" }
+            }
+        }
+
+        if {$force} {
             set pathto($tool) ""
         }
 
         if {$pathto($tool) eq ""} {
             set pathto($tool) [$type GetPathTo $tool]
+        }
+
+        if {$require && $pathto($tool) eq ""} {
+            throw FATAL "Cannot locate the \"$tool\" tool."
         }
 
         return $pathto($tool)

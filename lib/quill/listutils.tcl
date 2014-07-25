@@ -18,6 +18,7 @@
 
 namespace eval ::quill:: {
 	namespace export \
+        interleave   \
         ladd         \
 		lshift
 }
@@ -62,6 +63,25 @@ proc ::quill::lshift {listvar} {
     return $result
 }
 
+# interleave keys values
+#
+# keys   - A list of keys
+# values - A list of values
+#
+# Given two lists, one of keys and one of values, returns a list
+# of interleaved keys and values.  If the lists are the same 
+# length, and the keys are all unique, the result is a valid
+# dictionary.
+
+proc ::quill::interleave {keys values} {
+    set result [list]
+
+    foreach key $keys value $values {
+        lappend result $key $value
+    }
+
+    return $result
+}
 
 
 
