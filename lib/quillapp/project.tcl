@@ -295,6 +295,22 @@ snit::type ::quillapp::project {
 		return $meta(gui-$app)
 	}
 
+	# app target app
+	#
+	# app  - The app name
+	#
+	# Returns the full path to built app, whether it's a kit or .exe,
+	# in the project bin directory.
+
+	typemethod {app target} {app} {
+		if {$meta(apptype-$app) eq "exe"} {
+			return [project root bin [plat appfile $app]]
+		} else {
+			return [project root bin $app.kit]
+		}
+	}
+
+
 	# require version pkg
 	#
 	# pkg - The package name

@@ -76,14 +76,15 @@ snit::type ::quillapp::buildtool {
 
 	proc BuildTclApp {app} {
 		# FIRST, get relevant data
-		set guiflag [project app gui $app]
+		set guiflag [project app gui     $app]
 		set apptype [project app apptype $app]
+		set outfile [project app target  $app]
 
 		# NEXT, tell the user what we are doing.
 		if {$guiflag} {
-			puts "Building GUI app $app as '$apptype'..."
+			puts "Building GUI app $app as '$apptype' $outfile"
 		} else {
-			puts "Building Console app $app as '$apptype'..."
+			puts "Building Console app $app as '$apptype' $outfile"
 		}
 
 		# NEXT, build up the command
@@ -106,12 +107,6 @@ snit::type ::quillapp::buildtool {
 			-archive [plat pathof teapot]
 
 		# Output file
-		if {$apptype eq "exe"} {
-			set outfile [project root bin [plat appfile $app]]
-		} else {
-			set outfile [project root bin $app.kit]
-		}
-
 		lappend command \
 			-out $outfile
 

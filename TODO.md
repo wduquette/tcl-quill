@@ -4,22 +4,15 @@ This is the official list of work to be done.
 
 ## Next
 
-* quill install
-  * Install executables into ~/bin
-  * Install specific executable
-    * "quill install app" installs all apps
-    * "quill install lib" installs all libs
-    * "quill install app names..." installs the specific apps
-    * "quill install lib names..." installs the specific libs
 * Manage local teapot
 
 ## Before First Release
 
-* quill install: Install executables into ~/bin
 * Manage local teapot in ~/.quill/teapot
 * quill deps: pull teapot packages into local teapot as needed.
 * quill new: "lib" tree
 * quill build: build libs as teapot .zips
+* quill build: support the same app|lib syntax as "quill install".
 * quill install: Install teapot .zips into local teapot
 * Write INSTALL.md
 * Write BUILD.md
