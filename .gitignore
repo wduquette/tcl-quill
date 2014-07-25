@@ -2,6 +2,8 @@
 /docs/man*/*.html
 /.quill
 *.kit
+*.exe
+/bin/quill
 
 # SublimeText files
 *.sublime-*

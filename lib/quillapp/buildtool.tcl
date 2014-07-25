@@ -117,8 +117,20 @@ snit::type ::quillapp::buildtool {
 
 		# Prefix
 		if {$apptype eq "exe"} {
-			# TODO: add the -prefix and basekit
-			throw FATAL "exe apps not yet supported"
+			if {$guiflag} {
+				set basekit [plat pathto tk-basekit]
+			} else {
+				set basekit [plat pathto tcl-basekit]
+			}
+
+			if {$basekit eq ""} {
+				throw FATAL [outdent "
+				    Error building app $app: no basekit found.
+				"]
+			}
+
+			lappend command \
+				-prefix $basekit
 		}
 
 		# Required packages
@@ -135,8 +147,6 @@ snit::type ::quillapp::buildtool {
 		lappend command \
 			>& $log
 
-		# TODO: verbose puts
-		puts "Command: $command"
 
 		try {
 			eval exec $command
