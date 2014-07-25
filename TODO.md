@@ -1,40 +1,64 @@
 # Project TODO List
 
+This is the official list of work to be done.
+
 ## Next
 
+* quill install
+  * Install executables into ~/bin
+  * Install specific executable
+    * "quill install app" installs all apps
+    * "quill install lib" installs all libs
+    * "quill install app names..." installs the specific apps
+    * "quill install lib names..." installs the specific libs
+* Manage local teapot
+
+## Before First Release
+
+* quill install: Install executables into ~/bin
+* Manage local teapot in ~/.quill/teapot
+* quill deps: pull teapot packages into local teapot as needed.
+* quill new: "lib" tree
+* quill build: build libs as teapot .zips
+* quill install: Install teapot .zips into local teapot
 * Write INSTALL.md
-# Write BUILD.md
+* Write BUILD.md
+* Build as 0.1.0 and release on github.
+* Put announcements on wiki.tcl.tk and comp.lang.tcl.
+
+## Needed Tests
+
+* quill(n)
+  * manpage(n), especially macros
+  * Others?
+* quillapp(n) modules
+
+## Existing Tools
+
+Quill's existing tools should provide the following additional features:
+
 * quill build
-* quill shell enhancements
-  * Support when no app defined
-  * Support for "plain" shell when app defined
-  * project.quill "shell" script, for plain shells.
-* Tests
-  * manpage(n)
-  * quillapps packages
+  * Build "provide" libs as teapot .zips
+  * Build a specific target
+  * Build as ".app" on OSX.
+  * Include icons in GUI apps
+  * Support non-TDK build methods.
+    * Freewrap?
+      * How to make that work with teapot packages?
 
-* Implement effects of app options
-  * -apptype - One of "kit", "uberkit", "exe".
-    * kit: Just the app's own files.  Other packages are loaded from
-      the environment. (i.e., from the local teapot)  Cross-platform.
-    * uberkit: The app's own files plus all required packages.
-      Cross-platform, provided that no non-Tcl packages are included.
-    * exe: starpack, using basekit for the current platform.
-* Support requires.
-  * State them in project.quill. DONE.
-  * Then, update "package require" blocks in project libs so that versions
-    match requires in project.quill.  DONE.
-    * Instead of simply replacing the block, Quill reads lines in block
-      looking for "package require <package>" and rewrites them with the
-      version spec from project.quill.
-  * Then write code to check local teapot and update it using teacup.
-* Support building .kits and .exes
-* Add tests for manpage(n), including the macros.
+* quill docs
+  * Translate .md files to HTML?
+  * Provide a format for non-manpage docs?
+  * Provide other back-ends for manpage(5).
 
-## To Find Out
+* quill new
+  * Create "lib" tree
 
-* Can tclapp take a teapot package file and include it straight into a
-  wrapped app?
+* quill shell
+  * Allow selecting the specific app loader, or no app loader.
+  * Support "shell" project.quill statement for shell initialization
+    when running with no app loader
+  * Allow user to specify script to execute on command line.
 
 ## Missing Tools
 
@@ -43,34 +67,20 @@ Quill should provide the following tools.
 * quill add
   * Add a lib or app to the project.
 
-* quill build
-  * Build some or all of the build projects.
-    * Apps
-    * Libs (as teapot .zips)
+* quill deploy
+  * Upload project libraries to remote repository
+    * TBD: Which repository?  By what mechanism?
 
 * quill deps
   * Check external dependencies, and retrieve missing ones.
 
-* quill docs
-  * Build documentation
-    * DONE Man pages in manpage(5) format
-    * Markdown?
-    * A fancier format with section numbers?
-
 * quill install
-  * Install build products into the local environment.
+  * Install executables into ~/bin
+  * Install provided libs into local teapot
 
-* quill new
-  * Create a new project tree given a template
-    * DONE app tree
-    * lib tree
-
-* quill replace (?)
-  * Project search and replace command
+* quill editing tools (?)
+  * Project search and replace commands.
 
 * quill run
   * Run the main app (or a given app) with a given command line.
 
-* quill shell
-  * Allow selecting the app loader, or no app loader.
-  * Support "shell" project.quill statement for shell initialization.
