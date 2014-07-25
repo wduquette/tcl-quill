@@ -60,6 +60,14 @@ Quill should provide the following tools.
 * quill add
   * Add a lib or app to the project.
 
+* quill config
+  * Global configuration for Quill
+  * Quill tries to find all helpers, etc., automatically.  This is the
+    escape hatch; use it to establish locations of TDK, etc.
+  * We might have other configuration items eventually.
+    * E.g., on Windows, which command shell is in use?  bash?  Powershell?
+      the old-fashioned "DOS" shell?
+
 * quill deploy
   * Upload project libraries to remote repository
     * TBD: Which repository?  By what mechanism?
