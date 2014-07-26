@@ -4,16 +4,12 @@ This is the official list of work to be done.
 
 ## Next
 
-* quill deps
-  * Test explicit names on update, refresh
-* Add test for ::quill::interleave
-
 ## Before First Release
 
-* quill new: "lib" tree
 * quill build: build libs as teapot .zips
 * quill build: support the same app|lib syntax as "quill install".
 * quill install: Install teapot .zips into local teapot
+* quill new: "lib" tree
 * Write INSTALL.md
 * Write BUILD.md
 * Build as 0.1.0 and release on github.
