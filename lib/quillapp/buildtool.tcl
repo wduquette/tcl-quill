@@ -22,14 +22,33 @@
 set ::quillapp::tools(build) {
 	command     "build"
 	description "Build applications and libraries"
-	argspec     {0 0 ""}
+	argspec     {0 - "?app|lib? ?names..."}
 	intree      true
 	ensemble    ::quillapp::buildtool
 }
 
 set ::quillapp::help(build) {
 	The "quill build" tool builds the project's applications and 
-	provided libraries, as listed in the project.quill file.
+	provided libraries, as listed in the project.quill file.  By
+	default, all applications and libraries are built.
+
+	To build only the apps:
+
+	    $ quill build app
+
+	To build specific apps:
+
+	    $ quill build app myfirstapp mysecondapp ...
+
+	To build only the provided libraries:
+
+	    $ quill build lib
+
+	To build specific libraries:
+
+	    $ quill build lib myfirstlib mysecondlib ...
+
+
 }
 
 #-------------------------------------------------------------------------
@@ -54,14 +73,27 @@ snit::type ::quillapp::buildtool {
 	# Executes the tool given the arguments.
 
 	typemethod execute {argv} {
+		set targetType [lshift argv]
+		set names $argv
+
 		# FIRST, build provided libraries
-		foreach lib [project provide names] {
-			puts "TODO: Build library $lib!"
+		if {$targetType in {lib ""}} {
+			if {[llength $names] == 0} {
+				set names [project provide names]
+			}
+			foreach lib $names {
+				puts "TODO: build library $lib!"
+			}
 		}
 
 		# NEXT, build applications
-		foreach app [project app names] {
-			BuildTclApp $app
+		if {$targetType in {app ""}} {
+			if {[llength $names] == 0} {
+				set names [project app names]
+			}
+			foreach app $names {
+				BuildTclApp $app
+			}
 		}
 	}
 
