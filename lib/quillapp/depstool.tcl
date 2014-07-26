@@ -163,7 +163,7 @@ snit::type ::quillapp::depstool {
 
 		if {$count > 0} {
 			puts ""
-			puts "Update $count package(s)."
+			puts "Updated $count package(s)."
 		} else {
 			puts "No packages were obviously out-of-date."
 		}
@@ -196,12 +196,8 @@ snit::type ::quillapp::depstool {
 			incr count
 		}
 
-		if {$count > 0} {
-			puts ""
-			puts "Update $count package(s)."
-		} else {
-			puts "No packages were obviously out-of-date."
-		}
+		puts ""
+		puts "Refreshed $count package(s)."
 	}
 
 }
