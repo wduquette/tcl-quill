@@ -71,6 +71,7 @@ snit::type ::quillapp::versiontool {
 		DisplayPath tclapp
 		DisplayPath tcl-basekit
 		DisplayPath tk-basekit
+		DisplayPath teapot-pkg
 
 		puts ""
 		puts "Local Teapot: [plat pathof teapot]"

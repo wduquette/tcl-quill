@@ -37,6 +37,7 @@ snit::type ::quillapp::plat {
         tclapp      ""
         tcl-basekit ""
         tk-basekit  ""
+        teapot-pkg  ""
     }
 
     # pathof - Array of normalized paths to important directories
@@ -170,6 +171,27 @@ snit::type ::quillapp::plat {
             }
             windows {
                 set path [FindOnPath tclapp.exe]
+            }
+            default {
+                error "unknown platform id: \"[$type id]\""
+            }
+        }
+
+        return $path
+    }
+
+    # GetPathTo teapot-pkg
+    #
+    # Returns the path to the teapot-pkg executable.
+
+    typemethod {GetPathTo teapot-pkg} {} {
+        switch [$type id] {
+            linux -
+            osx   {
+                set path [FindOnPath teapot-pkg]
+            }
+            windows {
+                set path [FindOnPath teapot-pkg.exe]
             }
             default {
                 error "unknown platform id: \"[$type id]\""
