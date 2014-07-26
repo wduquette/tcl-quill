@@ -4,23 +4,25 @@ Nothing in this file should be presumed to be reflective of anything
 in the project.  Everything in this file is either incomplete, obsolete, 
 or wrong.
 
-## Q: How to structure project tree templates.
+## Q: A GUI version of Quill?
 
-Two kinds of thing: elements and trees.
+Would it be good to have a GUI version of Quill that abstracts completely
+away from the command line?
 
-A project tree is a collection of elements created by "quill new".
+* Need project tree widget: contents of the selected project.
+* Need log widget, results of latest action.
+* Scan for projects?
+* Recent projects?
+* Something like the GitHub for Mac/Windows apps.
 
-A project element is a collection of files created using 
-maptemplate(n) and the gentree command.
+## Q: How can I make Quill less dependent on the installed Tclsh?
 
-Define two ensembles: element and tree.  Element creates elements.
-tree creates trees.
+* Build as "exe"
+* Search for default tclsh as we search for teacup, etc.
+* Build data structure in ~/.quill of known shells, by Tcl version
+* Allow user to specify desired Tcl version in project.quill
 
-Both ensembles are normal namespace ensembles, ::quillapp::element
-and ::quillapp::tree.  That way, elements and trees can be added 
-after the fact.
-
-## Q: Is there a better way to do project file templates?
+## Q: How to do project file templates?
 
 **Nutshell: Defined maptemplate(n).**
 
