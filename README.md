@@ -12,6 +12,8 @@ Quill is a build tool for Tcl/Tk projects, inspired by
   * Lightweight executables ("starkits")
   * Reusable packages (teapot modules, .tm or .zip)
 * Make it easy to build and deploy Tcl applications and libraries.
+* Support formatted HTML documentation
+* Run cross-platform (Windows, OS X, Linux)
 
 ## Building and Installation
 
@@ -19,6 +21,82 @@ To install Quill, see [docs/INSTALL.md](./docs/INSTALL.md).
 
 To build Quill from scratch, see [docs/BUILD.md](./docs/BUILD.md).
 
+
+## Basic Use Case
+
+Assuming you have ActiveTcl 8.6.1 or later installed, with the installation's
+`tclsh` on your path, you should be able to do the following:
+
+1. Download and install `quill.kit` in your ~/bin directory (or wherever).
+   See [docs/INSTALL.md](./docs/INSTALL.md).
+
+2. Create a new skeleton project tree:
+
+```
+$ cd ~/work
+$ quill new app my-application myapp
+...
+```
+
+3. Run the application:
+
+```
+$ cd my-application
+$ ./bin/myapp.tcl a b c
+my-application 0.0a0
+
+Args: <a b c>
+```
+
+4. Run the application test suite:
+
+```
+$ quill test
+... Runs dummy test (which will fail)
+```
+
+5. Build HTML documentation:
+
+```
+$ quill docs
+... (You'll have to write some)
+```
+
+6. Build the Application (if TDK is installed) as a .kit or standalone
+executable:
+
+```
+$ quill build
+...
+$ ./bin/myapp.kit a b c
+my-application 0.0a0
+
+Args: <a b c>
+```
+
+7. Load the application and its libraries into Tkcon for interactive
+   testing:
+
+```
+$ quill shell
+... (Invokes Tkcon; does not run the application's "main" proc)
+```
+
+## Other Features
+
+Quill can also build library packages and install them into your local
+teapot repository for general use; and if your local teapot is located
+somewhere that requires "root" or "admin" privileges to touch, it can
+also create a new teapot repository for you in your home page.
+
+Then, you can add `require` statements to your `project.quill` file
+(created for you by `quill new`), and Quill will take care of downloading
+the required packages into your local teapot when you execute 
+`quill deps update`.
+
+See the (quill(5))[./docs/man5/quill.ehtml] man page for information about
+the contents of the `project.quill` file, and enter `quill help` at the
+command line for help on Quill and its subcommands.
 
 ## Assumptions
 
@@ -51,3 +129,8 @@ bug reports and patches.
 Note that platform-specific code is concentrated in `lib/quillapp/plat.tcl`.
 That's where Quill finds external programs like `tkcon` and `teacup`, for
 example.
+
+In addition, I've focussed on using ActiveState's "teapot" package 
+repository and TclDevKit tool chain, because I have access to those.
+I'm open to extending Quill to use other tool chains as well; and help
+with that is also welcome.

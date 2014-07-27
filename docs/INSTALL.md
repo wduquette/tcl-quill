@@ -15,11 +15,11 @@ in principle support FreeWrap.
 ## Installation
 
 1. Install ActiveTcl 8.6.1 or later on your development machine.  Make
-   sure that "tclsh" at your command shell of choice invokes
+   sure that `tclsh` at your command shell of choice invokes
    this version of Tcl.
 
 2. To build executables and libraries for deployment, install 
-   TclDevKit 5.1 so that the "tclapp" and "teapot-pkg" executables 
+   TclDevKit 5.1 so that the `tclapp` and `teapot-pkg` executables 
    are on your PATH.  (Note: Quill can do quite a lot for you even
    without TDK installed.)
 
