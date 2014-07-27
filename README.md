@@ -27,10 +27,10 @@ To build Quill from scratch, see [docs/BUILD.md](./docs/BUILD.md).
 Assuming you have ActiveTcl 8.6.1 or later installed, with the installation's
 `tclsh` on your path, you should be able to do the following:
 
-1. Download and install `quill.kit` in your ~/bin directory (or wherever).
-   See [docs/INSTALL.md](./docs/INSTALL.md).
+**Download and install `quill.kit` in your ~/bin directory (or wherever).**
+See [docs/INSTALL.md](./docs/INSTALL.md).
 
-2. Create a new skeleton project tree:
+**Create a new skeleton project tree:**
 
 ```
 $ cd ~/work
@@ -38,7 +38,7 @@ $ quill new app my-application myapp
 ...
 ```
 
-3. Run the application:
+**Run your new application:**
 
 ```
 $ cd my-application
@@ -48,22 +48,22 @@ my-application 0.0a0
 Args: <a b c>
 ```
 
-4. Run the application test suite:
+**Run the application test suite:**
 
 ```
 $ quill test
 ... Runs dummy test (which will fail)
 ```
 
-5. Build HTML documentation:
+**Build the project's HTML documentation:**
 
 ```
 $ quill docs
 ... (You'll have to write some)
 ```
 
-6. Build the Application (if TDK is installed) as a .kit or standalone
-executable:
+**Build the Application (if TDK is installed) as a .kit or standalone
+executable:**
 
 ```
 $ quill build
@@ -74,8 +74,8 @@ my-application 0.0a0
 Args: <a b c>
 ```
 
-7. Load the application and its libraries into Tkcon for interactive
-   testing:
+**Load the application and its libraries into Tkcon for interactive
+testing:**
 
 ```
 $ quill shell
