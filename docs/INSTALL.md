@@ -25,9 +25,10 @@ in principle support FreeWrap.
 
 3. Download the Quill distribution.  It contains the following:
 
-    bin\quill.kit
-    docs\index.html
-    docs\...
+   * `README.md`
+   * `bin\quill.kit`
+   * `docs\index.html`
+   * `docs\...`
 
 4. Copy `quill.kit` to your ~/bin directory as `quill`, and make sure it
    is marked executable.
@@ -36,7 +37,7 @@ in principle support FreeWrap.
 
 6. You should now be able to enter the command
 
-    $ quill version
+    `$ quill version`
 
    This will tell you which version of Quill you are running, and what
    helper commands (e.g., `tclsh`, `teacup`, etc.) it has found and will
