@@ -13,6 +13,13 @@ Quill is a build tool for Tcl/Tk projects, inspired by
   * Reusable packages (teapot modules, .tm or .zip)
 * Make it easy to build and deploy Tcl applications and libraries.
 
+## Building and Installation
+
+To install Quill, see [docs/INSTALL.md](./docs/INSTALL.md).
+
+To build Quill from scratch, see [docs/BUILD.md](./docs/BUILD.md).
+
+
 ## Assumptions
 
 At present, Quill relies heavily on ActiveState's package repository

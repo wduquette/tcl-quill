@@ -6,12 +6,12 @@ This is the official list of work to be done.
 
 ## Before First Release
 
+* Add basic use case for creating, running, and building a project to
+  README.md.
+* Write BUILD.md
 * quill build: build libs as teapot .zips
-* quill build: support the same app|lib syntax as "quill install".
 * quill install: Install teapot .zips into local teapot
 * quill new: "lib" tree
-* Write INSTALL.md
-* Write BUILD.md
 * Build as 0.1.0 and release on github.
 * Put announcements on wiki.tcl.tk and comp.lang.tcl.
 
