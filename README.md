@@ -94,7 +94,7 @@ Then, you can add `require` statements to your `project.quill` file
 the required packages into your local teapot when you execute 
 `quill deps update`.
 
-See the (quill(5))[./docs/man5/quill.ehtml] man page for information about
+See the [quill(5)](./docs/man5/quill.ehtml) man page for information about
 the contents of the `project.quill` file, and enter `quill help` at the
 command line for help on Quill and its subcommands.
 
