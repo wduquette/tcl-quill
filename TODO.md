@@ -6,7 +6,6 @@ This is the official list of work to be done.
 
 ## Before First Release
 
-* quill install: Install teapot .zips into local teapot
 * quill new: "lib" tree
 * Build as 0.1.0 and release on github.
 * Put announcements on wiki.tcl.tk and comp.lang.tcl.

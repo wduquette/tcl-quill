@@ -84,7 +84,7 @@ snit::type ::quillapp::installtool {
 				set names [project provide names]
 			}
 			foreach lib $names {
-				puts "TODO: install library $lib!"
+				InstallTclLib $lib
 			}
 		}
 
@@ -119,5 +119,35 @@ snit::type ::quillapp::installtool {
 		puts "Installing app $app as $dest"
 		file copy -force $source $dest
 	}
+
+	# InstallTclLib lib
+	#
+	# lib  - The name of the application
+	#
+	# installs the application to ~/bin.
+
+	proc InstallTclLib {lib} {
+		if {$lib ni [project provide names]} {
+			throw FATAL "No such library is provided in project.quill: \"$lib\""
+		}
+
+		set ver    [project version]
+		set source [project root .quill teapot package-$lib-$ver-tcl.zip]
+
+		if {![file isfile $source]} {
+			puts "WARNING: Cannot install lib $lib: teapot package"
+			puts $source
+			puts "has not been built.\n"
+			return
+		}
+
+		set command ""
+		lappend command [plat pathto teacup] install \
+			$source
+
+		puts "Installing lib $lib to local teapot..."
+		puts [eval exec $command]
+	}
+
 }
 

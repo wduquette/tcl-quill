@@ -203,7 +203,7 @@ snit::type ::quillapp::buildtool {
 	proc BuildLibZip {lib} {
 		# FIRST, make sure the lib is known.
 		if {$lib ni [project provide names]} {
-			throw FATAL "Lib \"$lib\" is not provided in project.quill."
+			throw FATAL "No such library is provided in project.quill: \"$lib\""
 		}
 		
 		# NEXT, save the teapot.txt file.
@@ -228,9 +228,9 @@ snit::type ::quillapp::buildtool {
 			[project root lib $lib]
 
 		# NEXT, call the command
-		set outfile [file join $outdir package-$lib[project version]-tcl.zip]
-		puts "Building lib $lib as $outfile"
-		eval exec $command
+		set outfile [file join $outdir package-$lib-[project version]-tcl.zip]
+		puts "\nBuilding lib $lib:"
+		puts [eval exec $command]
 	}
 }
 
