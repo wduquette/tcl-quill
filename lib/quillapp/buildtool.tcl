@@ -82,7 +82,7 @@ snit::type ::quillapp::buildtool {
 				set names [project provide names]
 			}
 			foreach lib $names {
-				puts "TODO: build library $lib!"
+				BuildLibZip $lib
 			}
 		}
 
@@ -107,7 +107,12 @@ snit::type ::quillapp::buildtool {
 	# Builds the application using tclapp.
 
 	proc BuildTclApp {app} {
-		# FIRST, get relevant data
+		# FIRST, make sure the app is known.
+		if {$app ni [project app names]} {
+			throw FATAL "App \"$app\" is not defined in project.quill."
+		}
+
+		# NEXT, get relevant data
 		set guiflag [project app gui     $app]
 		set apptype [project app apptype $app]
 		set outfile [project app target  $app]
@@ -183,6 +188,49 @@ snit::type ::quillapp::buildtool {
 			    See $log for details.
 			"]
 		}
+	}
+
+	#---------------------------------------------------------------------
+	# Building Tcl Lib teapot .zip files
+
+	# BuildLibZip lib
+	#
+	# lib   - The name of the library
+	#
+	# Creates a teapot.txt file for the library, and then packages
+	# it into <root>/.quill/teapot/* for later installation.
+
+	proc BuildLibZip {lib} {
+		# FIRST, make sure the lib is known.
+		if {$lib ni [project provide names]} {
+			throw FATAL "Lib \"$lib\" is not provided in project.quill."
+		}
+		
+		# NEXT, save the teapot.txt file.
+		set teapotTxt [outdent "
+			Package          $lib [project version]
+    		Meta entrykeep 
+    		Meta included    *
+    		Meta platform    tcl
+		"]
+
+		writefile [project root lib $lib teapot.txt] $teapotTxt
+
+		# NEXT, make sure the output directory exists.
+		set outdir [project root .quill teapot]
+		file mkdir $outdir
+
+		# NEXT, prepare the packaging command
+		set command ""
+		lappend command [plat pathto teapot-pkg] generate \
+			-t zip                                        \
+			-o $outdir                                    \
+			[project root lib $lib]
+
+		# NEXT, call the command
+		set outfile [file join $outdir package-$lib[project version]-tcl.zip]
+		puts "Building lib $lib as $outfile"
+		eval exec $command
 	}
 }
 

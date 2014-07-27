@@ -4,6 +4,7 @@
 *.kit
 *.exe
 /bin/quill
+teapot.txt
 
 # SublimeText files
 *.sublime-*

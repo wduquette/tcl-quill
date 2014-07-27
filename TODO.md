@@ -6,8 +6,6 @@ This is the official list of work to be done.
 
 ## Before First Release
 
-* Write BUILD.md
-* quill build: build libs as teapot .zips
 * quill install: Install teapot .zips into local teapot
 * quill new: "lib" tree
 * Build as 0.1.0 and release on github.
