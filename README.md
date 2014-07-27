@@ -119,10 +119,11 @@ assumes the following:
 ## Ways to Help
 
 I'm developing Quill on OS X, but I'm trying to write it so that will work 
-on OS X, Linux, and Windows, and on Unix in general.  For Windows, I'm 
-using that Quill is being used from a MinGW bash shell.
+on OS X, Linux, and Windows, and on Unix in general.  For Windows I'm 
+expecting that Quill is being used from a MinGW bash shell rather than 
+PowerShell or the basic Command Shell, but I'm trying not to rely on that.
 
-However, for personal work I only have access to OS X.  Thus, it would be 
+However, I only have access to OS X.  Thus, it would be 
 a great help to me to have users try it out on other platforms and submit
 bug reports and patches.
 

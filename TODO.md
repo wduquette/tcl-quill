@@ -6,8 +6,6 @@ This is the official list of work to be done.
 
 ## Before First Release
 
-* Add basic use case for creating, running, and building a project to
-  README.md.
 * Write BUILD.md
 * quill build: build libs as teapot .zips
 * quill install: Install teapot .zips into local teapot
