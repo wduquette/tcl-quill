@@ -1,4 +1,4 @@
-project tcl-quill 0.1.0 "Quill Project Build System for Tcl/Tk"
+project tcl-quill 0.1.1a0 "Quill Project Build System for Tcl/Tk"
 homepage http://github.com/wduquette/tcl-quill
 app quill
 provide quill
