@@ -14,7 +14,7 @@
 #-----------------------------------------------------------------------
 
 # -quill-provide-begin DO NOT EDIT BY HAND
-package provide quillapp 0.1a0
+package provide quillapp 0.1.0
 # -quill-provide-end
 
 #-----------------------------------------------------------------------
