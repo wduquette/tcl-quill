@@ -5,9 +5,13 @@ This is the official list of work to be done.
 # Next
 
 * Write foropt loop.
-* Use system tclsh, so that Quill can be built as a starpack.
-* Quill now retrieves the Tclsh from the path, and uses that.
 * Use "plat pathto $tool -require" whenever getting tools.
+* Grab parmset(n) and simplify, and use for "quill config".
+* Use "catch" and "error" rather than "try" and "throw" in
+  the apploader template.
+* Add "tcl" requirement in project.quill; defaults to 8.6.
+* Use "tcl" requirement version instead of $tcl_version in 
+  app loader template.
 * Support for other versions of TCL/TK.
   * I.e, use Quill for Tcl 8.5 projects.
 

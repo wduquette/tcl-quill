@@ -96,20 +96,21 @@ maptemplate ::quillapp::appLoader {appname} {
     #-------------------------------------------------------------------------
     # Invoke the application
 
-    try {
-        # Skip main if we're running interactively; this allows for 
-        # interactive testing.
-        if {!$tcl_interactive} {
+    if {!$tcl_interactive} {
+        if {[catch {
             main $argv
+        } result eopts]} {
+            if {[dict get $eopts -errorcode] eq "FATAL"} {
+                # The application has flagged a FATAL error; display it 
+                # and halt.
+                puts $result
+                exit 1
+            } else {
+                puts "Unexpected error: $result"
+                puts "Error Code: ([dict get $eopts -errorcode])\n"
+                puts [dict get $eopts -errorinfo]
+            }
         }
-    } trap FATAL {result} {
-        # The application has flagged a FATAL error; display it and halt.
-        puts $result
-        exit 1
-    } on error {result eopt} {
-        puts "Unexpected error: $result"
-        puts "([dict get $eopt -errorcode])\n"
-        puts [dict get $eopt -errorinfo]
     }
 }
 
