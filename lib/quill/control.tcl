@@ -20,6 +20,7 @@ namespace eval ::quill:: {
 	namespace export \
 		assert       \
         codecatch    \
+        foroption    \
         precond      \
         require
 }
@@ -100,4 +101,56 @@ proc ::quill::require {expression message {errorCode INVALID}} {
     }
 
     throw $errorCode $message
+}
+
+
+# foroption optvar listvar ?-all? body
+#
+# Iterates over the options in the named listvar, removing
+# each option in turn using [lshift] and assigning it to the
+# named optvar.  The body is a set of [switch] cases, one for each
+# valid option (the default case is handled automatically).
+# The command throws INVALID if it comes to an option it doesn't
+# recognize.  The cases should retrieve option values using
+# [lshift] on the listvar.
+#
+# By default, foroption stops on the first token it finds that
+# doesn't begin with a hyphen "-".  If -all is given, it expects
+# to consume the entire contents of the listvar, and throws 
+# INVALID if it cannot.
+#
+# When foroption returns, the listvar will contain any remaining
+# arguments.
+
+proc ::quill::foroption {optvar listvar allflag {body ""}} {
+    upvar $optvar opt
+    upvar $listvar arglist
+
+    # FIRST, process all or some?
+    if {$body eq ""} {
+        set body $allflag
+        set all 0
+    } else {
+        if {$allflag ne "-all"} {
+            error "Unexpected option: \"$allflag\""
+        }
+
+        set all 1
+    }
+
+    # NEXT, set up the switch command
+    set switchcmd [format {
+        switch -exact -- $%s {
+            %s
+            default { throw INVALID "Unknown option: \"$%s\"" }
+        }
+    } $optvar $body $optvar]
+
+    while {
+        [llength $arglist] > 0 &&
+        ($all || [string index [lindex $arglist 0] 0] eq "-")
+    } {
+        set opt [lshift arglist]
+        uplevel 1 $switchcmd
+    }
 }

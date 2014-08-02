@@ -22,6 +22,8 @@ namespace import ::tcltest::test
 #-------------------------------------------------------------------------
 # Load the package to be tested
 
+# or source ../../lib/quill/pkgModules.tcl
+package prefer latest
 package require quill
 namespace import ::quill::*
 
@@ -54,6 +56,87 @@ test codecatch-1.2 {script fails} -body {
         throw FAILURE "Simulated error"
     }
 } -result {FAILURE {Simulated error}}
+
+#-------------------------------------------------------------------------
+# foroption
+
+test foroption-1.1 {no args} -body {
+    set argv ""
+    set test 0
+    foroption opt argv {
+        -test { set test 1 }
+    }
+
+    list $test $argv
+} -result {0 {}}
+
+test foroption-1.2 {no options} -body {
+    set argv {this that}
+    set test 0
+    foroption opt argv {
+        -test { set test 1 }
+    }
+
+    list $test $argv
+} -result {0 {this that}}
+
+test foroption-1.3 {one option} -body {
+    set argv {-test this that}
+    set test 0
+    foroption opt argv {
+        -test { set test 1 }
+    }
+
+    list $test $argv
+} -result {1 {this that}}
+
+test foroption-1.3 {two options with lshift} -body {
+    set argv {-test -num 5 this that}
+    set test 0
+    set num 0
+    foroption opt argv {
+        -test { set test 1            }
+        -num  { set num [lshift argv] }
+    }
+
+    list $test $num $argv
+} -result {1 5 {this that}}
+
+test foroption-1.4 {-all, successfully} -body {
+    set argv {-test -num 5}
+    set test 0
+    set num 0
+    foroption opt argv -all {
+        -test { set test 1            }
+        -num  { set num [lshift argv] }
+    }
+
+    list $test $num $argv
+} -result {1 5 {}}
+
+test foroption-2.1 {unknown option} -body {
+    set argv {-test -num 5 this that}
+    set test 0
+    set num 0
+
+    codecatch {
+        foroption opt argv {
+            -test { set test 1 }
+        }
+    }
+} -result {INVALID {Unknown option: "-num"}}
+
+test foroption-2.2 {-all, unsuccessfully} -body {
+    set argv {-test this that}
+    set test 0
+    set num 0
+
+    codecatch {
+        foroption opt argv -all {
+            -test { set test 1 }
+        }
+    }
+} -result {INVALID {Unknown option: "this"}}
 
 #-------------------------------------------------------------------------
 # precond

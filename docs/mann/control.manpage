@@ -1,4 +1,4 @@
-<manpage control(n) "Control Strucutres" quill(n)>
+<manpage control(n) "Control Structures" quill(n)>
 
 <section SYNOPSIS>
 
@@ -55,6 +55,38 @@ Otherwise, returns a list of "ok" and the result string.<p>
 
 The primary use for this command is in tests that verify the 
 error code.<p>
+
+<defitem foroption {foroption <i optvar listvar> ?-all? <i body>}>
+
+This command iterates over the options in a list of arguments, extracting
+the options from the named <i listvar> and assigning them to the 
+named <i optvar>.  The <i body> is a list of 'switch' cases, one for each
+valid option.  To retrieve an option's value, the relevant switch case
+can use <xref listutils(n)#lshift> on the <i listvar>.<p>
+
+By default, <xref #foroption> extracts options until it reaches the first
+item in the <i listvar> that doesn't begin with a hyphen ("-"). 
+When it returns, the <i listvar> contains any remaining arguments.<p>
+
+If the <b -all> option is given, <xref #foroption> expects the list to 
+contain only options and their values, and will throw an error if the 
+list is not empty when it is complete.<p>
+
+The command throws <b INVALID> when it finds an unknown option.<p>
+
+For example,
+
+<pre>
+array set opts {
+    -flag 0
+    -num  0
+}
+
+foroption opt argv -all {
+    -flag { set opts($opt) 1             }
+    -num  { set opts($opt) [lshift argv] }
+}
+</pre>
 
 <defitem precond {precond <i>expression message</i>}>
 
