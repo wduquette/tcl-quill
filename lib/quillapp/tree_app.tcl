@@ -58,9 +58,16 @@ proc ::quillapp::appTree {project appname} {
 # Default project.quill file for an "app" project.
 
 maptemplate ::quillapp::projectQuill {project appname} {
+    set tclversion [plat versionof tclsh]
+
+    if {$tclversion eq ""} {
+        set tclversion $::tcl_version
+    }
+} {
     project %project 0.0a0 "Your project description"
     homepage http://home.page.url
     app %appname
+    require Tcl %tclversion
 }
 
 # projectREADME
@@ -88,94 +95,94 @@ maptemplate ::quillapp::projectDocsIndex {} {
     <title>%project Documentation</title>
     <style>
     <!--
-            /* Links should be displayed with no underline */
-            :link {
-                text-decoration: none;
-            }
+        /* Links should be displayed with no underline */
+        :link {
+            text-decoration: none;
+        }
 
-            :visited {
-                text-decoration: none;
-            }
+        :visited {
+            text-decoration: none;
+        }
 
-            /* Body is black on white, and indented. */
-            body {
-                color: black;
-                background-color: white;
-                margin-left: 0.5in;
-                margin-right: 0.5in;
-            }
+        /* Body is black on white, and indented. */
+        body {
+            color: black;
+            background-color: white;
+            margin-left: 0.5in;
+            margin-right: 0.5in;
+        }
 
-            /* For the page header */
-            h1.header {
-                position: relative;
-                left: -0.4in;
-                background-color: red;
-                color: black;
-            }
+        /* For the page header */
+        h1.header {
+            position: relative;
+            left: -0.4in;
+            background-color: red;
+            color: black;
+        }
 
-            /* The title and section headers are outdented. */
-            h1 {
-                position: relative;
-                left: -0.4in;
-            }
+        /* The title and section headers are outdented. */
+        h1 {
+            position: relative;
+            left: -0.4in;
+        }
 
-            h2 {
-                position: relative;
-                left: -0.4in;
-            }
+        h2 {
+            position: relative;
+            left: -0.4in;
+        }
 
-            /* Preformatted text has a special background */
-            pre {
-                border: 1px solid blue;
-                background-color: #FFFF66;
-                padding: 2px;
-            }
+        /* Preformatted text has a special background */
+        pre {
+            border: 1px solid blue;
+            background-color: #FFFF66;
+            padding: 2px;
+        }
 
-            /* Use for indenting */
-            .indent0 { }
-            .indent1 {
-                position: relative;
-                left: 0.4in
-            }
-            .indent2 {
-                position: relative;
-                left: 0.8in
-            }
-            .indent3 {
-                position: relative;
-                left: 1.2in
-            }
-            .indent4 {
-                position: relative;
-                left: 1.6in
-            }
-            .indent5 {
-                position: relative;
-                left: 2.0in
-            }
-            .indent6 {
-                position: relative;
-                left: 2.4in
-            }
-            .indent7 {
-                position: relative;
-                left: 2.8in
-            }
-            .indent8 {
-                position: relative;
-                left: 3.2in
-            }
-            .indent9 {
-                position: relative;
-                left: 3.6in
-            }
+        /* Use for indenting */
+        .indent0 { }
+        .indent1 {
+            position: relative;
+            left: 0.4in
+        }
+        .indent2 {
+            position: relative;
+            left: 0.8in
+        }
+        .indent3 {
+            position: relative;
+            left: 1.2in
+        }
+        .indent4 {
+            position: relative;
+            left: 1.6in
+        }
+        .indent5 {
+            position: relative;
+            left: 2.0in
+        }
+        .indent6 {
+            position: relative;
+            left: 2.4in
+        }
+        .indent7 {
+            position: relative;
+            left: 2.8in
+        }
+        .indent8 {
+            position: relative;
+            left: 3.2in
+        }
+        .indent9 {
+            position: relative;
+            left: 3.6in
+        }
 
-            /* Outdent to margin */
-            .outdent {
-                position: relative;
-                left: -0.4in;
-            }
-        -->
+        /* Outdent to margin */
+        .outdent {
+            position: relative;
+            left: -0.4in;
+        }
+    -->
     </style>
     </head>
     <body>

@@ -7,23 +7,28 @@ This is the official list of work to be done.
 * Write foropt loop.
 * Use "plat pathto $tool -require" whenever getting tools.
 * Grab parmset(n) and simplify, and use for "quill config".
-* Use "catch" and "error" rather than "try" and "throw" in
-  the apploader template.
-* Add "tcl" requirement in project.quill; defaults to 8.6.
-* Use "tcl" requirement version instead of $tcl_version in 
-  app loader template.
-* Support for other versions of TCL/TK.
-  * I.e, use Quill for Tcl 8.5 projects.
+* Add check on "teacup" executable for build 298288 or later.
+* Move gentree to misc, and probably rename.
+* Move helpers list from version tool to 'quill helpers' or something.
+* Check "info(gottcl)" in appropriate spots, if it seems necessary.
+* Must update required Tcl version in existing apploader scripts.
 
-# Possibilities For Quill 0.2.0
+# Requirements For Quill 0.2.0
+
+* Support for other versions of TCL/TK.
+  * I.e, use Quill for Tcl 8.4/8.5 projects.
+  * Support cross-platform startpack builds
+* Update Tools
+  * quill new
+    * Create library tree
+
+# Possibilities for Quill 0.2.0
 
 * Automate building a release .zip or .tar.gz file
 * New Tools
   * quill add
     * Add apps and provides to existing project
 * Update Tools
-  * quill new
-    * Create library tree
   * quill build
     * Support icons and .app builds
 * Support for C/C++ library packages

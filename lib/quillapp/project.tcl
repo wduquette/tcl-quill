@@ -41,10 +41,12 @@ snit::type ::quillapp::project {
 	# intree - 1 if we're in a project tree, 0 if not.  Set by
 	#          [project findroot]
 	# root   - The project tree's root directory
+	# gottcl - 1 if we have a valid tclsh, and 0 otherwise.
 
 	typevariable info -array {
 		intree ""
 		root   ""
+		gottcl 0
 	}
 
 	# meta - Project metadata array for the project being managed.
@@ -61,6 +63,7 @@ snit::type ::quillapp::project {
 	# gui-$app      - Flag, 0 or 1: does package require Tk?
 	#
 	# requires      - List of required package names
+	# version-$req  - The required version
 	# local-$req    - Flag, 0 or 1: is package local?
 	#
 	# provides      - List of names of exported library packages.
@@ -73,7 +76,8 @@ snit::type ::quillapp::project {
 		url         "http://my.home.page"
 		apps        {}
 		provides    {}
-		requires    {}
+		requires    {Tcl}
+		version-Tcl 8.6
 	}
 
 	#---------------------------------------------------------------------
@@ -333,6 +337,64 @@ snit::type ::quillapp::project {
 	}
 
 	#---------------------------------------------------------------------
+	# Sanity Check
+
+	# check
+	#
+	# Does checks of the environment vs. project.quill.
+	# Sets the following info() variables:
+	#
+	#    gottcl
+
+	typemethod check {} {
+		set info(gottcl) 0
+
+		# FIRST, do we have a tclsh?
+		if {[plat pathto tclsh] eq ""} {
+			puts [outdent {
+				WARNING: Quill cannot find the platform tclsh; it isn't
+				on the PATH.  Please install ActiveTcl, or identify the
+				correct tclsh using 'quill config helper.tclsh'.
+			}]
+
+			puts ""
+
+			return
+		}
+
+		set ver    [plat versionof tclsh]
+		set reqver [project require version Tcl]
+
+		if {$ver eq ""} {
+			puts [outdent {
+				WARNING: Quill cannot identify the version of the 
+				current tclsh.  This implies that Quill cannot execute
+				it.  Please verify that the tclsh is working properly.
+			}]
+
+			puts ""
+
+			return
+		} 
+
+		if {![package vsatisfies $ver $reqver]} {
+			puts [outdent "
+				WARNING: Your project requires Tcl $reqver, but the current
+				tclsh is for Tcl $ver.  Please change your requirement,
+				or install the desired version of Tcl.
+			"]
+
+			puts ""
+
+			return
+		}
+
+		set info(gottcl) 1
+
+		return 
+	}
+
+	#---------------------------------------------------------------------
 	# Loading the Project file
 
 	# loadinfo
@@ -383,6 +445,10 @@ snit::type ::quillapp::project {
 		}
 
 		$interp destroy
+
+		# NEXT, check status
+
+		project check
 	}
 
 
