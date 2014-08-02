@@ -45,6 +45,12 @@ snit::type ::quillapp::plat {
         teapot ""
     }
 
+    # versionof - Array of helper tool version numbers.
+    typevariable versionof -array {
+        tclsh  ""
+        teacup ""
+    }
+
 
     #---------------------------------------------------------------------
     # Public Typemethods
@@ -122,7 +128,7 @@ snit::type ::quillapp::plat {
     # Returns the path to the tclsh.
 
     typemethod {GetPathTo tclsh} {} {
-        return [file normalize [info nameofexecutable]]
+        return [FindOnPath tclsh]
     }
 
     # GetPathTo tkcon
@@ -130,7 +136,7 @@ snit::type ::quillapp::plat {
     # Returns the path to the tkcon executable.
 
     typemethod {GetPathTo tkcon} {} {
-        set shelldir [file dirname [info nameofexecutable]]
+        set shelldir [file dirname [$type pathto tclsh]]
 
         switch [$type id] {
             linux -
@@ -153,7 +159,7 @@ snit::type ::quillapp::plat {
     # Returns the path to the teacup executable.
 
     typemethod {GetPathTo teacup} {} {
-        set shelldir [file dirname [info nameofexecutable]]
+        set shelldir [file dirname [$type pathto tclsh]]
         set path [file join $shelldir teacup]
 
         return [file normalize $path]
@@ -302,6 +308,92 @@ snit::type ::quillapp::plat {
         }
 
         return [file normalize [exec $teacup default]]
+    }
+
+    #---------------------------------------------------------------------
+    # Version Finding for Tools
+
+    # versionof tool ?-force?
+    #
+    # tool   - Name of a tool we use.
+    #
+    # Retrieves the tool's version number, build number, or what have you.
+
+    typemethod versionof {tool args} {
+        if {$tool ni [array names versionof]} {
+            return ""
+        }
+
+        set force   0
+
+        while {[llength $args] > 0} {
+            set opt [lshift args]
+            switch -exact -- $opt {
+                -force   { set force 1   }
+                default  { error "Unknown option: \"$opt\"" }
+            }
+        }
+
+        if {$force} {
+            set versionof($tool) ""
+        }
+
+
+        if {$versionof($tool) eq ""} {
+            set versionof($tool) [$type GetVersionOf $tool]
+        }
+
+        return $versionof($tool)
+    }
+
+    # GetVersionOf tclsh
+    #
+    # Retrieves the tclsh version (e.g., info patchlevel).
+
+    typemethod {GetVersionOf tclsh} {} {
+        # FIRST, get the tclsh
+        set tclsh [$type pathto tclsh]
+
+        if {$tclsh eq ""} {
+            return ""
+        }
+
+        # NEXT, create a script to query it.
+        set query [project root .quill query.tcl]
+        writefile $query [outdent {
+            puts [info patchlevel]
+        }]
+
+        # NEXT, query the shell.
+        try {
+            set result [string trim [exec $tclsh $query]]
+        } on error {result} {
+            set result ""
+        }
+
+        return $result
+    }
+
+    # GetVersionOf teacup
+    #
+    # Retrieves the teacup version.
+
+    typemethod {GetVersionOf teacup} {} {
+        # FIRST, get the teacup
+        set teacup [$type pathto teacup]
+
+        if {$teacup eq ""} {
+            return ""
+        }
+
+        # NEXT, query the teacup.
+        try {
+            set result [string trim [exec $teacup version]]
+        } on error {result} {
+            set result ""
+        }
+
+        return $result
     }
 
     #---------------------------------------------------------------------

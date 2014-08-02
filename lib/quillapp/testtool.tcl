@@ -121,7 +121,7 @@ snit::type ::quillapp::testtool {
 		# NEXT, run the tests.
 		try {
 			cd [project root test $target]
-			exec [info nameofexecutable] $fname {*}$optlist \
+			exec [plat pathto tclsh] $fname {*}$optlist \
 				>@ stdout 2>@ stderr
 		} on error {result} {
 			throw FATAL "Error running tests: $result"

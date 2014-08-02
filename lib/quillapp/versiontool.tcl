@@ -79,19 +79,22 @@ snit::type ::quillapp::versiontool {
 
 	# DisplayPath tool
 	#
-	# tool - The tool name
+	# tool    - The tool name
 	#
-	# Displays the path, and whether the tool can be found or not.
+	# Displays the path and the tool's version (if known).
 
 	proc DisplayPath {tool} {
 		set path [plat pathto $tool]
+		set ver  [plat versionof $tool]
 
-		if {[file isfile $path]} {
-			set flag ""
-		} else {
+		if {![file isfile $path]} {
 			set flag " (NOT FOUND)"
+		} elseif {$ver ne ""} {
+			set flag " ($ver)"
+		} else {
+			set flag ""
 		}
-
+		
 		puts [format "    %-12s %s%s" $tool $path $flag]
 	}
 }

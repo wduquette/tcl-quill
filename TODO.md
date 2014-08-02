@@ -2,6 +2,15 @@
 
 This is the official list of work to be done.
 
+# Next
+
+* Write foropt loop.
+* Use system tclsh, so that Quill can be built as a starpack.
+* Quill now retrieves the Tclsh from the path, and uses that.
+* Use "plat pathto $tool -require" whenever getting tools.
+* Support for other versions of TCL/TK.
+  * I.e, use Quill for Tcl 8.5 projects.
+
 # Possibilities For Quill 0.2.0
 
 * Automate building a release .zip or .tar.gz file

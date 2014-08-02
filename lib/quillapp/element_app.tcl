@@ -49,6 +49,7 @@ maptemplate ::quillapp::appLoader {appname} {
     set project     [project name]
     set description [project description]
     set pkgname     ${appname}app
+    # TODO: Should be Tcl requirement from project.quill.
     set tclversion  [set ::tcl_version]
 } {
     #!/bin/sh
