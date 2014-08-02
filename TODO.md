@@ -2,6 +2,20 @@
 
 This is the official list of work to be done.
 
+# Possibilities For Quill 0.2.0
+
+* Automate building a release .zip or .tar.gz file
+* New Tools
+  * quill add
+    * Add apps and provides to existing project
+* Update Tools
+  * quill new
+    * Create library tree
+  * quill build
+    * Support icons and .app builds
+* Support for C/C++ library packages
+
+
 ## Needed Tests
 
 * quill(n)
@@ -14,8 +28,6 @@ This is the official list of work to be done.
 Quill's existing tools should provide the following additional features:
 
 * quill build
-  * Build "provide" libs as teapot .zips
-  * Build a specific target
   * Build as ".app" on OSX.
   * Include icons in GUI apps
   * Support non-TDK build methods.
@@ -26,9 +38,6 @@ Quill's existing tools should provide the following additional features:
   * Translate .md files to HTML?
   * Provide a format for non-manpage docs?
   * Provide other back-ends for manpage(5).
-
-* quill install
-  * Install provided libs into local teapot
 
 * quill new
   * Create "lib" tree
