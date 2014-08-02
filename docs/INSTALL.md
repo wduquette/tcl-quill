@@ -2,8 +2,8 @@
 
 ## Dependencies
 
-In principle, Quill could be used with any installation of Tcl 8.6.  At 
-present, however, Quill requires ActiveTcl 8.6.1 or later (because of
+In principle, Quill could be used with any installation of Tcl 8.4 or later.
+At present, however, Quill requires some version of ActiveTcl, because of
 ActiveTcl's support for "teapot" repositories).
 
 Further, in order to build executables and libraries for deployment 
@@ -14,7 +14,7 @@ in principle support FreeWrap.
 
 ## Installation
 
-1. Install ActiveTcl 8.6.1 or later on your development machine.  Make
+1. Install ActiveTcl 8.4 or later on your development machine.  Make
    sure that `tclsh` at your command shell of choice invokes
    this version of Tcl.
 
@@ -23,14 +23,15 @@ in principle support FreeWrap.
    are on your PATH.  (Note: Quill can do quite a lot for you even
    without TDK installed.)
 
-3. Download the Quill distribution.  It contains the following:
+3. Download the Quill distribution for your platform.  It contains the 
+   following:
 
    * `README.md`
-   * `bin\quill.kit`
+   * `bin\quill` of `bin\quill.exe`
    * `docs\index.html`
    * `docs\...`
 
-4. Copy `quill.kit` to your ~/bin directory as `quill`, and make sure it
+4. Copy `bin\quill` to your ~/bin directory (or wherever), and make sure it
    is marked executable.
 
 5. Put the documentation somewhere where you can find it.

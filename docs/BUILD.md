@@ -37,7 +37,7 @@ $ ./bin/quill.tcl version
 ... (Displays version and helper tools)
 ```
 
-Next, verify that your local teapot is setup properly.  It needs to be
+Next, verify that your local teapot is set up properly.  It needs to be
 writable by the user.  To find out, use `quill.tcl teapot`.
 
 ```
@@ -45,8 +45,7 @@ $ ./bin/quill.tcl teapot
 ... (Displays status of local teapot)
 ```
 
-If it isn't writable, follow Quill's directions to make it so.  You might
-also wish to obtain the latest `teacup` executable:
+If it isn't writable, follow Quill's directions to make it so.  You probably also want to obtain the latest `teacup` executable:
 
 ```
 $ teacup update-self
@@ -71,7 +70,8 @@ If necessary, you can acquire the required packages as follows:
 $ ./bin/quill.tcl deps update
 ```
 
-Next, you are ready to build Quill as an "uberkit":
+Next, you are ready to build Quill as a standalone executable for your 
+platform
 
 ```
 $ ./bin/quill.tcl build
@@ -80,14 +80,9 @@ $ ./bin/quill.tcl build
 And then, it can be installed for use on your system:
 
 ```
-$ ./bin/quill.tcl install
+$ ./bin/quill install
 ```
 
-This copies `./bin/quill.kit` to `~/bin/quill` and marks it executable.
-If you are on Windows and are not using a `bash` shell, you may need to
-define a `quill.bat` file to invoke it.
+This copies `./bin/quill` (or `./bin/quill.exe`) to `~/bin/quill`, which 
+it assumes is on the PATH.
 
-**NOTE:** *Always* use `./bin/quill.tcl` to install any `quill.kit` you
-have built yourself.  Do to the nature of Starkits and virtual file systems,
-using either `./bin/quill.kit install` or `~/bin/quill install` to install
-Quill itself will result in possibly messy failures.
