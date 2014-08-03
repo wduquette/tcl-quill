@@ -75,7 +75,9 @@ maptemplate ::quillapp::appLoader {appname} {
 
     set auto_path [linsert $auto_path 0 $libdir]
 
+    # -quill-tcl-begin
     package require Tcl %tclversion
+    # -quill-tcl-end
 
     # quillinfo(n) is a generated package containing this project's 
     # metadata.
@@ -83,7 +85,9 @@ maptemplate ::quillapp::appLoader {appname} {
 
     # If it's a gui, load Tk.
     if {[quillinfo isgui %appname]} {
+    # -quill-tk-begin
         package require Tk %tclversion
+    # -quill-tk-end
     }
 
     # %pkgname(n) is the package containing the bulk of the 

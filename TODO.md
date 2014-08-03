@@ -10,7 +10,8 @@ This is the official list of work to be done.
 * Move gentree to misc, and probably rename.
 * Move helpers list from version tool to 'quill helpers' or something.
 * Check "info(gottcl)" in appropriate spots, if it seems necessary.
-* Must update required Tcl version in existing apploader scripts.
+* quillapp(n) doesn't really need a namespace.  App packages don't
+  really need a namespace.
 
 # Requirements For Quill 0.2.0
 

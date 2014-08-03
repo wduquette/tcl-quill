@@ -18,7 +18,10 @@
 
 namespace eval ::quillapp:: {
 	namespace export \
-		checkargs
+		checkargs    \
+        tagsplit     \
+        tagreplace   \
+        prepare
 }
 
 #-------------------------------------------------------------------------
@@ -96,6 +99,29 @@ proc ::quillapp::tagsplit {tag text} {
         return [list $before $block $after]
     }
 }
+
+# tagreplace tag text newblock
+#
+# tag       - A "-quill-$tag-begin/end" tag
+# text      - A text string possibly containing the tag.
+# newblock  - New text to replace the tagged block.
+#
+# Replaces the tagged block with the new block text, and returns
+# the result.
+
+proc ::quillapp::tagreplace {tag text newblock} {
+    set result [tagsplit $tag $text]
+
+    # No such tag.  Return the text unchange.
+    if {[llength $result] == 0} {
+        return $text
+    } 
+
+    lassign $result before block after
+
+    return "[join $before \n]\n$newblock\n[join $after \n]"
+}
+
 
 # prepare var options...
 #

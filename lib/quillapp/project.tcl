@@ -581,12 +581,44 @@ snit::type ::quillapp::project {
 			element quillinfo
 		}
 
+		# NEXT, update Tcl/Tk versions in apploader scripts.
+		foreach app [project app names] {
+			UpdateAppTclTk $app
+		}
+
 		# NEXT, update each lib.
 		foreach libdir [project globdirs lib *] {
 			UpdatePkgIfneeded $libdir
 			UpdatePkgProvide $libdir
 			UpdatePkgRequire $libdir
 		}
+	}
+
+	# UpdateAppTclTk app
+	#
+	# app    - A project application name
+	#
+	# Updates the Tcl/Tk package requires in the app's loader script
+	# to the version required by the project.
+
+	proc UpdateAppTclTk {app} {
+		# FIRST, get the file to update
+		set fname [project app loader $app]
+
+		# NEXT, if there isn't one, we don't need to update it.
+		if {![file isfile $fname]} {
+			return
+		}
+
+		# NEXT, get its content and update it.
+		set text [readfile $fname]
+		set tclText "package require Tcl [project require version Tcl]"
+		set tkText  "package require Tk [project require version Tcl]"
+
+		set text [tagreplace tcl $text $tclText]
+		set text [tagreplace tk  $text $tkText]
+
+		writefile $fname $text
 	}
 
 	# UpdatePkgIfneeded libdir

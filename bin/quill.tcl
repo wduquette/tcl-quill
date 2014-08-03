@@ -33,24 +33,20 @@ package require quillapp
 namespace import quillapp::*
 
 #-------------------------------------------------------------------------
-# Main Routine
-
-
-#-------------------------------------------------------------------------
 # Invoke the application
 
 try {
-	# Skip main if we're running interactively; this allows for 
-	# interactive testing.
-	if {!$tcl_interactive} {
-		main $argv
-	}
+    # Skip main if we're running interactively; this allows for 
+    # interactive testing.
+    if {!$tcl_interactive} {
+        main $argv
+    }
 } trap FATAL {result} {
-	# The application has flagged a FATAL error; display it and halt.
-	puts $result
-	exit 1
+    # The application has flagged a FATAL error; display it and halt.
+    puts $result
+    exit 1
 } on error {result eopt} {
-	puts "Unexpected error: $result"
-	puts "([dict get $eopt -errorcode])\n"
-	puts [dict get $eopt -errorinfo]
+    puts "Unexpected error: $result"
+    puts "([dict get $eopt -errorcode])\n"
+    puts [dict get $eopt -errorinfo]
 }
