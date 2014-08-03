@@ -22,11 +22,11 @@ namespace import ::tcltest::test
 #-------------------------------------------------------------------------
 # Load the package to be tested
 
-package require quill
+source ../../lib/quill/pkgModules.tcl
 namespace import ::quill::*
 
 
-#---------------------------------------------------------------------
+#-------------------------------------------------------------------------
 # template
 
 test template-1.1 {constant template} -body {

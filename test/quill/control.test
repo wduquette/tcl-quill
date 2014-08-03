@@ -22,9 +22,7 @@ namespace import ::tcltest::test
 #-------------------------------------------------------------------------
 # Load the package to be tested
 
-# or source ../../lib/quill/pkgModules.tcl
-package prefer latest
-package require quill
+source ../../lib/quill/pkgModules.tcl
 namespace import ::quill::*
 
 

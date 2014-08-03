@@ -8,9 +8,9 @@ This is the official list of work to be done.
 * quill test is loading quill(n) from teapot instead of the local copy.
   * Change the test template so that it loads the package by sourcing
     its pkgModules.tcl file directly.
-  * OR use 'package prefer latest'
-  * Not sure which is better, but 'package prefer latest' might be
-    better when making changes to two packages simultaneously.
+  * If a package includes another provided package, as when quillapp
+    requires quill, we should be OK; quillapp's package require gets 
+    updated with the current development version.
 * Use "plat pathto $tool -require" whenever getting tools.
 * Grab parmset(n) and simplify, and use for "quill config".
 * Add check on "teacup" executable for build 298288 or later.

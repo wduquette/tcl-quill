@@ -269,7 +269,7 @@ maptemplate ::quillapp::testFile {package} {
     #-------------------------------------------------------------------------
     # Load the package to be tested
 
-    package require %package
+    source ../../lib/%package/pkgModules.tcl
     namespace import ::%package::*
 
     #-------------------------------------------------------------------------
@@ -277,7 +277,7 @@ maptemplate ::quillapp::testFile {package} {
 
     # TBD
 
-    #-----------------------------------------------------------------------
+    #-------------------------------------------------------------------------
     # dummy
 
     test dummy-1.1 {dummy test} -body {
