@@ -676,7 +676,9 @@ snit::type ::quillapp::project {
 	# libdir    - A project lib directory
 	#
 	# Looks for the pkgModules file and updates the 
-	# "package require" block.
+	# "package require" block.  Versions are set to the required version
+	# for packages "require"'d in project.quill, and to the project version
+	# for packages "provide"'d in project.quill. 
 
 	proc UpdatePkgRequire {libdir} {
 		# FIRST, get the file to update
@@ -709,6 +711,8 @@ snit::type ::quillapp::project {
 				if {$package in [project require names]} {
 					set ver [project require version $package]
 					lappend nblock "package require $package $ver"
+				} elseif {$package in [project provide names]} {
+					lappend nblock "package require $package [project version]"
 				} else {
 					puts [outdent "
 						Warning: $pkgModules 
