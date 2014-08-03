@@ -1,0 +1,613 @@
+# -*-Tcl-*-
+#---------------------------------------------------------------------
+# TITLE:
+#    parmset.test
+#
+# AUTHOR:
+#    Will Duquette
+#
+# DESCRIPTION:
+#    Test cases for parmset(n).
+
+#---------------------------------------------------------------------
+# Load the tcltest package
+
+if {[lsearch [namespace children] ::tcltest] == -1} {
+    package require tcltest 2.3
+    eval ::tcltest::configure $argv
+}
+
+namespace import ::tcltest::test
+
+#-------------------------------------------------------------------------
+# Load the package to be tested
+
+source ../../lib/quill/pkgModules.tcl
+namespace import ::quill::*
+
+#-----------------------------------------------------------------------
+# Test Routines
+
+namespace eval ::test:: {
+    variable names  {}
+
+    proc Notify {set name} {
+        variable names
+
+        if {$name ne ""} {
+            lappend names $set $name
+        } else {
+            lappend names $set *
+        }
+    }
+}
+
+proc bprint {text} { return "\n$text" }
+
+#-----------------------------------------------------------------------
+# define
+
+test define-1.1 {Defining a parameter adds its name to the list} -setup {
+    set ps [parmset %AUTO%]
+} -body {
+    $ps define myparm snit::boolean yes
+
+    $ps names
+} -cleanup {
+    $ps destroy
+} -result {myparm}
+
+test define-1.2 {Can redefine a parameter} -setup {
+    set ps [parmset %AUTO%]
+} -body {
+    $ps define myparm snit::boolean yes
+    $ps define myparm snit::integer 5
+
+    list [$ps type myparm] [$ps getdefault myparm]
+} -cleanup {
+    $ps destroy
+} -result {snit::integer 5}
+
+test define-2.1 {Parameter names can't contain whitespace} -setup {
+    set ps [parmset %AUTO%]
+} -body {
+    $ps define "my parm" snit::boolean yes
+} -returnCodes {
+    error
+} -cleanup {
+    $ps destroy
+} -result {Parameter name contains whitespace: "my parm"}
+
+test define-2.2 {Default values must be valid} -setup {
+    set ps [parmset %AUTO%]
+} -body {
+    $ps define myparm snit::boolean foo
+} -returnCodes {
+    error
+} -cleanup {
+    $ps destroy
+} -result {Invalid default value, parm 'myparm': invalid boolean "foo", should be one of: 1, 0, true, false, yes, no, on, off}
+
+#-------------------------------------------------------------------
+# exists
+
+test exist-1.1 {no such parameter} -setup {
+    set ps [parmset %AUTO%]
+} -body {
+    $ps exists nonesuch
+} -cleanup {
+    $ps destroy
+} -result {0}
+
+test exist-1.2 {parameter exists} -setup {
+    set ps [parmset %AUTO%]
+    $ps define myparm snit::boolean yes
+} -body {
+    $ps exists myparm
+} -cleanup {
+    $ps destroy
+} -result {1}
+
+#-------------------------------------------------------------------
+# type
+
+test type-1.1 {Returns a parameter's type} -setup {
+    set ps [parmset %AUTO%]
+
+    $ps define myparm snit::boolean yes
+} -body {
+    $ps type myparm
+} -cleanup {
+    $ps destroy
+} -result {snit::boolean}
+
+test type-2.1 {Error if parameter not known} -setup {
+    set ps [parmset %AUTO%]
+} -body {
+    $ps type nonesuch
+} -returnCodes {
+    error
+} -cleanup {
+    $ps destroy
+} -result {No such parameter: nonesuch}
+
+#-------------------------------------------------------------------
+# getdefault
+
+test getdefault-1.1 {Returns a parameter's default value} -setup {
+    set ps [parmset %AUTO%]
+
+    $ps define myparm snit::boolean yes
+    $ps set myparm no
+} -body {
+    $ps getdefault myparm
+} -cleanup {
+    $ps destroy
+} -result {yes}
+
+test getdefault-2.1 {Error if parameter not known} -setup {
+    set ps [parmset %AUTO%]
+} -body {
+    $ps getdefault nonesuch
+} -returnCodes {
+    error
+} -cleanup {
+    $ps destroy
+} -result {No such parameter: nonesuch}
+
+#-----------------------------------------------------------------------
+# names
+
+test names-1.1 {By default, no parameters} -setup {
+    set ps [parmset %AUTO%]
+} -body {
+    $ps names 
+} -cleanup {
+    $ps destroy
+} -result {}
+
+test names-1.2 {Names are listed in dictionary order} -setup {
+    set ps [parmset %AUTO%]
+    
+    $ps define Aab snit::boolean yes
+    $ps define aaa snit::boolean yes
+    $ps define aAd snit::boolean yes
+    $ps define AAC snit::boolean yes
+} -body {
+    $ps names 
+} -cleanup {
+    $ps destroy
+} -result {aaa Aab AAC aAd}
+
+#-------------------------------------------------------------------
+# get
+
+test get-1.1 {Returns current value} -setup {
+    set ps [parmset %AUTO%]
+    $ps define aaa snit::integer 15
+    $ps define bbb snit::boolean no
+} -body {
+    list [$ps get aaa] [$ps get bbb]
+} -cleanup {
+    $ps destroy
+} -result {15 no}
+
+test get-2.1 {Empty string if parameter not known} -setup {
+    set ps [parmset %AUTO%]
+} -body {
+    $ps get nonesuch
+} -cleanup {
+    $ps destroy
+} -result {}
+
+#-------------------------------------------------------------------
+# set
+
+test set-1.1 {Can set a parameter value} -setup {
+    set ps [parmset %AUTO%]
+    $ps define myparm snit::integer 15
+} -body {
+    set a [$ps get myparm]
+    
+    $ps set myparm 19
+
+    set b [$ps get myparm]
+
+    list $a $b
+} -cleanup {
+    $ps destroy
+} -result {15 19}
+
+test set-2.1 {Error if parameter not known} -setup {
+    set ps [parmset %AUTO%]
+} -body {
+    $ps set nonesuch 15
+} -returnCodes {
+    error
+} -cleanup {
+    $ps destroy
+} -result {No such parameter: nonesuch}
+
+test set-2.2 {Error if value is invalid} -setup {
+    set ps [parmset %AUTO%]
+    $ps define myparm snit::integer 15
+} -body {
+    $ps set myparm bogus
+} -returnCodes {
+    error
+} -cleanup {
+    $ps destroy
+} -result {Parm 'myparm': invalid value "bogus", expected integer}
+
+#-----------------------------------------------------------------------
+# clear
+
+test clear-1.1 {Can clear values} -setup {
+    set ps [parmset %AUTO%]
+    $ps define myparm snit::integer 15
+    $ps set myparm 20
+} -body {
+    $ps clear
+    $ps get myparm
+} -cleanup {
+    $ps destroy
+} -result {15}
+
+
+#-------------------------------------------------------------------
+# list
+
+test list-1.1 {Can list all values} -setup {
+    set ps [parmset %AUTO%]
+    $ps define my.num snit::integer 15
+    $ps define my.text snit::stringtype "A short text string"
+} -body {
+    bprint [$ps list]
+} -cleanup {
+    $ps destroy
+} -result {
+my.num  15
+my.text {A short text string}
+}
+
+test list-1.2 {Can list some values} -setup {
+    set ps [parmset %AUTO%]
+    $ps define my.num   snit::integer    15
+    $ps define my.text  snit::stringtype "A short text string"
+    $ps define your.num snit::integer    20
+} -body {
+    bprint [$ps list my.*]
+} -cleanup {
+    $ps destroy
+} -result {
+my.num  15
+my.text {A short text string}
+}
+
+test list-1.3 {Returns nothing if no values found} -setup {
+    set ps [parmset %AUTO%]
+    $ps define my.num   snit::integer    15
+    $ps define my.text  snit::stringtype "A short text string"
+    $ps define your.num snit::integer    20
+} -body {
+    $ps list her.*
+} -cleanup {
+    $ps destroy
+} -result {}
+
+#-------------------------------------------------------------------
+# save
+
+test save-1.1 {save file to disk} -setup {
+    set ps [parmset %AUTO%]
+    $ps define my.num   snit::integer    15
+    $ps define my.text  snit::stringtype "A short text string"
+    $ps define your.num snit::integer    20
+
+    $ps set my.num   1
+    $ps set my.text  howdy
+    $ps set your.num 2
+} -body {
+    $ps save "test.save"
+    bprint "[tcltest::viewFile test.save]\n"
+} -cleanup {
+    $ps destroy
+    tcltest::removeFile test.save
+} -match glob -result {
+# Parameter values
+# *
+
+parm my.num   1
+parm my.text  howdy
+parm your.num 2
+
+# End of file
+}
+
+test save-1.2 {default values are not saved} -setup {
+    set ps [parmset %AUTO%]
+    $ps define my.num   snit::integer    15
+    $ps define my.text  snit::stringtype "A short text string"
+    $ps define your.num snit::integer    20
+
+    $ps set my.num   1
+} -body {
+    $ps save "test.save"
+    bprint "[tcltest::viewFile test.save]\n"
+} -cleanup {
+    $ps destroy
+    tcltest::removeFile test.save
+} -match glob -result {
+# Parameter values
+# *
+
+parm my.num   1
+
+# End of file
+}
+
+test save-1.3 {save file to disk with header text} -setup {
+    set ps [parmset %AUTO%]
+    $ps define my.num   snit::integer    15
+    $ps define my.text  snit::stringtype "A short text string"
+    $ps define your.num snit::integer    20
+} -body {
+    $ps save "test.save" "Notebook Preferences"
+    bprint "[tcltest::viewFile test.save]\n"
+} -cleanup {
+    $ps destroy
+    tcltest::removeFile test.save
+} -match glob -result {
+# Notebook Preferences
+# *
+
+
+# End of file
+}
+
+test save-1.4 {save file to disk with multi-line header text} -setup {
+    set ps [parmset %AUTO%]
+    $ps define my.num   snit::integer    15
+    $ps define my.text  snit::stringtype "A short text string"
+    $ps define your.num snit::integer    20
+} -body {
+    $ps save "test.save" "Notebook Preferences\nSaved With Pride!"
+    bprint "[tcltest::viewFile test.save]\n"
+} -cleanup {
+    $ps destroy
+    tcltest::removeFile test.save
+} -match glob -result {
+# Notebook Preferences
+# Saved With Pride!
+# *
+
+
+# End of file
+}
+
+#-------------------------------------------------------------------
+# load
+
+test load-1.1 {load file from disk} -setup {
+    tcltest::makeFile {
+# Notebook Preferences
+# Saved With Pride!
+# *
+
+parm my.num   30
+parm my.text  {A longer text string}
+parm your.num 40
+
+# End of file
+    } test.save
+
+    set ps [parmset %AUTO%]
+    $ps define my.num   snit::integer    15
+    $ps define my.text  snit::stringtype "A short text string"
+    $ps define your.num snit::integer    20
+} -body {
+    $ps load "test.save"
+    bprint [$ps list]
+} -cleanup {
+    $ps destroy
+    tcltest::removeFile test.save
+} -result {
+my.num   30
+my.text  {A longer text string}
+your.num 40
+}
+
+test load-1.2 {Parameters not present in the file get defaults on load} -setup {
+    tcltest::makeFile {
+# Notebook Preferences
+# Saved With Pride!
+# *
+
+parm my.num   30
+parm my.text  {A longer text string}
+
+# End of file
+    } test.save
+
+    set ps [parmset %AUTO%]
+    $ps define my.num   snit::integer    15
+    $ps define my.text  snit::stringtype "A short text string"
+    $ps define your.num snit::integer    20
+} -body {
+    $ps load "test.save"
+    bprint [$ps list]
+} -cleanup {
+    $ps destroy
+    tcltest::removeFile test.save
+} -result {
+my.num   30
+my.text  {A longer text string}
+your.num 20
+}
+
+test load-1.3 {-forgiving flag} -setup {
+    tcltest::makeFile {
+# Notebook Preferences
+# Saved With Pride!
+# *
+
+parm my.num   NotNumeric  ;# Ignored
+parm my.text  "My String"
+parm your.num NotNumeric  ;# Ignored
+
+# Ignored
+parm nonesuch NotAParameter
+
+# End of file
+    } test.save
+
+    set ps [parmset %AUTO%]
+    $ps define my.num   snit::integer    15
+    $ps define my.text  snit::stringtype "A short text string"
+    $ps define your.num snit::integer    20
+} -body {
+    $ps load "test.save" -forgiving
+    bprint [$ps list]
+} -cleanup {
+    $ps destroy
+    tcltest::removeFile test.save
+} -result {
+my.num   15
+my.text  {My String}
+your.num 20
+}
+
+test load-2.1 {missing file} -setup {
+    set ps [parmset %AUTO%]
+} -body {
+    codecatch {
+        $ps load "test.save"
+    }
+} -cleanup {
+    $ps destroy
+} -match glob -result {{PARMSET NOFILE} {No such file: "*/test.save"}}
+
+test load-2.2 {invalid content} -setup {
+    tcltest::makeFile {
+This is not a parmset(n) file.
+    } test.save
+    set ps [parmset %AUTO%]
+} -body {
+    codecatch {
+        $ps load "test.save"
+    }
+} -cleanup {
+    $ps destroy
+    tcltest::removeFile test.save
+} -match glob -result {{PARMSET BADFILE} {Error, invalid command name "This", in "*/test.save"}}
+
+test load-2.3 {invalid parameter value} -setup {
+    tcltest::makeFile {
+parm my.num   30
+parm my.text  {A longer text string}
+parm your.num 401K
+    } test.save
+    set ps [parmset %AUTO%]
+    $ps define my.num   snit::integer    15
+    $ps define my.text  snit::stringtype "A short text string"
+    $ps define your.num snit::integer    20
+
+} -body {
+    codecatch {
+        $ps load "test.save"
+    }
+} -cleanup {
+    $ps destroy
+    tcltest::removeFile test.save
+} -match glob -result {{PARMSET BADFILE} {Error, Parm 'your.num': invalid value "401K", expected integer, in "*/test.save"}}
+
+test load-2.4 {parmset unchanged on load error} -setup {
+    tcltest::makeFile {
+parm my.num   30
+parm my.text  {A longer text string}
+parm your.num 401K
+    } test.save
+
+    set ps [parmset %AUTO%]
+    $ps define my.num   snit::integer    15
+    $ps define my.text  snit::stringtype "A short text string"
+    $ps define your.num snit::integer    20
+} -body {
+    catch {$ps load "test.save"}
+    bprint [$ps list]
+} -cleanup {
+    $ps destroy
+    tcltest::removeFile test.save
+} -result {
+my.num   15
+my.text  {A short text string}
+your.num 20
+}
+
+#-----------------------------------------------------------------------
+# -notifycmd
+
+test notify-1.1 {-notifycmd called when parameter's value is set} -body {
+    set ps [parmset %AUTO% -notifycmd {::test::Notify ps}]
+
+    $ps define my.num  snit::integer    15
+    $ps define my.text snit::stringtype "A short text string"
+
+
+    set ::test::names ""
+
+    $ps set my.num 10
+
+    set ::test::names
+} -cleanup {
+    $ps destroy
+} -result {ps my.num}
+
+test notify-1.2 {-notifycmd called once on "load"} -setup {
+    tcltest::makeFile {
+parm my.num   30
+parm my.text  {A longer text string}
+parm your.num 40
+    } test.save
+
+    set ps [parmset %AUTO%]
+    $ps define my.num   snit::integer    15
+    $ps define my.text  snit::stringtype "A short text string"
+    $ps define your.num snit::integer    20
+} -body {
+    $ps configure -notifycmd {::test::Notify ps}
+
+    set ::test::names {}
+    $ps load "test.save"
+
+    set ::test::names
+} -cleanup {
+    $ps destroy
+    tcltest::removeFile test.save
+} -result {ps *}
+
+test notify-1.3 {clear calls -notifycmd once with ""} -setup {
+    set ps [parmset %AUTO%]
+    $ps define my.num   snit::integer    15
+    $ps define my.text  snit::stringtype "A short text string"
+    $ps define your.num snit::integer    20
+
+} -body {
+    $ps configure -notifycmd {::test::Notify ps}
+    set ::test::names {}
+
+    $ps clear
+
+    set ::test::names
+} -cleanup {
+    $ps destroy
+} -result {ps *}
+
+
+
+#-----------------------------------------------------------------------
+# Clean up and finish
+
+namespace forget ::test::
+
+::tcltest::cleanupTests

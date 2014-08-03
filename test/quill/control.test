@@ -25,6 +25,10 @@ namespace import ::tcltest::test
 source ../../lib/quill/pkgModules.tcl
 namespace import ::quill::*
 
+#-------------------------------------------------------------------------
+# Setup
+
+proc echo {args} { return "echo <[join $args ><]>" }
 
 #-------------------------------------------------------------------------
 # assert
@@ -39,6 +43,37 @@ test assert-1.2 {assert fails} -body {
         assert {1 + 1 == 3}
     }
 } -result {ASSERT {Assertion failed: 1 + 1 == 3}}
+
+#-----------------------------------------------------------------------
+# callwith
+
+test callwith-1.1 {prefix is empty} -body {
+    callwith "" a b c
+} -result {}
+
+test callwith-2.1 {one word prefix, no args} -body {
+    callwith echo
+} -result {echo <>}
+
+test callwith-2.2 {one word prefix, 1 arg with whitespace} -body {
+    callwith echo "a b c"
+} -result {echo <a b c>}
+
+test callwith-2.3 {one word prefix, 2 args} -body {
+    callwith echo a b
+} -result {echo <a><b>}
+
+test callwith-3.1 {two word prefix, no args} -body {
+    callwith [list echo clientArg]
+} -result {echo <clientArg>}
+
+test callwith-3.2 {two word prefix, 1 arg with whitespace} -body {
+    callwith [list echo clientArg] "a b c"
+} -result {echo <clientArg><a b c>}
+
+test callwith-3.3 {two word prefix, 2 args} -body {
+    callwith [list echo clientArg] a b
+} -result {echo <clientArg><a><b>}
 
 #-------------------------------------------------------------------------
 # codecatch

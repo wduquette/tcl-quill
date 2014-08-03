@@ -20,10 +20,23 @@ listutils(n) defines the following commands:<p>
 
 <deflist commands>
 
+<defitem interleave {interleave <i alist blist>}>
+
+Given two lists, returns the result of interleaving the elements of the
+two lists into a single list.  If one list is shorter than the other, it
+is implicitly padded with empty strings.<p>
+
+If the elements of <i alist> are unique, and <i blist> contains no more 
+items than <i alist>, then the result is a valid dictionary.<p>
+
 <defitem ladd {ladd <i listvar items...>}>
 
 Appends the <i items> to the named list variable only if they are
 not already present in the list.  Returns the new list.<p>
+
+<defitem lmaxlen {lmaxlen <i>list</i>}>
+
+Returns the string length of the longest element in <i>list</i>.<p>
 
 <defitem lshift {lshift <i>listvar</i>}>
 

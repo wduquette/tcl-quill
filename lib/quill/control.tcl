@@ -19,6 +19,7 @@
 namespace eval ::quill:: {
 	namespace export \
 		assert       \
+        callwith     \
         codecatch    \
         foroption    \
         precond      \
@@ -153,4 +154,24 @@ proc ::quill::foroption {optvar listvar allflag {body ""}} {
         set opt [lshift arglist]
         uplevel 1 $switchcmd
     }
+}
+
+
+# callwith prefix args...
+#
+# prefix    - A command prefix, or ""
+# args      - Arguments to append to the prefix.
+#
+# If prefix is "", does nothing.  Otherwise, the args
+# are appended to the prefix and the resulting command
+# is called in the global scope.  Returns the resulting
+# command's return value.
+
+proc ::quill::callwith {prefix args} {
+    if {[llength $prefix] == 0} {
+        return
+    }
+
+    set command [concat $prefix $args]
+    uplevel #0 $command
 }

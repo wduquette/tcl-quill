@@ -1,0 +1,153 @@
+<manpage parmset(n) "Parameter Set" quill(n)>
+
+<section SYNOPSIS>
+
+<pre>
+package require quill <version>
+namespace import ::quill::*
+</pre>
+
+<itemlist>
+
+<section DESCRIPTION>
+
+parmset(n) is an object type which manages a set of parameters
+with typed values.  Clients can define parameters, set and
+get their values, and query them in several ways.  Parameters are 
+typically arranged in an implicit hierarchy, using
+periods as separators, e.g., <b>app.this</b> and <b>app.that</b>.<p>
+
+
+<section COMMANDS>
+
+parmset(n) defines the following commands:<p>
+
+<deflist commands>
+
+<defitem parmset {parmset <i>obj</i> ?<i>options...</i>?}>
+
+Creates a new parmset(n) object called <i>obj</i>.  The parmset(n)
+is initially empty; new parameters can be defined with
+<xref "#define">.<p>
+
+The parmset(n) may be created with the following option:<p>
+
+<deflist options>
+
+<defopt {-notifycmd <i>command</i> }>
+
+Specifies a command to be called when one or more parameter values are
+set.  The <i>command</i> is called with one additional argument:<p>
+
+<ul>
+  <li> When a single parameter value is <xref #set>, the
+       <i>command</i> is called with the name of the parameter.<p>
+
+  <li> When <xref #load> or <xref #clear>
+       is called, the <i>command</i> is called with the empty string.
+</ul><p>
+
+Note that the <i>command</i> is called whether or not any parameter
+values actually changed.<p>
+
+</deflist options>
+
+</deflist commands>
+
+<section "INSTANCE COMMAND">
+
+Each instance of parmset(n) has the following subcommands.<p>
+
+<deflist instance>
+
+<defitem cget {<i>obj</i> cget <i>option</i>}>
+
+Returns the value of the named <i>option</i>.  See
+above for the list of options.<p>
+
+<defitem clear {<i>obj</i> clear}>
+
+Sets all parameters to their default values.<p>
+
+<defitem configure {<i>obj</i> configure ?<i>option value</i>?...}>
+
+This method sets the value of one or more options.  See
+above for the list of options.<p>
+
+<defitem define {<i>obj</i> define <i>name ptype value</i>}>
+
+Defines a new parameter called <i>name</i> of type <i>ptype</i>, with
+the specified default <i>value</i>.  The <i>ptype</i> needs to be
+a validation type command, e.g., <b>snit::boolean</b>.  See the
+section on validation types in the Snit man page.<p>
+
+<defitem exists {<i>obj</i> exists <i>name</i>}>
+
+Returns 1 if the parmset(n) contains a parameter called <i>name</i>,
+and 0 otherwise.<p>
+
+<defitem get {<i>obj</i> get <i>name</i>}>
+
+Returns the value of the named parameter.<p>
+
+<defitem getdefault {<i>obj</i> getdefault <i>name</i>}>
+
+Returns the default value of the named parameter.<p>
+
+<defitem list {<i>obj</i> list ?<i>pattern</i>?}>
+
+Returns a two-column list of the parameter names and values in
+<i>obj</i>.  If given, <i>pattern</i> should
+be a glob-style wildcard pattern; only parameters whose names
+which match the pattern will be included.<p>
+
+<defitem load {<i>obj</i> load <i>filename</i> ?<i>mode</i>?}>
+
+Loads the file named <i>filename</i> into the parmset.  If the load
+is successful, any parameters set in the file will have the values
+specified there; any parameters not set in the file will have their
+default values.  If the load is unsuccessful, e.g., if one of the
+values is invalid, or if there is an unrecognized parameter, or
+there is some other error in the file, then an error will be thrown
+and the parmset's current contents will be unchanged.<p>
+
+The <i>mode</i> may be set to <b>-strict</b> (the default) or
+<b>-forgiving</b>.  If <i>mode</i> is <b>-forgiving</b>, then
+parmset(n) will completely ignore unrecognized parameters and invalid
+parameter values, and will load whatever valid parameter values it
+finds.<p>
+
+<defitem names {<i>obj</i> names ?<i>pattern</i>?}>
+
+Returns a list of the parameter names in dictionary order.  By
+default, the list includes all names. If given, <i>pattern</i> should
+be a glob-style wildcard pattern; only names which match the pattern
+will be returned.<p>
+
+<defitem save {<i>obj</i> save <i>filename</i> ?<i>header</i>?}>
+
+Saves the parameter set's data to a file called <i>filename</i>; any
+existing file with that name will be overwritten.  The header comment
+in the file will contain the specified <i>header</i> string; it
+defaults to "Parameter values".<p>
+
+<defitem set {<i>obj</i> set <i>name value</i>}>
+
+Sets the <i>value</i> of parameter <i>name</i>.  The <i>value</i>
+must belong to the parameter's type.<p>
+
+<defitem type {<i>obj</i> type <i>name</i>}>
+
+Returns the type of the named parameter.<p>
+
+</deflist instance>
+
+<section AUTHOR>
+
+Will Duquette.<p>
+
+<section "SEE ALSO">
+
+<xref quill(n)>.
+
+</manpage>

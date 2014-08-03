@@ -20,6 +20,7 @@ namespace eval ::quill:: {
 	namespace export \
         interleave   \
         ladd         \
+        lmaxlen      \
 		lshift
 }
 
@@ -46,6 +47,27 @@ proc ::quill::ladd {listvar args} {
 
 	return $theList
 }
+
+# lmaxlen list
+#
+# list  - A list value
+#
+# Returns the string length of the longest element of the list.
+
+proc ::quill::lmaxlen {list} {
+    set max 0
+
+    foreach item $list {
+        set len [string length $item]
+
+        if {$len > $max} {
+            set max $len
+        }
+    }
+
+    return $max
+}
+
 
 # lshift listvar
 #
