@@ -4,7 +4,7 @@ This is the official list of work to be done.
 
 # Next
 
-* Write foroption loop.
+* Use foroption loop.
 * quill test is loading quill(n) from teapot instead of the local copy.
   * Change the test template so that it loads the package by sourcing
     its pkgModules.tcl file directly.

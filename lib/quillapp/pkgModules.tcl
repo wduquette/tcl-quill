@@ -24,7 +24,12 @@ package provide quillapp 0.1.1a0
 package require snit 2.3
 # -quill-require-end
 
+# TODO: Have Quill set the version number explicitly?
+# The "require" tag above could set it for project.quill's requires and 
+# provides both.
+package prefer latest
 package require quill
+package prefer stable 
 
 namespace import quill::*
 

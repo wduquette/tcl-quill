@@ -242,14 +242,10 @@ snit::type ::quill::manpage {
         set trans(version) 0.0.0
         set outdir $indir
 
-        while {[llength $args] > 0} {
-            set opt [lshift args]
-            switch -exact -- $opt {
-                -header  { set trans(header) [lshift args]  }
-                -outdir  { set outdir [lshift args]         }
-                -version { set trans(version) [lshift args]        }
-                default  { error "Unknown option: \"$opt\"" }
-            }
+        foroption opt args -all {
+            -header  { set trans(header) [lshift args]  }
+            -outdir  { set outdir [lshift args]         }
+            -version { set trans(version) [lshift args] }
         }
 
         # NEXT, set up transient data that spans multiple manpages

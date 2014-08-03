@@ -119,54 +119,46 @@ proc ::quillapp::prepare {var args} {
 
     set theVar [string trim $theVar]
 
-    while {[llength $args] > 0} {
-        set opt [lshift args]
-
-        switch -exact -- $opt {
-            -file {
-                if {![regexp {^[-[:alnum:]_]+$} $theVar]} {
-                    throw INVALID \
-                        "Input \"$var\" contains illegal characters or whitespace: \"$theVar\""
-                }
+    foroption opt args -all {
+        -file {
+            if {![regexp {^[-[:alnum:]_]+$} $theVar]} {
+                throw INVALID \
+                    "Input \"$var\" contains illegal characters or whitespace: \"$theVar\""
             }
+        }
 
-            -oneof {
-                set values [lshift args]
+        -oneof {
+            set values [lshift args]
 
-                if {$theVar ni $values} {
-                    throw INVALID \
-                        "Input \"$var\" is not one of ([join $values {, }]): \"$theVar\""
-                }
+            if {$theVar ni $values} {
+                throw INVALID \
+                    "Input \"$var\" is not one of ([join $values {, }]): \"$theVar\""
             }
+        }
 
-            -required {
-                if {$theVar eq ""} {
-                    throw INVALID \
-                        "Input \"$var\" requires a non-empty value."
-                }
+        -required {
+            if {$theVar eq ""} {
+                throw INVALID \
+                    "Input \"$var\" requires a non-empty value."
             }
+        }
 
-            -tighten {
-                set theVar [tighten $theVar]
-            }
+        -tighten {
+            set theVar [tighten $theVar]
+        }
 
-            -toupper {
-                set theVar [string toupper $theVar]
-            }
+        -toupper {
+            set theVar [string toupper $theVar]
+        }
 
-            -tolower {
-                set theVar [string tolower $theVar]
-            }
+        -tolower {
+            set theVar [string tolower $theVar]
+        }
 
-            -type {
-                set theType [lshift args]
+        -type {
+            set theType [lshift args]
 
-                set theVar [{*}$theType validate $theVar]
-            }
-
-            default {
-                error "Unknown option: \"$opt\""
-            }
+            set theVar [{*}$theType validate $theVar]
         }
     }
 }

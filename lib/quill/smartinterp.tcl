@@ -155,67 +155,6 @@ snit::type ::quill::smartinterp {
     }
 
 
-    # smartalias name arglist ?options...?
-    #
-    # name     The alias name; may be a list.
-    # arglist  A standard argument list.
-    # 
-    # -syntax    The argument syntax to be used in error messages
-    # -command   The command to which name is aliased.
-    #
-    # Creates a smart alias.  If the name consists of two or more
-    # elements, the leading elements must be the name of a
-    # previously defined ensemble.
-
-    method smartaliasOld {name arglist args} {
-        # FIRST, require that the parent command (if any) is already
-        # defined as an ensemble.
-        $self RequireThatParentIsEnsemble $name
-
-        # NEXT, get the options
-        set syntax "%A"
-        set command ""
-
-        while {[llength $args] > 0} {
-            set opt [lshift args]
-
-            switch -exact -- $opt {
-                -syntax {
-                    set syntax [lshift args]
-                }
-                
-                -command {
-                    set command [lshift args]
-                }
-
-                default {
-                    error "unknown option: \"$opt\""
-                }
-            }
-        }
-
-        # NEXT, save the alias data.
-        set alias(ensemble-$name) 0
-        set alias(arglist-$name)  $arglist
-        set alias(command-$name)  $command
-
-        if {$syntax eq ""} {
-            set alias(syntax-$name) "$name"
-        } else {
-            set alias(syntax-$name) "$name $syntax"
-        }
-
-        # NEXT, if it has an ensemble parent, add the last token of
-        # the name to the parent's list of subcommands.
-        if {[llength $name] > 1} {
-            set parent [lrange $name 0 end-1]
-            set subcommand [lindex $name end]
-            lappend alias(subcommands-$parent) $subcommand
-        }
-
-        # NEXT, create the actual alias
-        $self alias $name $self SmartAliasHandler $name
-    }
 
     # smartalias name syntax minArgs maxArgs prefix
     #
