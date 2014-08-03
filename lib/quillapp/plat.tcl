@@ -99,13 +99,9 @@ snit::type ::quillapp::plat {
         set force   0
         set require 0
 
-        while {[llength $args] > 0} {
-            set opt [lshift args]
-            switch -exact -- $opt {
-                -force   { set force 1   }
-                -require { set require 1 }
-                default  { error "Unknown option: \"$opt\"" }
-            }
+        foroption opt args -all {
+            -force   { set force 1   }
+            -require { set require 1 }
         }
 
         if {$force} {
@@ -324,14 +320,10 @@ snit::type ::quillapp::plat {
             return ""
         }
 
-        set force   0
+        set force 0
 
-        while {[llength $args] > 0} {
-            set opt [lshift args]
-            switch -exact -- $opt {
-                -force   { set force 1   }
-                default  { error "Unknown option: \"$opt\"" }
-            }
+        foroption opt args -all {
+            -force { set force 1   }
         }
 
         if {$force} {

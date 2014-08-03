@@ -501,18 +501,14 @@ snit::type ::quillapp::project {
 		set gui     0
 		set apptype uberkit
 
-		while {[llength $args] > 0} {
-			set opt [lshift args]
+		foroption opt args -all {
+			-gui {
+				set gui 1
+			}
 
-			switch -exact -- $opt {
-				-gui {
-					set gui 1
-				}
-
-				-apptype {
-					set apptype [lshift args]
-					prepare apptype -oneof {kit uberkit exe}
-				}
+			-apptype {
+				set apptype [lshift args]
+				prepare apptype -oneof {kit uberkit exe}
 			}
 		}
 
@@ -548,13 +544,9 @@ snit::type ::quillapp::project {
 	proc RequireCmd {name version args} {
 		# FIRST, options
 		set local 0
-		while {[llength $args] > 0} {
-			set opt [lshift args] 
 
-			switch -exact -- {
-				-local  { set local 1}
-				default { error "Unknown option: \"$opt\"" }
-			}
+		foroption opt args -all {
+			-local { set local 1}
 		}
 
 		# NEXT, validate data
