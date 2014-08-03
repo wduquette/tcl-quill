@@ -19,9 +19,10 @@
 namespace eval ::quillapp:: {
 	namespace export \
 		checkargs    \
+        gentree      \
+        prepare      \
         tagsplit     \
-        tagreplace   \
-        prepare
+        tagreplace 
 }
 
 #-------------------------------------------------------------------------
@@ -186,5 +187,24 @@ proc ::quillapp::prepare {var args} {
 
             set theVar [{*}$theType validate $theVar]
         }
+    }
+}
+
+# gentree path content...
+#
+# path    - A path relative to the project root, using "/" as the
+#           separator.
+# content - Content to write to the path.
+#
+# The input is a set of path and content pairs.
+
+proc ::quillapp::gentree {args} {
+    # NEXT, process the files
+    foreach {path content} $args {
+        # FIRST get the paths
+        set p [project root {*}[split $path /]]
+
+        # NEXT, generate the files.
+        writefile $p $content
     }
 }
