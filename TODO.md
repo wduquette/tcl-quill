@@ -4,10 +4,19 @@ This is the official list of work to be done.
 
 # Next
 
-* Use "plat pathto $tool -require" whenever getting tools.
-* Grab parmset(n) and simplify, and use for "quill config".
+* Define "config.tcl" module that defines and delegates to configuration
+  parmset.
+  * At startup, load configuration parmset from ~/.quill/config.quill
+    * -forgiving, of course.
+  * Define path.tclsh, etc.
+    * Validator should check for the file's existence.
+  * Define helper.tcl module that determines which helpers to use,
+    based on plat and config.
+  * Define helpertool.tcl that lists the helpers and the source
+    * Found on path, or from config.
+  * Define configtool.tcl that lets you play with the configuration 
+    settings.
 * Add check on "teacup" executable for build 298288 or later.
-* Move gentree to misc, and probably rename.
 * Move helpers list from version tool to 'quill helpers' or something.
 * Check "info(gottcl)" in appropriate spots, if it seems necessary.
 * quillapp(n) doesn't really need a namespace.  App packages don't

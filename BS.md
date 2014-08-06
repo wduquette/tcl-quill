@@ -10,19 +10,14 @@ When I made Quill public, the first comment I got back was from a user who
 uses Tcl 8.5, but Quill requires Tcl 8.6.  So, what needs to be done to 
 support other versions of Tcl/Tk?
 
-* Build Quill as a starpack.  
-  * Then it doesn't rely on the installed copy of Tcl/Tk.
+* Build Quill as a starpack.  DONE.
 * Use system tclsh
-  * Find tclsh on path
-    * Allow users to specify which tools to use, via "quill config"
-      * Use simplified parmset, saved in ~/.quill.
-  * Query tclsh for Tcl version
+  * Find tclsh on path.  DONE.
+    * Query tclsh for Tcl version DONE
+  * Allow users to specify which tools to use, via "quill config"
 * Request update of "teacup" if it's too old.
-* Avoid using Tcl 8.6-specific code in templates.
-  * Only issue at present is try/catch in apploader, so far as I know.
-* Support Tcl/Tk requirements in project.quill.
-  * As "require" statements?
-  * Or something specific to Tcl and Tk?
+* Avoid using Tcl 8.6-specific code in templates.  DONE.
+* Support Tcl/Tk requirements in project.quill. DONE>
 
 ## Q: A GUI version of Quill?
 
