@@ -32,6 +32,11 @@ snit::type ::quillapp::teapot {
 	#---------------------------------------------------------------------
 	# Type Variables
 
+	# goodbuild  - Versions prior to 298288 are known to have caused
+	#              problems for Quill.
+	
+	typevariable goodbuild 298288
+
 	#---------------------------------------------------------------------
 	# Teapot Queries
 
@@ -101,6 +106,29 @@ snit::type ::quillapp::teapot {
 		}
 
 		return 0
+	}
+
+	# checkbuild
+	#
+	# Checks the build number of the selected teacup executable.
+
+	typemethod checkbuild {} {
+		set teacup [plat pathto teacup]
+
+		if {$teacup eq ""} {
+			return ""
+		}
+
+		set verstring [string trim [exec $teacup version]]
+		set buildnum [lindex [split $verstring .] end]
+
+		if {$buildnum < $goodbuild} {
+			puts [outdent "
+				WARNING: You may be using an out-of-date 'teacup'.
+				You should update it by executing 'teacup update-self'
+				at the command line.  (You might need to use sudo).
+			"]
+		}
 	}
 
 	# installed pkg ver
