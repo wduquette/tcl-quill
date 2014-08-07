@@ -57,12 +57,16 @@ snit::type ::quillapp::versiontool {
 	# Executes the tool given the arguments.
 
 	typemethod execute {argv} {
+		set os [plat os]
+
 		puts "Quill [quillinfo version]: [quillinfo description]"
 		puts ""
 		puts "Home Page: [quillinfo homepage]"
 		puts ""
 		puts "Please submit bug reports to the issue tracker at the home page."
 		puts ""
+		puts "Quill thinks it is running on $os."
+		puts "" 
 		puts "Helper Tools:"
 
 		DisplayPath tclsh

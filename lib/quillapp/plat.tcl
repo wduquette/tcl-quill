@@ -60,14 +60,30 @@ snit::type ::quillapp::plat {
     # Returns the platform ID.  Quill doesn't care (at present)
     # about the specifics, but about the broad categories:
     # Windows, Linux, OSX.
+    #
+    # TODO: platform(n) is probably the right tool here, but it isn't
+    # clear from the man page what it returns in these cases.
+    #
+    # For now, we will assume that anything that isn't OSX or Windows
+    # is sufficiently similar to Linux to make no difference.
 
     typemethod id {} {
-        if {$::tcl_platform(os) eq "Darwin"} {
-            return osx
-        } elseif {$::tcl_platform(os) eq "Windows"} {
-            return windows
-        } else {
-            return linux
+        switch -glob -- $::tcl_platform(os) {
+            "Darwin"   { return osx     }
+            "Windows*" { return windows }
+            default    { return linux   }
+        }
+    }
+
+    # os
+    #
+    # Returns the platform, pretty printed.
+
+    typemethod os {} {
+        switch [plat id] {
+            osx      { return "Mac OSX" }
+            windows  { return "Windows" }
+            linux    { return "Linux"   }
         }
     }
 
@@ -398,6 +414,10 @@ snit::type ::quillapp::plat {
     # Given the name of the program, tries to find it on the
     # PATH.  If it is found, returns the normalized path to the
     # program.
+    #
+    # On Windows, ".exe" is added to the program name; and 
+    # we assume initially that we're using a standard Windows command
+    # shell and that the PATH separator is ";".
 
     proc FindOnPath {program} {
         global env
@@ -407,8 +427,11 @@ snit::type ::quillapp::plat {
             return ""
         }
 
-        # NEXT, if we're on Windows, try ";" as a PATH separator.
+        # NEXT, if we're on Windows, add ".exe" and try ";" as a 
+        # PATH separator.
         if {[plat id] eq "windows"} {
+            set program $program.exe
+
             set result [FindWith [split $env(PATH) ";"] $program]
 
             if {$result ne ""} {
@@ -440,5 +463,25 @@ snit::type ::quillapp::plat {
         }
 
         return ""
+    }
+
+    #---------------------------------------------------------------------
+    # Miscellaneous Operations
+
+    # setexecutable filename
+    #
+    # filename   - Name of a file that should be executable.
+    #
+    # Marks the file as executable (or tries to).
+    #
+    # TODO: Figure out what to do on Windows.  Normally Windows uses
+    # the extension, so there might not be anything to do.  But if you're
+    # using MinGW or Cygwin, setting the executable flag might make sense.
+    
+    typemethod setexecutable {filename} {
+        if {[plat id] ne "windows"} {
+            file attributes $filename \
+                -permissions u+x
+        }
     }
 }

@@ -35,8 +35,7 @@ proc ::quillapp::appElement {appname} {
     gentree bin/$appname.tcl           [appLoader $appname]  \
             docs/man1/$appname.manpage [appManPage $appname]
 
-    file attributes [project root bin $appname.tcl] \
-        -permissions u+x
+    plat setexecutable [project root bin $appname.tcl]
 
     element package ${appname}app true
 }

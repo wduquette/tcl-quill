@@ -135,3 +135,10 @@ In addition, I've focussed on using ActiveState's "teapot" package
 repository and TclDevKit tool chain, because I have access to those.
 I'm open to extending Quill to use other tool chains as well; and help
 with that is also welcome.
+
+## Acknowledgements
+
+Thanks to the following people who have contributed bug reports, patches,
+or ideas to Quill:
+
+* effelsberg
