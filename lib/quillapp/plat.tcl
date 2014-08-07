@@ -430,7 +430,9 @@ snit::type ::quillapp::plat {
         # NEXT, if we're on Windows, add ".exe" and try ";" as a 
         # PATH separator.
         if {[plat id] eq "windows"} {
-            set program $program.exe
+            if {[file extension $program] eq ""} {
+                set program $program.exe
+            }
 
             set result [FindWith [split $env(PATH) ";"] $program]
 
