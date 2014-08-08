@@ -58,6 +58,7 @@ Quill's existing tools should provide the following additional features:
   * Build as ".app" on OSX.
   * Include icons in GUI apps
   * Support non-TDK build methods.
+    * Direct creation of a starkit, per issue #3.
     * Freewrap?
       * How to make that work with teapot packages?
 
