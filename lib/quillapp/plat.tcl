@@ -140,7 +140,7 @@ snit::type ::quillapp::plat {
     # Returns the path to the tclsh.
 
     typemethod {GetPathTo tclsh} {} {
-        return [FindOnPath tclsh]
+        return [FindOnPath [$type appfile tclsh]]
     }
 
     # GetPathTo tkcon
@@ -172,7 +172,7 @@ snit::type ::quillapp::plat {
 
     typemethod {GetPathTo teacup} {} {
         set shelldir [file dirname [$type pathto tclsh]]
-        set path [file join $shelldir teacup]
+        set path [file join $shelldir [$type appfile teacup]]
 
         return [file normalize $path]
     }
@@ -182,20 +182,7 @@ snit::type ::quillapp::plat {
     # Returns the path to the tclapp executable.
 
     typemethod {GetPathTo tclapp} {} {
-        switch [$type id] {
-            linux -
-            osx   {
-                set path [FindOnPath tclapp]
-            }
-            windows {
-                set path [FindOnPath tclapp.exe]
-            }
-            default {
-                error "unknown platform id: \"[$type id]\""
-            }
-        }
-
-        return $path
+        return [FindOnPath [$type appfile tclapp]]
     }
 
     # GetPathTo teapot-pkg
@@ -203,20 +190,7 @@ snit::type ::quillapp::plat {
     # Returns the path to the teapot-pkg executable.
 
     typemethod {GetPathTo teapot-pkg} {} {
-        switch [$type id] {
-            linux -
-            osx   {
-                set path [FindOnPath teapot-pkg]
-            }
-            windows {
-                set path [FindOnPath teapot-pkg.exe]
-            }
-            default {
-                error "unknown platform id: \"[$type id]\""
-            }
-        }
-
-        return $path
+        return [FindOnPath [$type appfile teapot-pkg]]
     }
 
     # GetPathTo tcl-basekit
@@ -254,19 +228,16 @@ snit::type ::quillapp::plat {
         }
 
         # NEXT, get the likely location given the platform.
+        # On OSX, we know it's in /Library/Tcl/basekits.  Otherwise,
+        # it's usually with the application
         switch [$type id] {
             osx {
                 set basedir "/Library/Tcl/basekits"
                 set pattern [file join $basedir $prefix]
             }
-            windows {
-                set basedir [file dirname [$type tclsh]]
-                set pattern [file join $basedir $prefix].exe
-            }
-            linux   -
             default {
-                set basedir [file dirname [$type tclsh]]
-                set pattern [file join $basedir $prefix]
+                set basedir [file dirname [$type pathto tclsh]]
+                set pattern [file join $basedir [$type appfile $prefix]]
             }
         }
 
@@ -283,6 +254,64 @@ snit::type ::quillapp::plat {
 
         return ""
     } 
+
+    #---------------------------------------------------------------------
+    # Path Finding Tools
+
+    # FindOnPath program
+    #
+    # program  - The name of a program.
+    #
+    # Given the name of the program, tries to find it on the
+    # PATH.  If it is found, returns the normalized path to the
+    # program.
+    #
+    # We assume initially that we're using a standard Windows command
+    # shell and that the PATH separator is ";".
+
+    proc FindOnPath {program} {
+        global env
+
+        # FIRST, do we have a PATH?
+        if {![info exists env(PATH)]} {
+            return ""
+        }
+
+        # NEXT, if we're on Windows try ";" as a 
+        # PATH separator.
+        if {[plat id] eq "windows"} {
+            set result [FindWith [split $env(PATH) ";"] $program]
+
+            if {$result ne ""} {
+                return $result
+            }
+        }
+
+        # NEXT, we're on a Unix flavor, or on Windows using a Unix
+        # shell, so the path separator is ":".
+        return [FindWith [split $env(PATH) ":"] $program]
+    }
+
+    # FindWith dirlist program
+    #
+    # dirlist - A list of directories where executables might be found.
+    # program - The executable name.
+    #
+    # Looks for the executable in the directories, and returns the 
+    # normalized path to the first match.  If the program is not found,
+    # returns ""
+
+    proc FindWith {dirlist program} {
+        foreach dir $dirlist {
+            set files [glob -nocomplain [file join $dir $program]]
+
+            if {[llength $files] == 1} {
+                return [file normalize [lindex $files 0]]
+            }
+        }
+
+        return ""
+    }
 
     #---------------------------------------------------------------------
     # Directory Paths
@@ -311,6 +340,10 @@ snit::type ::quillapp::plat {
     # GetPathOf teapot
     #
     # Returns the path of the local teapot repository.
+    #
+    # TODO: Probably we don't want to have to make ~/.quill/teapot
+    # the default teapot; we just want it linked, and we want to
+    # use it explicitly.
 
     typemethod {GetPathOf teapot} {} {
         set teacup [$type pathto teacup]
@@ -404,68 +437,6 @@ snit::type ::quillapp::plat {
         return $result
     }
 
-    #---------------------------------------------------------------------
-    # Path Finding Tools
-
-    # FindOnPath program
-    #
-    # program  - The name of a program.
-    #
-    # Given the name of the program, tries to find it on the
-    # PATH.  If it is found, returns the normalized path to the
-    # program.
-    #
-    # On Windows, ".exe" is added to the program name; and 
-    # we assume initially that we're using a standard Windows command
-    # shell and that the PATH separator is ";".
-
-    proc FindOnPath {program} {
-        global env
-
-        # FIRST, do we have a PATH?
-        if {![info exists env(PATH)]} {
-            return ""
-        }
-
-        # NEXT, if we're on Windows, add ".exe" and try ";" as a 
-        # PATH separator.
-        if {[plat id] eq "windows"} {
-            if {[file extension $program] eq ""} {
-                set program $program.exe
-            }
-
-            set result [FindWith [split $env(PATH) ";"] $program]
-
-            if {$result ne ""} {
-                return $result
-            }
-        }
-
-        # NEXT, we're on a Unix flavor, or on Windows using a Unix
-        # shell, so the path separator is ":".
-        return [FindWith [split $env(PATH) ":"] $program]
-    }
-
-    # FindWith dirlist program
-    #
-    # dirlist - A list of directories where executables might be found.
-    # program - The executable name.
-    #
-    # Looks for the executable in the directories, and returns the 
-    # normalized path to the first match.  If the program is not found,
-    # returns ""
-
-    proc FindWith {dirlist program} {
-        foreach dir $dirlist {
-            set files [glob -nocomplain [file join $dir $program]]
-
-            if {[llength $files] == 1} {
-                return [file normalize [lindex $files 0]]
-            }
-        }
-
-        return ""
-    }
 
     #---------------------------------------------------------------------
     # Miscellaneous Operations
