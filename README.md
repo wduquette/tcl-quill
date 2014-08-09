@@ -141,4 +141,4 @@ with that is also welcome.
 Thanks to the following people who have contributed bug reports, patches,
 or ideas to Quill:
 
-* effelsberg
+* Stephan Effelsberg
