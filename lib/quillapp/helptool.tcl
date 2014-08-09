@@ -74,6 +74,16 @@ snit::type ::quillapp::helptool {
 		}
 
 		puts ""
+
+		puts [outdent {
+			In addition, you can use 'quill' to execute Tcl scripts in
+			the context of the project's code base (i.e., with access to
+			the project's packages):
+
+			   $ quill myfile.tcl args....
+		}]
+
+		puts ""
 		puts "Use 'quill help <topic>' to see more about any tool."
 	}
 

@@ -39,22 +39,33 @@ proc ::quillapp::main {argv} {
 		return
 	}
 
-	# NEXT, get the tool
+	# NEXT, get the subcommand.  It must be either a .tcl file to execute,
+	# or one of Quill's tools.
+	set projectInfoNeeded 0
 	set tool [lshift argv]
 
-	if {![info exists ::quillapp::tools($tool)]} {
-		throw FATAL [outdent "
-			Unknown subcommand: \"$tool\"
-			See 'quill help' for a list of commands.
-		"]
+	if {[file isfile $tool]} {
+		set userScript [file normalize $tool]
+		set tool "UserScript"
+		set projectInfoNeeded 1
+	} else {
+		if {![info exists ::quillapp::tools($tool)]} {
+			throw FATAL [outdent "
+				Unknown subcommand: \"$tool\"
+				See 'quill help' for a list of commands.
+			"]
+		}
+		# NEXT, check the number of arguments.
+		checkargs "quill $tool" \
+			{*}[dict get $::quillapp::tools($tool) argspec] $argv
+
+		if {[dict get $quillapp::tools($tool) intree]} {
+			set projectInfoNeeded 1
+		}
 	}
 
-	# NEXT, check the number of arguments.
-	checkargs "quill $tool" \
-		{*}[dict get $::quillapp::tools($tool) argspec] $argv
-
 	# NEXT, load the project info if the tool needs it.
-	if {[dict get $quillapp::tools($tool) intree]} {
+	if {$projectInfoNeeded} {
 		# FIRST, fail if we need to be a project and we aren't.
 		if {![project intree]} {
 			throw FATAL [outdent {
@@ -71,8 +82,27 @@ proc ::quillapp::main {argv} {
 	}
 
 	# NEXT, execute the tool.
-	set cmd [dict get $quillapp::tools($tool) ensemble]
-	$cmd execute $argv
+	if {$tool eq "UserScript"} {
+		ExecuteScript $userScript $argv
+	} else {
+		set cmd [dict get $quillapp::tools($tool) ensemble]
+		$cmd execute $argv
+	}
 
 	puts ""
+}
+
+# ExecuteScript path argv
+#
+# path  - The full path to the script file
+# argv  - Arguments for the script.
+#
+# Attempts to execute the script in the context of the project.
+
+proc ExecuteScript {path argv} {
+	# FIRST, prepare the environment.
+	set ::env(TCLLIBPATH) [project libpath]
+
+	# NEXT, run the tests.
+	exec [plat pathto tclsh] $path {*}$argv >@ stdout 2>@ stderr
 }
