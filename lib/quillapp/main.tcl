@@ -33,6 +33,9 @@ proc ::quillapp::main {argv} {
 	# root?
 	project findroot
 
+	# NEXT, load the configuration data.
+	config init
+
 	# NEXT, if there are no arguments then just display the help.
 	if {[llength $argv] == 0} {
 		helptool execute {}

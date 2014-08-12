@@ -6,10 +6,8 @@ This is the official list of work to be done.
 
 * Define "config.tcl" module that defines and delegates to configuration
   parmset.
-  * At startup, load configuration parmset from ~/.quill/config.quill
-    * -forgiving, of course.
-  * Define path.tclsh, etc.
-    * Validator should check for the file's existence.
+  * Write config(5) man page, documenting the configuration parms;
+    or add them to the config help.
   * Define helper.tcl module that determines which helpers to use,
     based on plat and config.
   * Define helpertool.tcl that lists the helpers and the source

@@ -36,6 +36,7 @@ namespace eval ::quillapp:: {
 
 source [file join $::quillapp::library misc.tcl             ]
 source [file join $::quillapp::library plat.tcl             ]
+source [file join $::quillapp::library config.tcl           ]
 source [file join $::quillapp::library teapot.tcl           ]
 source [file join $::quillapp::library version.tcl          ]
 source [file join $::quillapp::library element.tcl          ]

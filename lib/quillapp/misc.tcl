@@ -19,10 +19,12 @@
 namespace eval ::quillapp:: {
 	namespace export \
 		checkargs    \
+        exefile      \
         gentree      \
         prepare      \
         tagsplit     \
-        tagreplace 
+        tagreplace   \
+        tclfile
 }
 
 #-------------------------------------------------------------------------
@@ -206,5 +208,52 @@ proc ::quillapp::gentree {args} {
 
         # NEXT, generate the files.
         writefile $p $content
+    }
+}
+
+#-------------------------------------------------------------------------
+# Types
+
+# Verifies that a path is an executable file.  Validation returns
+# the normalized path.  "" is also OK.
+snit::type ::quillapp::exefile {
+    typemethod validate {value} {
+        set value [string trim $value]
+
+        if {$value eq ""} {
+            return ""
+        }
+
+        if {![file isfile $value]} {
+            throw INVALID "Not a file: \"$value\""
+        }
+
+        if {![file executable $value]} {
+            throw INVALID "Not an executable: \"$value\""
+        }
+
+        return [file normalize $value]
+    }
+}
+
+# Verifies that a path is a Tcl script...or at least, not obviously
+# something else.  "" is also OK. Validation returns the normalized path.
+snit::type ::quillapp::tclfile {
+    typemethod validate {value} {
+        set value [string trim $value]
+
+        if {$value eq ""} {
+            return ""
+        }
+
+        if {![file isfile $value]} {
+            throw INVALID "Not a file: \"$value\""
+        }
+
+        if {[file extension] ni {.tcl {}}} {
+            throw INVALID "Not a .tcl script: \"$value\""
+        }
+
+        return [file normalize $value]
     }
 }
