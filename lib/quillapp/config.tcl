@@ -55,9 +55,18 @@ snit::type ::quillapp::config {
 		set ps [parmset ${type}::ps]
 
 		# Helper Commands
-		$ps define helper.tclsh  ::quillapp::exefile ""
-		$ps define helper.teacup ::quillapp::exefile ""
-		$ps define helper.tkcon  ::quillapp::tclfile ""
+		# TODO: Consider making ::quillapp::filename a snit::type workalike,
+		# with options for "-executable" and "-pattern", so that I can
+		# define executable-specific types.  Actually, the types could
+		# also know how to find them....
+
+		$ps define helper.tclsh       ::quillapp::exefile ""
+		$ps define helper.teacup      ::quillapp::exefile ""
+		$ps define helper.tkcon       ::quillapp::tclfile ""
+		$ps define helper.tclapp      ::quillapp::exefile ""
+		$ps define helper.basekit.tcl ::quillapp::exefile ""
+		$ps define helper.basekit.tk  ::quillapp::exefile ""
+		$ps define helper.teapot-pkg  ::quillapp::exefile ""
 
 		# Load the config file.
 		set configFile [file join ~ .quill quill.config]
