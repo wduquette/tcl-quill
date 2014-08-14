@@ -4,6 +4,7 @@ This is the official list of work to be done.
 
 # Next
 
+* Handle parmset errors.  Add INVALID to parmset(n).
 * Define "config.tcl" module that defines and delegates to configuration
   parmset.
   * Write config(5) man page, documenting the configuration parms;

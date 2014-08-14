@@ -60,13 +60,13 @@ snit::type ::quillapp::config {
 		# define executable-specific types.  Actually, the types could
 		# also know how to find them....
 
-		$ps define helper.tclsh       ::quillapp::exefile ""
-		$ps define helper.teacup      ::quillapp::exefile ""
-		$ps define helper.tkcon       ::quillapp::tclfile ""
-		$ps define helper.tclapp      ::quillapp::exefile ""
-		$ps define helper.basekit.tcl ::quillapp::exefile ""
-		$ps define helper.basekit.tk  ::quillapp::exefile ""
-		$ps define helper.teapot-pkg  ::quillapp::exefile ""
+		$ps define helper.tclsh       snit::stringtype ""
+		$ps define helper.teacup      snit::stringtype ""
+		$ps define helper.tkcon       snit::stringtype ""
+		$ps define helper.tclapp      snit::stringtype ""
+		$ps define helper.basekit.tcl snit::stringtype ""
+		$ps define helper.basekit.tk  snit::stringtype ""
+		$ps define helper.teapot-pkg  snit::stringtype ""
 
 		# Load the config file.
 		set configFile [file join ~ .quill quill.config]
@@ -74,6 +74,14 @@ snit::type ::quillapp::config {
 		if {[file isfile $configFile]} {
 			$ps load $configFile -forgiving
 		}
+	}
+
+	# save
+	#
+	# Saves the configuration parameters to disk.
+
+	typemethod save {} {
+		$ps save $configFile
 	}
 }
 

@@ -198,7 +198,7 @@ snit::type ::quill::parmset {
                 return
             }
 
-            error "No such parameter: $name"
+            throw INVALID "No such parameter: $name"
         }
         
         # FIRST, validate the type
