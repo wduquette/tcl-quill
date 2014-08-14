@@ -4,17 +4,20 @@ This is the official list of work to be done.
 
 # Next
 
-* Handle parmset errors.  Add INVALID to parmset(n).
 * Define "config.tcl" module that defines and delegates to configuration
-  parmset.
+  parmset.  Work remaining:
   * Write config(5) man page, documenting the configuration parms;
     or add them to the config help.
-  * Define helper.tcl module that determines which helpers to use,
-    based on plat and config.
-  * Define helpertool.tcl that lists the helpers and the source
-    * Found on path, or from config.
-  * Define configtool.tcl that lets you play with the configuration 
-    settings.
+  * Split plat.tcl into plat.tcl and env.tcl.
+  * Stuff that's genuinely platform-dependent goes into env.tcl,
+    e.g., how to make a file executable.
+  * Stuff about the current development environment (some of which does
+    depend on the current platform) goes in env.tcl.
+  * Revise env.tcl to that determines which helpers to use,
+    based on what it can find and the config parameters.
+  * Define envtool.tcl that describes the environment, and lists the 
+    helpers and their source (found on path or from config).
+    * This replaces most of what "versiontool" does.
 * Add check on "teacup" executable for build 298288 or later.
 * Move helpers list from version tool to 'quill helpers' or something.
 * Check "info(gottcl)" in appropriate spots, if it seems necessary.
@@ -25,7 +28,7 @@ This is the official list of work to be done.
 
 * Support for other versions of TCL/TK.
   * I.e, use Quill for Tcl 8.4/8.5 projects.
-  * Support cross-platform startpack builds
+  * Support cross-platform starpack builds, if possible.
 * Update Tools
   * quill new
     * Create library tree
