@@ -87,6 +87,14 @@ snit::type ::quillapp::teapot {
 			}
 		}
 
+		foreach line [split [exec $teacup link info $teapot] \n] {
+			if {[regexp {^Shell\s+(.+)$} $line dummy path] &&
+				[file normalize $path] eq $tclsh
+			} {
+				return 1
+			}
+		}
+
 		return 0
 	}
 
@@ -99,8 +107,10 @@ snit::type ::quillapp::teapot {
 		set teacup [plat pathto teacup]
 		set teapot [plat pathof teapot]
 
-		foreach {code path} [exec $teacup link info $tclsh] {
-			if {[file normalize $path] eq $teapot} {
+		foreach line [split [exec $teacup link info $tclsh] \n] {
+			if {[regexp {^Repository\s+(.+)$} $line dummy path] &&
+				[file normalize $path] eq $teapot
+			} {
 				return 1
 			}
 		}
