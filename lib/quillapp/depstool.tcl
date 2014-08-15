@@ -150,9 +150,15 @@ snit::type ::quillapp::depstool {
 		}
 
 		foreach pkg $pkgnames {
-			if {$pkg ni [project require names]} {
+			if {$pkg ni [project require names -all]} {
 				throw FATAL "The project doesn't require any package called \"$pkg\"."
 			}
+
+			if {$pkg in {Tcl Tk}} {
+				puts "Warning: $pkg cannot be updated this way."
+				continue
+			}
+
 			set ver [project require version $pkg]
 
 			if {![teapot installed $pkg $ver]} {
@@ -182,10 +188,17 @@ snit::type ::quillapp::depstool {
 		}
 
 		foreach pkg $pkgnames {
-			if {$pkg ni [project require names]} {
+			if {$pkg ni [project require names -all]} {
 				throw FATAL "The project doesn't require any package called \"$pkg\"."
 			}
+
 			set ver [project require version $pkg]
+
+			if {$pkg in {Tcl Tk}} {
+				puts "Warning: $pkg cannot be updated this way."
+				continue
+			}
+
 
 
 			if {[teapot installed $pkg $ver]} {

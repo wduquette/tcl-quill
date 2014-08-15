@@ -20,6 +20,7 @@ namespace eval ::quill:: {
 	namespace export \
         interleave   \
         ladd         \
+        ldelete      \
         lmaxlen      \
 		lshift
 }
@@ -46,6 +47,27 @@ proc ::quill::ladd {listvar args} {
     }
 
 	return $theList
+}
+
+# ldelete listvar value...
+#
+# listvar - The name of a list variable
+# values  - Values to delete from the list if present.
+#
+# Removes each value from the list var if it is present.  Returns
+# the new list.
+
+proc ::quill::ldelete {listvar args} {
+    upvar 1 $listvar theList
+
+    foreach value $args {
+        set i [lsearch -exact $theList $value]
+        if {$i != -1} {
+            set theList [lreplace $theList $i $i]
+        }
+    }
+
+    return $theList
 }
 
 # lmaxlen list
