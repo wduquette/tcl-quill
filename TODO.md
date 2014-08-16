@@ -4,6 +4,12 @@ This is the official list of work to be done.
 
 # Next
 
+* Put better usage messages at the top of help pages.
+* Figure out how to pull basekits from teapot.
+  * teacup list --all-platforms base-tcl-thread 
+  * teacup list --all-platforms base-tk-thread
+  * Platforms: win32-ix86, linux-*-ix86, macosx*-x86_64
+  * Versions: 8.5.* 8.6.*
 * 'quill version' should return just the quill name and version; move
   the other information to 'quill env'.
 * Add check on "teacup" executable for build 298288 or later.
@@ -14,8 +20,13 @@ This is the official list of work to be done.
 # Requirements For Quill 0.2.0
 
 * Support for other versions of TCL/TK.
-  * I.e, use Quill for Tcl 8.4/8.5 projects.
-  * Support cross-platform startpack builds
+  * I.e, use Quill for Tcl 8.5 or 8.6 projects.  Can also support 8.4 if
+    anyone wants it.
+  * Support cross-platform starpack build.
+  * Support for 'quill package' to package up a distribution for different
+    platforms.
+    * Includes bin/, docs/, provided lib .zip's, README, LICENSE, etc.
+    * Use vfs::zip to create the .zip file.
 * Update Tools
   * quill new
     * Create library tree

@@ -4,6 +4,44 @@ Nothing in this file should be presumed to be reflective of anything
 in the project.  Everything in this file is either incomplete, obsolete, 
 or wrong.
 
+## Q: How to support building Quill for multiple platforms on OSX?
+
+So long as Quill is pure-Tcl, this is easy: I just need to grab the
+appropriate basekit.
+
+Basekits can be retrieved from the ActiveState teapot as follows:
+
+First, get a list of what's available:
+
+```
+teacup list --all-platforms base-tcl-thread
+teacup list --all-platforms base-tk-thread
+```
+
+We only want platforms that match one of: win32-ix86, linux-*-ix86, 
+or macosx*-x86_64.
+
+We only want versions that match one of: 8.5.* 8.6.*.
+
+On Tcl 8.4, it's similar, though -thread isn't always available.
+
+We can retrieve these to disk using 
+
+`teacup get base-tcl-thread version arch`
+
+where the version and architecture are as in the list returned from teacup.
+
+Now, in theory these can be pulled into the local teapot; but it can only
+contain one architecture.  So pull these into ~/.quill/basekits on demand,
+and save them.
+
+Then, "quill build" can build any or all of the three versions, saving the
+exe to bin/myapp-$arch or bin/myapp-$arch.exe.
+
+Then "quill install" can grab the appropriate one for your local bin.
+
+Then, "quill dist" can build the distribition any of the chosen flavors.
+
 ## Q: How to support multiple versions of TCL/TK?
 
 When I made Quill public, the first comment I got back was from a user who
