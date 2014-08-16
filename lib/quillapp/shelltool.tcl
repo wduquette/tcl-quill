@@ -67,8 +67,8 @@ snit::type ::quillapp::shelltool {
 
 		# NEXT, set up the command.
 		lappend command \
-			[plat pathto tclsh] \
-			[plat pathto tkcon]
+			[env pathto tclsh] \
+			[env pathto tkcon]
 
 		# NEXT, If there's an application, adds the first application's
 		# loader to the command.

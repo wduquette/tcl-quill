@@ -364,7 +364,7 @@ snit::type ::quillapp::project {
 		set info(gottcl) 0
 
 		# FIRST, do we have a tclsh?
-		if {[plat pathto tclsh] eq ""} {
+		if {[env pathto tclsh] eq ""} {
 			puts [outdent {
 				WARNING: Quill cannot find the platform tclsh; it isn't
 				on the PATH.  Please install ActiveTcl, or identify the
@@ -376,7 +376,7 @@ snit::type ::quillapp::project {
 			return
 		}
 
-		set ver    [plat versionof tclsh]
+		set ver    [env versionof tclsh]
 		set reqver [project require version Tcl]
 
 		if {$ver eq ""} {

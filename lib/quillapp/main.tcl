@@ -107,5 +107,5 @@ proc ExecuteScript {path argv} {
 	set ::env(TCLLIBPATH) [project libpath]
 
 	# NEXT, run the tests.
-	exec [plat pathto tclsh] $path {*}$argv >@ stdout 2>@ stderr
+	exec [env pathto tclsh] $path {*}$argv >@ stdout 2>@ stderr
 }

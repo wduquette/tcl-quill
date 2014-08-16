@@ -1,0 +1,76 @@
+<manpage os(n) "OS Independence" quill(n)>
+
+<section SYNOPSIS>
+
+<pre>
+package require quill <version>
+namespace import ::quill::*
+</pre>
+
+<itemlist>
+
+<section DESCRIPTION>
+
+os(n) is Quill's operating system independence layer.  All operations
+that will work differently on different operating systems will be handled
+here.<p>
+
+
+<section COMMANDS>
+
+os(n) defines the following commands:<p>
+
+<deflist commands>
+
+<defitem "os flavor" {os flavor}>
+
+This command returns the "flavor" of the operating system, from Quill's 
+point of view.  Quill is intended to run on Linux, Mac OSX, and Windows;
+only rarely is more information required.  Thus, this routine returns 
+<b linux>, <b osx>, or <b windows>.  Modules require more detailed
+information (i.e., the platform architecture) should use the standard
+<link http://www.tcl.tk/man/tcl8.6/TclCmd/platform.htm platform(n)>
+package.<p>
+
+<defitem "os name" {os name}>
+
+Returns a prettier version of the <xref "#os flavor"> for output to the
+user.<p>
+
+<defitem "os exefile" {os exefile <i base>}>
+
+Given a base executable name, e.g., "myapp", this routine appends ".exe"
+on Windows and leaves the name alone on other platforms, returning the
+result.<p>
+
+<defitem "os pathfind" {os pathfind <i progname>}>
+
+Given the name of a program, e.g., "<tt tclsh>" or "<tt tclsh.exe>" as
+appropriate for the platform, this routine attempts to find it on the 
+<tt PATH>.<p>
+
+On Windows, the routine assumes the path separator is ";", but also tries
+":" in case the user is executing Quill from a bash command line (e.g.,
+from the MinGW environment).<p>
+
+The routine returns the empty string if it cannot locate the program.
+
+<defitem "os setexecutable" {os setexecutable <i filename>}>
+
+Sets the executable flag for the named file using Tcl's 
+<tt file attributes> command.<p>
+
+This is a no-op on Windows, where <tt file attributes> is not available.<p>
+
+</deflist commands>
+
+
+<section AUTHOR>
+
+Will Duquette<p>
+
+<section "SEE ALSO">
+
+<xref quill(n)>.
+
+</manpage>

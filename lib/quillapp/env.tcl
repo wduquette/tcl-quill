@@ -39,6 +39,8 @@ snit::type ::quillapp::env {
         set plat ::quillapp::plat
     }
 
+    delegate typemethod * to plat
+
     #---------------------------------------------------------------------
     # TBD
 

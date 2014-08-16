@@ -75,7 +75,7 @@ snit::type ::quillapp::runtool {
 
 		# NEXT, set up the command.
 		lappend command \
-			[plat pathto tclsh] \
+			[env pathto tclsh] \
 			[project app loader [lindex [project app names] 0]] \
 			{*}$argv >@ stdout 2>@ stderr
 

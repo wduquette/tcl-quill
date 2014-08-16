@@ -68,7 +68,7 @@ snit::type ::quillapp::teapot {
 	# Returns 1 if the default teapot is writable, and 0 otherwise.
 
 	typemethod writable {} {
-		return [file writable [plat pathof teapot]]
+		return [file writable [env pathof teapot]]
 	}
 
 	# islinked teapot2shell
@@ -77,9 +77,9 @@ snit::type ::quillapp::teapot {
 	# tclsh.
 
 	typemethod {islinked teapot2shell} {} {
-		set tclsh  [plat pathto tclsh]
-		set teacup [plat pathto teacup]
-		set teapot [plat pathof teapot]
+		set tclsh  [env pathto tclsh]
+		set teacup [env pathto teacup]
+		set teapot [env pathof teapot]
 
 		foreach line [split [exec $teacup link info $teapot] \n] {
 			if {[regexp {^Shell\s+(.+)$} $line dummy path] &&
@@ -97,9 +97,9 @@ snit::type ::quillapp::teapot {
 	# Returns 1 if the shell knows that it is linked to the teapot.
 
 	typemethod {islinked shell2teapot} {} {
-		set tclsh  [plat pathto tclsh]
-		set teacup [plat pathto teacup]
-		set teapot [plat pathof teapot]
+		set tclsh  [env pathto tclsh]
+		set teacup [env pathto teacup]
+		set teapot [env pathof teapot]
 
 		foreach line [split [exec $teacup link info $tclsh] \n] {
 			if {[regexp {^Repository\s+(.+)$} $line dummy path] &&
@@ -117,7 +117,7 @@ snit::type ::quillapp::teapot {
 	# Checks the build number of the selected teacup executable.
 
 	typemethod checkbuild {} {
-		set teacup [plat pathto teacup]
+		set teacup [env pathto teacup]
 
 		if {$teacup eq ""} {
 			return ""
@@ -164,7 +164,7 @@ snit::type ::quillapp::teapot {
 	# converts the result into a list of dictionaries.
 
 	typemethod list {args} {
-		set teacup [plat pathto teacup -require]
+		set teacup [env pathto teacup -require]
 
 		set output [exec $teacup list --as csv {*}$args]
 
@@ -193,7 +193,7 @@ snit::type ::quillapp::teapot {
 	# Removes the specified package from the default teapot.
 
 	typemethod install {pkg ver} {
-		set teacup [plat pathto teacup -require]
+		set teacup [env pathto teacup -require]
 
 		puts [exec $teacup install $pkg $ver]
 	}
@@ -206,7 +206,7 @@ snit::type ::quillapp::teapot {
 	# Removes the specified package from the default teapot.
 
 	typemethod remove {pkg ver} {
-		set teacup [plat pathto teacup -require]
+		set teacup [env pathto teacup -require]
 
 		foreach item [teapot list --at-default --is package $pkg] {
 			set p [dict get $item name]
