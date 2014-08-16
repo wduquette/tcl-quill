@@ -39,8 +39,8 @@ snit::type ::quillapp::env {
         tkcon       ""
         teacup      ""
         tclapp      ""
-        tcl-basekit ""
-        tk-basekit  ""
+        basekit.tcl ""
+        basekit.tk  ""
         teapot-pkg  ""
     }
 
@@ -88,6 +88,12 @@ snit::type ::quillapp::env {
             -require { set require 1 }
         }
 
+        # Is there a configuration value?
+        if {$pathto($helper) eq ""} {
+            set pathto($helper) [config get helper.$helper]
+        }
+
+        # If not, try to find it in the environment
         if {$pathto($helper) eq ""} {
             set pathto($helper) [$type GetPathTo $helper]
         }
@@ -168,21 +174,21 @@ snit::type ::quillapp::env {
         return [os pathfind [os exefile teapot-pkg]]
     }
 
-    # GetPathTo tcl-basekit
+    # GetPathTo basekit.tcl
     #
     # Returns the path to the non-GUI basekit for this platform,
     # or "".
 
-    typemethod {GetPathTo tcl-basekit} {} {
+    typemethod {GetPathTo basekit.tcl} {} {
         $type GetBaseKit tcl
     }
 
-    # GetPathTo tk-basekit
+    # GetPathTo basekit.tk
     #
     # Returns the path to the GUI basekit for this platform,
     # or "".
 
-    typemethod {GetPathTo tk-basekit} {} {
+    typemethod {GetPathTo basekit.tk} {} {
         $type GetBaseKit tk
     }
 

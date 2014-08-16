@@ -150,9 +150,9 @@ snit::type ::quillapp::buildtool {
 		# Prefix
 		if {$apptype eq "exe"} {
 			if {$guiflag} {
-				set basekit [env pathto tk-basekit]
+				set basekit [env pathto basekit.tk]
 			} else {
-				set basekit [env pathto tcl-basekit]
+				set basekit [env pathto basekit.tcl]
 			}
 
 			if {$basekit eq ""} {

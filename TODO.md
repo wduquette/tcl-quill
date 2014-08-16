@@ -4,7 +4,6 @@ This is the official list of work to be done.
 
 # Next
 
-* Use env.tcl must allow config.tcl to override paths.
 * 'quill version' should return just the quill name and version; move
   the other information to 'quill env'.
 * Add check on "teacup" executable for build 298288 or later.

@@ -73,8 +73,8 @@ snit::type ::quillapp::versiontool {
 		DisplayPath tkcon
 		DisplayPath teacup 
 		DisplayPath tclapp
-		DisplayPath tcl-basekit
-		DisplayPath tk-basekit
+		DisplayPath basekit.tcl
+		DisplayPath basekit.tk
 		DisplayPath teapot-pkg
 
 		puts ""
