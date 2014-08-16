@@ -9,7 +9,9 @@
 #    Quill: Project Build System for Tcl/Tk
 #
 # DESCRIPTION:
-#    plat(n): Platform abstraction layer for Quill
+#    plat(n): Platform independence layer for Quill.  This module is the
+#    one that knows how to do various tasks in a platform-independent
+#    way.  This should possibly go in quill(n).
 #
 #-------------------------------------------------------------------------
 
@@ -93,6 +95,8 @@ snit::type ::quillapp::plat {
     #
     # Returns the full application file name, i.e., adds a ".exe"
     # on Windows.
+    #
+    # TODO: make this exefile
 
     typemethod appfile {app} {
         if {[$type id] eq "windows"} {
@@ -110,6 +114,9 @@ snit::type ::quillapp::plat {
     # is unknown, or -force is given, finds the executable first, and
     # caches the result.  Returns "" if the tool cannot be found, or
     # if -require is given throws a fatal error.
+    #
+    # TODO: -force is silly.  Provide "env reset" to reset all
+    # cached data.
 
     typemethod pathto {tool args} {
         set force   0

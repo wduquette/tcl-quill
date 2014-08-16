@@ -15,9 +15,11 @@ support other versions of Tcl/Tk?
   * Find tclsh on path.  DONE.
     * Query tclsh for Tcl version DONE
   * Allow users to specify which tools to use, via "quill config"
+    * But this should perhaps be Tcl version specific: the project
+      selects the Tcl version, and Quill selects the appropriate helpers.
 * Request update of "teacup" if it's too old.
 * Avoid using Tcl 8.6-specific code in templates.  DONE.
-* Support Tcl/Tk requirements in project.quill. DONE>
+* Support Tcl/Tk requirements in project.quill. DONE.
 
 ## Q: A GUI version of Quill?
 
