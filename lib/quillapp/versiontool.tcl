@@ -57,7 +57,7 @@ snit::type ::quillapp::versiontool {
 	# Executes the tool given the arguments.
 
 	typemethod execute {argv} {
-		set os [plat os]
+		set os [os name]
 
 		puts "Quill [quillinfo version]: [quillinfo description]"
 		puts ""

@@ -4,21 +4,10 @@ This is the official list of work to be done.
 
 # Next
 
-* Define "config.tcl" module that defines and delegates to configuration
-  parmset.
-  * Divide "plat" into two.
-    * plat.tcl proper has truly platform-specific stuff: how to find
-      files, how to mark files executable.
-    * env.tcl has environmental stuff in a broader way: what helpers to use.
-    
-  * Define helper.tcl module that determines which helpers to use,
-    based on plat and config.
-  * Define helpertool.tcl that lists the helpers and the source
-    * Found on path, or from config.
-  * Define configtool.tcl that lets you play with the configuration 
-    settings.
+* Use env.tcl must allow config.tcl to override paths.
+* 'quill version' should return just the quill name and version; move
+  the other information to 'quill env'.
 * Add check on "teacup" executable for build 298288 or later.
-* Move helpers list from version tool to 'quill env' or something.
 * Check "info(gottcl)" in appropriate spots, if it seems necessary.
 * quillapp(n) doesn't really need a namespace.  App packages don't
   really need a namespace.

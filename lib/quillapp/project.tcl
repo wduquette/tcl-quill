@@ -307,7 +307,7 @@ snit::type ::quillapp::project {
 
 	typemethod {app target} {app} {
 		if {$meta(apptype-$app) eq "exe"} {
-			return [project root bin [plat appfile $app]]
+			return [project root bin [os exefile $app]]
 		} else {
 			return [project root bin $app.kit]
 		}
