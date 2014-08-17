@@ -56,6 +56,8 @@ snit::type ::quillapp::envtool {
         set os [os name]
 
         puts "Quill [quillinfo version] thinks it is running on $os."
+        puts ""
+        puts "Local Teapot: [env pathof teapot]"
         puts "" 
         puts "Helper Tools:"
 
@@ -68,7 +70,9 @@ snit::type ::quillapp::envtool {
         DisplayPath teapot-pkg
 
         puts ""
-        puts "Local Teapot: [env pathof teapot]"
+        puts "!  - Helper tool could not be found on disk."
+        puts "+  - Path is configured explicitly."
+
     }
 
     # DisplayPath tool
@@ -81,15 +85,28 @@ snit::type ::quillapp::envtool {
         set path [env pathto $tool]
         set ver  [env versionof $tool]
 
-        if {![file isfile $path]} {
-            set flag " (NOT FOUND)"
-        } elseif {$ver ne ""} {
-            set flag " ($ver)"
+        set taglist [list]
+
+        if {$path eq "" || ![file isfile $path]} {
+            set code "!"
         } else {
-            set flag ""
+            set code " "
+        }
+
+        if {[config get helper.$tool] ne ""} {
+            append code "+"
+        } else {
+            append code " "
+        }
+
+
+        if {$ver ne ""} {
+            set tag "(v$ver)"
+        } else {
+            set tag ""
         }
         
-        puts [format "    %-12s %s%s" $tool $path $flag]
+        puts [format "%-2s %-12s %s%s" $code $tool $path $tag]
     }
 }
 
