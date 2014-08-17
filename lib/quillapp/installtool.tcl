@@ -142,7 +142,7 @@ snit::type ::quillapp::installtool {
 		}
 
 		set command ""
-		lappend command [plat pathto teacup] install \
+		lappend command [env pathto teacup] install \
 			$source
 
 		puts "Installing lib $lib to local teapot..."

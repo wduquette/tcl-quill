@@ -129,7 +129,7 @@ snit::type ::quillapp::buildtool {
 
 		# tclapp, app loader script, lib directories
 		lappend command \
-			[plat pathto tclapp] \
+			[env pathto tclapp] \
 			[project root bin $app.tcl] \
 			[project root lib * *]
 
@@ -141,7 +141,7 @@ snit::type ::quillapp::buildtool {
 
 		# Archive
 		lappend command \
-			-archive [plat pathof teapot]
+			-archive [env pathof teapot]
 
 		# Output file
 		lappend command \
@@ -150,9 +150,9 @@ snit::type ::quillapp::buildtool {
 		# Prefix
 		if {$apptype eq "exe"} {
 			if {$guiflag} {
-				set basekit [plat pathto tk-basekit]
+				set basekit [env pathto basekit.tk]
 			} else {
-				set basekit [plat pathto tcl-basekit]
+				set basekit [env pathto basekit.tcl]
 			}
 
 			if {$basekit eq ""} {
@@ -222,7 +222,7 @@ snit::type ::quillapp::buildtool {
 
 		# NEXT, prepare the packaging command
 		set command ""
-		lappend command [plat pathto teapot-pkg] generate \
+		lappend command [env pathto teapot-pkg] generate \
 			-t zip                                        \
 			-o $outdir                                    \
 			[project root lib $lib]

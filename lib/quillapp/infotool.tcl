@@ -77,7 +77,7 @@ snit::type ::quillapp::infotool {
 			puts "Provides: $lib"
 		}
 
-		foreach pkg [project require names] {
+		foreach pkg [project require names -all] {
 			set ver   [project require version $pkg]
 			set local [project require local $pkg]
 			puts -nonewline "Requires: $pkg $ver"

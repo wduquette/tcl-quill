@@ -1,0 +1,116 @@
+<manpage config(5) "Quill Configuration File Syntax">
+
+<section SYNOPSIS>
+
+<itemlist>
+
+<section DESCRIPTION>
+
+The Quill configuration file contains parameters used to configure Quill
+for the user's development environment.  The default settings should be
+appropriate for most users.<p>
+
+<subsection "Location">
+
+The Quill configuration file is located in the user's home directory at
+"<tt ~/.quill/quill.config>".  <b NOTE:> at some point, <tt quill.config>
+might move to a more appropriate location on Windows systems.<p>
+
+<subsection "Editing">
+
+It is possible to edit the Quill configuration file by hand, in a text
+file; see <xref "#Syntax">, below.  It is more typical to use 
+the <tt quill config> tool; see<p>
+
+<pre>
+$ quill help config
+</pre>
+
+for details.<p>
+
+<subsection "Syntax">
+
+The configuration file is a <xref parmset(n)> file, and so its syntax is
+very simple.  It consists of a sequence of zero or more <b parm> commands:
+
+<pre>
+parm <i name> <i value>
+</pre>
+
+where <i name> is the name of a configuration parameter, and <i value>
+is the value.<p>
+
+When changes are made using the <tt quill config> tool, only parameters
+with non-default values are saved.<p>
+
+Note that Quill ignores any errors in this file.<p>
+
+<section PARAMETERS>
+
+The following statements may appear in <tt quill.config>.<p>
+
+<deflist parameters>
+
+<defitem helper {helper.*}>
+
+The <tt helper.*> parameters tell Quill where to find certain helper 
+applications.  Quill can usually find them on its own, but this allows
+for unusual environments or for use of multiple versions of Tcl on one
+machine.<p>
+
+<deflist helper.*>
+
+<defitem helper.tclsh {helper.tclsh}>
+
+The full path to the default Tcl shell application.  If unset (the default),
+Quill will look for <tt tclsh> on the PATH.  Development cannot proceed
+until <tt tclsh> is identified one way or another.<p>
+
+<defitem helper.teacup {helper.teacup}>
+
+The full path to the ActiveTcl <tt teacup> application.  If unset 
+(the default), Quill will look for <tt teacup> on the PATH.  If the 
+<tt teacup> is not identified, Quill will not be able to acquire and
+manage external dependencies.<p>
+
+<defitem helper.tkcon {helper.tkcon}>
+
+The full path to the TKcon console application.  If unset 
+(the default), Quill will look for <tt tkcon> on the PATH.  If the
+TKcon application is not identified, Quill will not be able to support
+the <tt quill shell> tool.<p>
+
+<defitem helper.tclapp {helper.tclapp}>
+
+The full path to the TclDevKit <tt tclapp> application.  If unset 
+(the default), Quill will look for <tt tclapp> on the PATH.  If the
+<tt tclapp> application is not identified, Quill will not be able to 
+build applications for installation and deployment.  <b Note:> I
+hope to relax this constraint in the future.<p>
+
+<defitem helper.basekit.tcl {helper.basekit.tcl}>
+
+The full path to the ActiveTcl console-mode "basekit", a stub Tcl shell
+used when building standalone console applications.  If unset 
+(the default), Quill will look for the basekit in a manner appropriate 
+for the platform.  If the basekit is not identified, Quill will not be 
+able to build non-GUI console applications as standalone executables.<p>
+
+<defitem helper.basekit.tk {helper.basekit.tk}>
+
+The full path to the ActiveTcl GUI-mode "basekit", a stub Tcl/Tk shell
+used when building standalone GUI applications.  If unset 
+(the default), Quill will look for the basekit in a manner appropriate 
+for the platform.  If the basekit is not identified, Quill will not be 
+able to build GUI applications as standalone executables.<p>
+
+</deflist helper.*>
+
+</deflist parameters>
+
+<section AUTHOR>
+
+Will Duquette.<p>
+
+
+</manpage>

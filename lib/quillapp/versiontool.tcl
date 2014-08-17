@@ -57,7 +57,7 @@ snit::type ::quillapp::versiontool {
 	# Executes the tool given the arguments.
 
 	typemethod execute {argv} {
-		set os [plat os]
+		set os [os name]
 
 		puts "Quill [quillinfo version]: [quillinfo description]"
 		puts ""
@@ -73,12 +73,12 @@ snit::type ::quillapp::versiontool {
 		DisplayPath tkcon
 		DisplayPath teacup 
 		DisplayPath tclapp
-		DisplayPath tcl-basekit
-		DisplayPath tk-basekit
+		DisplayPath basekit.tcl
+		DisplayPath basekit.tk
 		DisplayPath teapot-pkg
 
 		puts ""
-		puts "Local Teapot: [plat pathof teapot]"
+		puts "Local Teapot: [env pathof teapot]"
 	}
 
 	# DisplayPath tool
@@ -88,8 +88,8 @@ snit::type ::quillapp::versiontool {
 	# Displays the path and the tool's version (if known).
 
 	proc DisplayPath {tool} {
-		set path [plat pathto $tool]
-		set ver  [plat versionof $tool]
+		set path [env pathto $tool]
+		set ver  [env versionof $tool]
 
 		if {![file isfile $path]} {
 			set flag " (NOT FOUND)"

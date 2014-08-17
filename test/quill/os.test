@@ -1,0 +1,193 @@
+# -*-Tcl-*-
+#-------------------------------------------------------------------------
+# TITLE:
+#    os.test
+#
+# AUTHOR:
+#    Will Duquette
+#
+# DESCRIPTION:
+#    quill(n): Test cases for os.tcl
+
+#-------------------------------------------------------------------------
+# Load the tcltest package
+
+if {[lsearch [namespace children] ::tcltest] == -1} {
+    package require tcltest 2.3
+    eval ::tcltest::configure $argv
+}
+
+namespace import ::tcltest::test
+
+#-------------------------------------------------------------------------
+# Load the package to be tested
+
+source ../../lib/quill/pkgModules.tcl
+namespace import ::quill::*
+
+#-------------------------------------------------------------------------
+# Setup
+
+set save(os)   $::tcl_platform(os)
+set save(PATH) $::env(PATH)
+
+proc cleanup {} {
+    variable save
+
+    set ::tcl_platform(os) $save(os)
+    set ::env(PATH)        $save(PATH)
+}
+
+#-------------------------------------------------------------------------
+# flavor
+
+test flavor-1.1 {returns osx} -setup {
+    set ::tcl_platform(os) "Darwin"
+} -body {
+    os flavor
+} -cleanup {
+    cleanup
+} -result {osx}
+
+test flavor-1.2 {returns windows} -setup {
+    set ::tcl_platform(os) "Windows NT"
+} -body {
+    os flavor
+} -cleanup {
+    cleanup
+} -result {windows}
+
+test flavor-1.3 {returns linux} -setup {
+    set ::tcl_platform(os) "Whatever"
+} -body {
+    os flavor
+} -cleanup {
+    cleanup
+} -result {linux}
+
+#-------------------------------------------------------------------------
+# name
+
+test name-1.1 {returns osx} -setup {
+    set ::tcl_platform(os) "Darwin"
+} -body {
+    os name
+} -cleanup {
+    cleanup
+} -result {Mac OSX}
+
+test name-1.2 {returns windows} -setup {
+    set ::tcl_platform(os) "Windows NT"
+} -body {
+    os name
+} -cleanup {
+    cleanup
+} -result {Windows}
+
+test name-1.3 {returns linux} -setup {
+    set ::tcl_platform(os) "Whatever"
+} -body {
+    os name
+} -cleanup {
+    cleanup
+} -result {Linux}
+
+#-------------------------------------------------------------------------
+# exefile
+
+test exefile-1.1 {adds .exe on windows} -setup {
+    set ::tcl_platform(os) "Windows NT"
+} -body {
+    os exefile myfile
+} -cleanup {
+    cleanup
+} -result {myfile.exe}
+
+test exefile-1.2 {Doesn't add .exe on OSX} -setup {
+    set ::tcl_platform(os) "Darwin"
+} -body {
+    os exefile myfile
+} -cleanup {
+    cleanup
+} -result {myfile}
+
+test exefile-1.3 {Doesn't add .exe on Linux} -setup {
+    set ::tcl_platform(os) "Whatever"
+} -body {
+    os exefile myfile
+} -cleanup {
+    cleanup
+} -result {myfile}
+
+
+#-------------------------------------------------------------------------
+# pathfind
+
+test pathfind-1.1 {no path found if PATH ""} -setup {
+    set ::env(PATH) ""
+} -body {
+    os pathfind tclsh
+} -cleanup {
+    cleanup
+} -result {}
+
+test pathfind-1.2 {PATH can use ";" on Windows} -setup {
+    set dir [file dirname [info nameofexecutable]]
+    set app [file tail [info nameofexecutable]]
+    set ::env(PATH) "C:/foo;$dir;C:/bar"
+    set ::tcl_platform(os) "Windows NT"
+} -body {
+    set a [os pathfind $app]
+    set b [file normalize [info nameofexecutable]]
+    expr {$a eq $b}
+} -cleanup {
+    cleanup
+} -result {1}
+
+test pathfind-1.3 {PATH can use ":" on others} -setup {
+    set dir [file dirname [info nameofexecutable]]
+    set app [file tail [info nameofexecutable]]
+    set ::env(PATH) "/foo:$dir:/bar"
+    set ::tcl_platform(os) "Darwin"
+} -body {
+    set a [os pathfind $app]
+    set b [file normalize [info nameofexecutable]]
+    expr {$a eq $b}
+} -cleanup {
+    cleanup
+} -result {1}
+
+test pathfind-1.4 {no path found if exe is missing} -setup {
+    set app [file tail [info nameofexecutable]]
+    set ::env(PATH) "/foo:/bar"
+    set ::tcl_platform(os) "Darwin"
+} -body {
+    os pathfind $app
+} -cleanup {
+    cleanup
+} -result {}
+
+#-------------------------------------------------------------------------
+# setexecutable
+#
+# Note: a file is executable if p & 64 is true.
+
+test setexecutable-1.1 {can set exe bit} -constraints unix -body {
+    tcltest::makeFile "dummy" dummy
+    set a [expr {[file attributes dummy -permissions] & 64}]
+    os setexecutable dummy
+    set b [expr {[file attributes dummy -permissions] & 64}]
+    list $a $b
+} -cleanup {
+    tcltest::removeFile dummy
+    cleanup
+} -result {0 64}
+
+
+#-------------------------------------------------------------------------
+# Clean up and finish
+
+::tcltest::cleanupTests
+
+
+

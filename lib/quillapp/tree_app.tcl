@@ -58,7 +58,7 @@ proc ::quillapp::appTree {project appname} {
 # Default project.quill file for an "app" project.
 
 maptemplate ::quillapp::projectQuill {project appname} {
-    set tclversion [plat versionof tclsh]
+    set tclversion [env versionof tclsh]
 
     if {$tclversion eq ""} {
         set tclversion $::tcl_version

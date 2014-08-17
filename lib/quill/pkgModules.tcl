@@ -45,6 +45,7 @@ source [file join $::quill::library manpage.tcl    ]
 source [file join $::quill::library template.tcl   ]
 source [file join $::quill::library maptemplate.tcl]
 source [file join $::quill::library parmset.tcl    ]
+source [file join $::quill::library os.tcl         ]
 
 
 

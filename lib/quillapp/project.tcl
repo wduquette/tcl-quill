@@ -230,7 +230,6 @@ snit::type ::quillapp::project {
 	typemethod description     {} { return $meta(description) }
 	typemethod {app names}     {} { return $meta(apps)        }
 	typemethod {provide names} {} { return $meta(provides)    }
-	typemethod {require names} {} { return $meta(requires)    }
 
 	# header
 	#
@@ -308,12 +307,27 @@ snit::type ::quillapp::project {
 
 	typemethod {app target} {app} {
 		if {$meta(apptype-$app) eq "exe"} {
-			return [project root bin [plat appfile $app]]
+			return [project root bin [os exefile $app]]
 		} else {
 			return [project root bin $app.kit]
 		}
 	}
 
+	# require names ?-all?
+	#
+	# Returns the names of all required packages EXCEPT Tcl and Tk.
+	# If -all is given, they are included if present.
+
+	typemethod {require names} {{opt ""}} {
+		set names $meta(requires)
+
+		if {$opt ne "-all"} {
+			ldelete names Tcl
+			ldelete names Tk
+		}
+
+		return $names
+	}
 
 	# require version pkg
 	#
@@ -350,7 +364,7 @@ snit::type ::quillapp::project {
 		set info(gottcl) 0
 
 		# FIRST, do we have a tclsh?
-		if {[plat pathto tclsh] eq ""} {
+		if {[env pathto tclsh] eq ""} {
 			puts [outdent {
 				WARNING: Quill cannot find the platform tclsh; it isn't
 				on the PATH.  Please install ActiveTcl, or identify the
@@ -362,7 +376,7 @@ snit::type ::quillapp::project {
 			return
 		}
 
-		set ver    [plat versionof tclsh]
+		set ver    [env versionof tclsh]
 		set reqver [project require version Tcl]
 
 		if {$ver eq ""} {
@@ -732,7 +746,7 @@ snit::type ::quillapp::project {
 			if {[string match "package require *" [tighten $line]]} {
 				set package [lindex $line 2]
 
-				if {$package in [project require names]} {
+				if {$package in [project require names -all]} {
 					set ver [project require version $package]
 					lappend nblock "package require $package $ver"
 				} elseif {$package in [project provide names]} {
