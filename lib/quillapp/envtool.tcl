@@ -93,6 +93,10 @@ snit::type ::quillapp::envtool {
             set code " "
         }
 
+        if {$path eq ""} {
+            set path "(NOT FOUND)"
+        }
+
         if {[config get helper.$tool] ne ""} {
             append code "+"
         } else {
@@ -101,7 +105,7 @@ snit::type ::quillapp::envtool {
 
 
         if {$ver ne ""} {
-            set tag "(v$ver)"
+            set tag " (v$ver)"
         } else {
             set tag ""
         }
