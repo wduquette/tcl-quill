@@ -18,88 +18,88 @@
 # Register the tool
 
 set ::quillapp::tools(version) {
-	command     "version"
-	description "Displays the Quill tool's version to the console."
-	argspec     {0 0 ""}
-	intree      false
-	ensemble    ::quillapp::versiontool
+    command     "version"
+    description "Displays the Quill tool's version to the console."
+    argspec     {0 0 ""}
+    intree      false
+    ensemble    ::quillapp::versiontool
 }
 
 set ::quillapp::help(version) {
-	The "quill version" tool displays the Quill application's version
-	to the console in human-readable form.  In addition, it lists the
-	specific helper tools being used by Quill.  
+    The "quill version" tool displays the Quill application's version
+    to the console in human-readable form.  In addition, it lists the
+    specific helper tools being used by Quill.  
 
-	The Tcl shell is that used to execute Quill; the other applications are
-	found relative to the Tcl shell where possible, or on the path when
-	not.
+    The Tcl shell is that used to execute Quill; the other applications are
+    found relative to the Tcl shell where possible, or on the path when
+    not.
 }
 
 #-------------------------------------------------------------------------
 # Namespace Export
 
 namespace eval ::quillapp:: {
-	namespace export \
-		versiontool
+    namespace export \
+        versiontool
 } 
 
 #-------------------------------------------------------------------------
 # Tool Singleton: versiontool
 
 snit::type ::quillapp::versiontool {
-	# Make it a singleton
-	pragma -hasinstances no -hastypedestroy no
+    # Make it a singleton
+    pragma -hasinstances no -hastypedestroy no
 
-	# execute argv
-	#
-	# argv - command line arguments for this tool
-	# 
-	# Executes the tool given the arguments.
+    # execute argv
+    #
+    # argv - command line arguments for this tool
+    # 
+    # Executes the tool given the arguments.
 
-	typemethod execute {argv} {
-		set os [os name]
+    typemethod execute {argv} {
+        set os [os name]
 
-		puts "Quill [quillinfo version]: [quillinfo description]"
-		puts ""
-		puts "Home Page: [quillinfo homepage]"
-		puts ""
-		puts "Please submit bug reports to the issue tracker at the home page."
-		puts ""
-		puts "Quill thinks it is running on $os."
-		puts "" 
-		puts "Helper Tools:"
+        puts "Quill [quillinfo version]: [quillinfo description]"
+        puts ""
+        puts "Home Page: [quillinfo homepage]"
+        puts ""
+        puts "Please submit bug reports to the issue tracker at the home page."
+        puts ""
+        puts "Quill thinks it is running on $os."
+        puts "" 
+        puts "Helper Tools:"
 
-		DisplayPath tclsh
-		DisplayPath tkcon
-		DisplayPath teacup 
-		DisplayPath tclapp
-		DisplayPath basekit.tcl
-		DisplayPath basekit.tk
-		DisplayPath teapot-pkg
+        DisplayPath tclsh
+        DisplayPath tkcon
+        DisplayPath teacup 
+        DisplayPath tclapp
+        DisplayPath basekit.tcl
+        DisplayPath basekit.tk
+        DisplayPath teapot-pkg
 
-		puts ""
-		puts "Local Teapot: [env pathof teapot]"
-	}
+        puts ""
+        puts "Local Teapot: [env pathof teapot]"
+    }
 
-	# DisplayPath tool
-	#
-	# tool    - The tool name
-	#
-	# Displays the path and the tool's version (if known).
+    # DisplayPath tool
+    #
+    # tool    - The tool name
+    #
+    # Displays the path and the tool's version (if known).
 
-	proc DisplayPath {tool} {
-		set path [env pathto $tool]
-		set ver  [env versionof $tool]
+    proc DisplayPath {tool} {
+        set path [env pathto $tool]
+        set ver  [env versionof $tool]
 
-		if {![file isfile $path]} {
-			set flag " (NOT FOUND)"
-		} elseif {$ver ne ""} {
-			set flag " ($ver)"
-		} else {
-			set flag ""
-		}
-		
-		puts [format "    %-12s %s%s" $tool $path $flag]
-	}
+        if {![file isfile $path]} {
+            set flag " (NOT FOUND)"
+        } elseif {$ver ne ""} {
+            set flag " ($ver)"
+        } else {
+            set flag ""
+        }
+        
+        puts [format "    %-12s %s%s" $tool $path $flag]
+    }
 }
 

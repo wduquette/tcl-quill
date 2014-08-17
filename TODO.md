@@ -4,12 +4,15 @@ This is the official list of work to be done.
 
 # Next
 
-* Put better usage messages at the top of help pages.
-* Figure out how to pull basekits from teapot.
-  * teacup list --all-platforms base-tcl-thread 
-  * teacup list --all-platforms base-tk-thread
-  * Platforms: win32-ix86, linux-*-ix86, macosx*-x86_64
-  * Versions: 8.5.* 8.6.*
+* Cross-platform builds:
+  * Make 'quill deps' check for a basekit in ~/.quill/basekits that 
+    matches the current os flavor.
+  * Make 'quill deps update' pull the basekit in.  On force, refresh it.
+  * Make 'quill build' get the basekit from ~/.quill/basekits.
+  * Change 'app' to allow specifying a list of kit|windows|linux|osx.
+  * 'quill deps' then looks for and retrieves all required basekits.
+  * 'quill build' builds all required version.
+
 * 'quill version' should return just the quill name and version; move
   the other information to 'quill env'.
 * Add check on "teacup" executable for build 298288 or later.

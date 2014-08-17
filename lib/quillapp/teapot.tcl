@@ -18,205 +18,205 @@
 # Namespace Export
 
 namespace eval ::quillapp:: {
-	namespace export \
-		teapot
+    namespace export \
+        teapot
 } 
 
 #-------------------------------------------------------------------------
 # Tool Singleton: teapot
 
 snit::type ::quillapp::teapot {
-	# Make it a singleton
-	pragma -hasinstances no -hastypedestroy no
+    # Make it a singleton
+    pragma -hasinstances no -hastypedestroy no
 
-	#---------------------------------------------------------------------
-	# Type Variables
+    #---------------------------------------------------------------------
+    # Type Variables
 
-	# goodbuild  - Versions prior to 298288 are known to have caused
-	#              problems for Quill.
-	
-	typevariable goodbuild 298288
+    # goodbuild  - Versions prior to 298288 are known to have caused
+    #              problems for Quill.
+    
+    typevariable goodbuild 298288
 
-	#---------------------------------------------------------------------
-	# Teapot Queries
+    #---------------------------------------------------------------------
+    # Teapot Queries
 
-	# quillpath
-	#
-	# Returns the path to Quill's own teapot.  This teapot might or might
-	# not exist at present.
+    # quillpath
+    #
+    # Returns the path to Quill's own teapot.  This teapot might or might
+    # not exist at present.
 
-	typemethod quillpath {} {
-		return [file normalize [file join ~ .quill teapot]]
-	}
+    typemethod quillpath {} {
+        return [file normalize [file join ~ .quill teapot]]
+    }
 
-	# ok
-	#
-	# Returns 1 if the teapot configuration is OK, and 0 otherwise.
-	# The configuration is OK if the default teapot is writable and the 
-	# teapot and shell are linked to each other.
+    # ok
+    #
+    # Returns 1 if the teapot configuration is OK, and 0 otherwise.
+    # The configuration is OK if the default teapot is writable and the 
+    # teapot and shell are linked to each other.
 
-	typemethod ok {} {
-		expr {
-			[teapot writable]              && 
-			[teapot islinked teapot2shell] &&
-			[teapot islinked shell2teapot]
-		}
-	}
+    typemethod ok {} {
+        expr {
+            [teapot writable]              && 
+            [teapot islinked teapot2shell] &&
+            [teapot islinked shell2teapot]
+        }
+    }
 
-	# writable
-	#
-	# Returns 1 if the default teapot is writable, and 0 otherwise.
+    # writable
+    #
+    # Returns 1 if the default teapot is writable, and 0 otherwise.
 
-	typemethod writable {} {
-		return [file writable [env pathof teapot]]
-	}
+    typemethod writable {} {
+        return [file writable [env pathof teapot]]
+    }
 
-	# islinked teapot2shell
-	#
-	# Returns 1 if the teapot knows that it is linked to the default
-	# tclsh.
+    # islinked teapot2shell
+    #
+    # Returns 1 if the teapot knows that it is linked to the default
+    # tclsh.
 
-	typemethod {islinked teapot2shell} {} {
-		set tclsh  [env pathto tclsh]
-		set teacup [env pathto teacup]
-		set teapot [env pathof teapot]
+    typemethod {islinked teapot2shell} {} {
+        set tclsh  [env pathto tclsh]
+        set teacup [env pathto teacup]
+        set teapot [env pathof teapot]
 
-		foreach line [split [exec $teacup link info $teapot] \n] {
-			if {[regexp {^Shell\s+(.+)$} $line dummy path] &&
-				[file normalize $path] eq $tclsh
-			} {
-				return 1
-			}
-		}
+        foreach line [split [exec $teacup link info $teapot] \n] {
+            if {[regexp {^Shell\s+(.+)$} $line dummy path] &&
+                [file normalize $path] eq $tclsh
+            } {
+                return 1
+            }
+        }
 
-		return 0
-	}
+        return 0
+    }
 
-	# islinked shell2teapot
-	#
-	# Returns 1 if the shell knows that it is linked to the teapot.
+    # islinked shell2teapot
+    #
+    # Returns 1 if the shell knows that it is linked to the teapot.
 
-	typemethod {islinked shell2teapot} {} {
-		set tclsh  [env pathto tclsh]
-		set teacup [env pathto teacup]
-		set teapot [env pathof teapot]
+    typemethod {islinked shell2teapot} {} {
+        set tclsh  [env pathto tclsh]
+        set teacup [env pathto teacup]
+        set teapot [env pathof teapot]
 
-		foreach line [split [exec $teacup link info $tclsh] \n] {
-			if {[regexp {^Repository\s+(.+)$} $line dummy path] &&
-				[file normalize $path] eq $teapot
-			} {
-				return 1
-			}
-		}
+        foreach line [split [exec $teacup link info $tclsh] \n] {
+            if {[regexp {^Repository\s+(.+)$} $line dummy path] &&
+                [file normalize $path] eq $teapot
+            } {
+                return 1
+            }
+        }
 
-		return 0
-	}
+        return 0
+    }
 
-	# checkbuild
-	#
-	# Checks the build number of the selected teacup executable.
+    # checkbuild
+    #
+    # Checks the build number of the selected teacup executable.
 
-	typemethod checkbuild {} {
-		set teacup [env pathto teacup]
+    typemethod checkbuild {} {
+        set teacup [env pathto teacup]
 
-		if {$teacup eq ""} {
-			return ""
-		}
+        if {$teacup eq ""} {
+            return ""
+        }
 
-		set verstring [string trim [exec $teacup version]]
-		set buildnum [lindex [split $verstring .] end]
+        set verstring [string trim [exec $teacup version]]
+        set buildnum [lindex [split $verstring .] end]
 
-		if {$buildnum < $goodbuild} {
-			puts [outdent "
-				WARNING: You may be using an out-of-date 'teacup'.
-				You should update it by executing 'teacup update-self'
-				at the command line.  (You might need to use sudo).
-			"]
-		}
-	}
+        if {$buildnum < $goodbuild} {
+            puts [outdent "
+                WARNING: You may be using an out-of-date 'teacup'.
+                You should update it by executing 'teacup update-self'
+                at the command line.  (You might need to use sudo).
+            "]
+        }
+    }
 
-	# installed pkg ver
-	#
-	# pkg   - A package name
-	# ver   - A version string
-	#
-	# Returns 1 if the named package is installed in the local
-	# repository, and 0 otherwise.
+    # installed pkg ver
+    #
+    # pkg   - A package name
+    # ver   - A version string
+    #
+    # Returns 1 if the named package is installed in the local
+    # repository, and 0 otherwise.
 
-	typemethod installed {pkg ver} {
-		set items [teapot list --at-default --is package $pkg]
+    typemethod installed {pkg ver} {
+        set items [teapot list --at-default --is package $pkg]
 
-		foreach item $items {
-			set p [dict get $item name]
-			set v [dict get $item version]
+        foreach item $items {
+            set p [dict get $item name]
+            set v [dict get $item version]
 
-			if {$pkg eq $p && [package vsatisfies $v $ver]} {
-				return 1
-			}
-		}
+            if {$pkg eq $p && [package vsatisfies $v $ver]} {
+                return 1
+            }
+        }
 
-		return 0
-	}
+        return 0
+    }
 
-	# list args...
-	#
-	# Calls "teacup list --as csv" with the other arguments, and
-	# converts the result into a list of dictionaries.
+    # list args...
+    #
+    # Calls "teacup list --as csv" with the other arguments, and
+    # converts the result into a list of dictionaries.
 
-	typemethod list {args} {
-		set teacup [env pathto teacup -require]
+    typemethod list {args} {
+        set teacup [env pathto teacup -require]
 
-		set output [exec $teacup list --as csv {*}$args]
+        set output [exec $teacup list --as csv {*}$args]
 
-		# Get the column headers
-		set lines [split $output \n]
-		set headers [split [lshift lines] ,]
+        # Get the column headers
+        set lines [split $output \n]
+        set headers [split [lshift lines] ,]
 
-		set result [list]
+        set result [list]
 
-		foreach line $lines {
-			set values [split $line ,]
-			lappend result [interleave $headers [split $line ,]]
-		}
+        foreach line $lines {
+            set values [split $line ,]
+            lappend result [interleave $headers [split $line ,]]
+        }
 
-		return $result
-	}
+        return $result
+    }
 
-	#---------------------------------------------------------------------
-	# Low-level Tools
+    #---------------------------------------------------------------------
+    # Low-level Tools
 
-	# install pkg ver
-	#
-	# pkg    - a package name
-	# ver    - A version number
-	#
-	# Removes the specified package from the default teapot.
+    # install pkg ver
+    #
+    # pkg    - a package name
+    # ver    - A version number
+    #
+    # Removes the specified package from the default teapot.
 
-	typemethod install {pkg ver} {
-		set teacup [env pathto teacup -require]
+    typemethod install {pkg ver} {
+        set teacup [env pathto teacup -require]
 
-		puts [exec $teacup install $pkg $ver]
-	}
+        puts [exec $teacup install $pkg $ver]
+    }
 
-	# remove pkg ver
-	#
-	# pkg    - a package name
-	# ver    - A version number
-	#
-	# Removes the specified package from the default teapot.
+    # remove pkg ver
+    #
+    # pkg    - a package name
+    # ver    - A version number
+    #
+    # Removes the specified package from the default teapot.
 
-	typemethod remove {pkg ver} {
-		set teacup [env pathto teacup -require]
+    typemethod remove {pkg ver} {
+        set teacup [env pathto teacup -require]
 
-		foreach item [teapot list --at-default --is package $pkg] {
-			set p [dict get $item name]
-			set v [dict get $item version]
+        foreach item [teapot list --at-default --is package $pkg] {
+            set p [dict get $item name]
+            set v [dict get $item version]
 
-			if {$p eq $pkg && [package vsatisfies $v $ver]} {
-				puts [exec $teacup remove --is package $p $v]
-			}
-		}
-	}
+            if {$p eq $pkg && [package vsatisfies $v $ver]} {
+                puts [exec $teacup remove --is package $p $v]
+            }
+        }
+    }
 
 }
 

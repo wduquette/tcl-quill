@@ -18,72 +18,78 @@
 # Register the tool
 
 set ::quillapp::tools(replace) {
-	command     "replace"
-	description "Global text replacement across files."
-	argspec     {3 - "target subtext files..."}
-	intree      false
-	ensemble    ::quillapp::replacetool
+    command     "replace"
+    description "Global text replacement across files."
+    argspec     {3 - "<target> <subtext> <file> ?<file>...?"}
+    intree      false
+    ensemble    ::quillapp::replacetool
 }
 
 set ::quillapp::help(replace) {
-	The "quill replace" tool looks for the target text in the named files,
-	and replaces it with the substitution text, saving the old content to
-	backup files.  E.g.,
+    The "quill replace" tool looks for the target text in the named files,
+    and replaces it with the substitution text, saving the old content to
+    backup files.  E.g.,
 
-	$ quill replace Fred George *.tcl
+    $ quill replace Fred George *.tcl
+
+    replaces all occurrences of "Fred" with "George" in the .tcl files
+    in the current directory.
+
+    NOTE: "quill replace" is not tied to the project tree; it can be used
+    with any text files.
 }
 
 #-------------------------------------------------------------------------
 # Namespace Export
 
 namespace eval ::quillapp:: {
-	namespace export \
-		replacetool
+    namespace export \
+        replacetool
 } 
 
 #-------------------------------------------------------------------------
 # Tool Singleton: replacetool
 
 snit::type ::quillapp::replacetool {
-	# Make it a singleton
-	pragma -hasinstances no -hastypedestroy no
+    # Make it a singleton
+    pragma -hasinstances no -hastypedestroy no
 
-	# execute argv
-	#
-	# argv - command line arguments for the primary app
-	# 
-	# Executes the app given the arguments.
+    # execute argv
+    #
+    # argv - command line arguments for the primary app
+    # 
+    # Executes the app given the arguments.
 
-	typemethod execute {argv} {
-		set target    [lshift argv]
-		set subtext   [lshift argv]
-		set filenames $argv
+    typemethod execute {argv} {
+        set target    [lshift argv]
+        set subtext   [lshift argv]
+        set filenames $argv
 
-		foreach name $filenames {
-			if {![file isfile $name]} {
-				throw FATAL "No such file: $name"
-			}
-		}
+        foreach name $filenames {
+            if {![file isfile $name]} {
+                throw FATAL "No such file: $name"
+            }
+        }
 
-		foreach name $filenames {
-			try {
-				set text [readfile $name]
+        foreach name $filenames {
+            try {
+                set text [readfile $name]
 
-				if {[string first $target $text] == -1} {
-					continue
-				}
+                if {[string first $target $text] == -1} {
+                    continue
+                }
 
-				puts "$name"
+                puts "$name"
 
-				set text [string map [list $target $subtext] $text]
+                set text [string map [list $target $subtext] $text]
 
-				file copy -force $name $name~
+                file copy -force $name $name~
 
-				writefile $name $text
-			} on error {result} {
-				throw FATAL "Error replacing in \"$name\": $result"
-			}
-		}
-	}
+                writefile $name $text
+            } on error {result} {
+                throw FATAL "Error replacing in \"$name\": $result"
+            }
+        }
+    }
 }
 

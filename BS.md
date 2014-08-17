@@ -4,6 +4,23 @@ Nothing in this file should be presumed to be reflective of anything
 in the project.  Everything in this file is either incomplete, obsolete, 
 or wrong.
 
+## Q: How to pull basekits from teapot?
+
+* Needed operations:
+  * Given the os flavor and the required Tcl version, see whether the
+    given basekit is in ~/.quill/basekits, and return its path.
+  * Given the os flavor and the required Tcl version, pull the desired
+    record from 'teacup list'.
+  * Then given that record, pull the desired basekit into ~/.quill/basekits.
+* Steps:
+  * Make 'quill deps' check for a basekit in ~/.quill/basekits that 
+    matches the current os flavor.
+  * Make 'quill deps update' pull the basekit in.  On force, refresh it.
+  * Make 'quill build' get the basekit from ~/.quill/basekits.
+  * Change 'app' to allow specifying a list of kit|windows|linux|osx.
+  * 'quill deps' then looks for and retrieves all required basekits.
+  * 'quill build' builds all required version.
+
 ## Q: How to support building Quill for multiple platforms on OSX?
 
 So long as Quill is pure-Tcl, this is easy: I just need to grab the
