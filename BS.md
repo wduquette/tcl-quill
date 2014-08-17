@@ -42,6 +42,11 @@ Then "quill install" can grab the appropriate one for your local bin.
 
 Then, "quill dist" can build the distribition any of the chosen flavors.
 
+Or, in project.quill, the -apptype option becomes -exetype; it can be a list
+of kit, osx, windows, linux.  When we build, we pull down the required 
+basekit, saving it as described above; and we save the different versions 
+into bin as described.  All can get packaged in one .tar file.
+
 ## Q: How to support multiple versions of TCL/TK?
 
 When I made Quill public, the first comment I got back was from a user who
