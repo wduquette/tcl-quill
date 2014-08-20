@@ -86,6 +86,18 @@ snit::type ::quillapp::env {
         foreach key [array names versionof] { set versionof($key) "" }
     }
 
+    # appdata name...
+    #
+    # name... - path components
+    #
+    # Returns a path within the appdata directory.
+    #
+    # TODO: Probably there are better locations on OS X and Windows.
+
+    typemethod appdata {args} {
+        return [file normalize [file join ~ .quill {*}$args]]
+    }
+
     # pathto helper ?-require?
     #
     # helper   - Name of a helper application, e.g., tclsh or teacup.
@@ -259,12 +271,10 @@ snit::type ::quillapp::env {
         # NEXT, either it wasn't in the usual place, or we requested
         # the basekit for another platform.  Look in Quill's basekits
         # repository.
-        #
-        # TODO: Add a routine for accessing the ~/.quill directory.
 
         set map [list %t $tcltk %v $tclver]
         set filepattern [string map $map $basekitPattern($flavor)]
-        set fullpattern [file join ~ .quill basekits $filepattern]
+        set fullpattern [env appdata basekits $filepattern]
 
         # Return the most recent that matches the x.y version.
         set choices [lsort -increasing [glob -nocomplain $fullpattern]]

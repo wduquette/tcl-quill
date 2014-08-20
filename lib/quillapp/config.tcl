@@ -72,7 +72,7 @@ snit::type ::quillapp::config {
         }
 
 		# Load the config file.
-		set configFile [file join ~ .quill quill.config]
+		set configFile [env appdata quill.config]
 
 		if {[file isfile $configFile]} {
 			$ps load $configFile -forgiving

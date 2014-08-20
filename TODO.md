@@ -4,12 +4,10 @@ This is the official list of work to be done.
 
 # Next
 
-* Look for [info tclversion].  We shouldn't be using it.
 * Cross-platform builds:
   * Make 'quill deps' check for a basekit in ~/.quill/basekits that 
     matches the current os flavor.
   * Make 'quill deps update' pull the basekit in.  On force, refresh it.
-  * Make 'quill build' get the basekit from ~/.quill/basekits.
   * Change 'app' to allow specifying a list of kit|windows|linux|osx.
   * 'quill deps' then looks for and retrieves all required basekits.
   * 'quill build' builds all required version.

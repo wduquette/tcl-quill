@@ -46,7 +46,7 @@ snit::type ::quillapp::teapot {
     # not exist at present.
 
     typemethod quillpath {} {
-        return [file normalize [file join ~ .quill teapot]]
+        return [file normalize [env appdata teapot]]
     }
 
     # ok
