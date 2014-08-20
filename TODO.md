@@ -13,8 +13,6 @@ This is the official list of work to be done.
   * 'quill deps' then looks for and retrieves all required basekits.
   * 'quill build' builds all required version.
 
-* 'quill version' should return just the quill name and version; move
-  the other information to 'quill env'.
 * Add check on "teacup" executable for build 298288 or later.
 * Check "info(gottcl)" in appropriate spots, if it seems necessary.
 * quillapp(n) doesn't really need a namespace.  App packages don't
