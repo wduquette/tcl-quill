@@ -32,6 +32,11 @@ information (i.e., the platform architecture) should use the standard
 <link http://www.tcl.tk/man/tcl8.6/TclCmd/platform.htm platform(n)>
 package.<p>
 
+<defitem "os flavors" {os flavors}>
+
+Returns a list of the valid OS flavors: <b linux>, <b osx>, and 
+<b windows>.<p>
+
 <defitem "os name" {os name}>
 
 Returns a prettier version of the <xref "#os flavor"> for output to the
