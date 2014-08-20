@@ -32,6 +32,12 @@ snit::type ::quill::os {
     #---------------------------------------------------------------------
     # OS Identification
 
+    typevariable osNames -array {
+        linux   "Linux"  
+        osx     "Mac OSX"
+        windows "Windows"
+    }
+
     # flavor
     #
     # Returns the OS ID.  Quill doesn't care (at present)
@@ -49,16 +55,20 @@ snit::type ::quill::os {
         }
     }
 
+    # flavors
+    #
+    # Returns the valid OS flavors.
+
+    typemethod flavors {} {
+        return [lsort [array names osNames]]
+    }
+
     # name
     #
     # Returns the OS, pretty printed for output.
 
     typemethod name {} {
-        switch [$type flavor] {
-            osx      { return "Mac OSX" }
-            windows  { return "Windows" }
-            linux    { return "Linux"   }
-        }
+        return $osNames([$type flavor])
     }
 
     # exefile base

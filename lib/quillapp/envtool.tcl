@@ -65,8 +65,8 @@ snit::type ::quillapp::envtool {
         DisplayPath tkcon
         DisplayPath teacup 
         DisplayPath tclapp
-        DisplayPath basekit.tcl
-        DisplayPath basekit.tk
+        DisplayPath basekit.tcl.[os flavor]
+        DisplayPath basekit.tk.[os flavor]
         DisplayPath teapot-pkg
 
         puts ""
@@ -110,7 +110,7 @@ snit::type ::quillapp::envtool {
             set tag ""
         }
         
-        puts [format "%-2s %-12s %s%s" $code $tool $path $tag]
+        puts [format "%-2s %-20s %s%s" $code $tool $path $tag]
     }
 }
 

@@ -31,17 +31,32 @@ snit::type ::quillapp::env {
     pragma -hasinstances no -hastypedestroy no
 
     #---------------------------------------------------------------------
+    # Constants
+
+    # teapot basekit patterns, by os flavor
+
+    typevariable basekitPattern -array {
+        linux   application-base-%t-thread-%v.*-linux-*-ix86
+        osx     application-base-%t-thread-%v.*-macosx*
+        windows application-base-%t-thread-%v.*-win32-ix86
+    }
+
+    #---------------------------------------------------------------------
     # Type Variables
 
     # pathto - Array of normalized paths to tool executables.
     typevariable pathto -array {
-        tclsh       ""
-        tkcon       ""
-        teacup      ""
-        tclapp      ""
-        basekit.tcl ""
-        basekit.tk  ""
-        teapot-pkg  ""
+        tclsh               ""
+        tkcon               ""
+        teacup              ""
+        tclapp              ""
+        teapot-pkg          ""
+        basekit.tcl.linux   ""
+        basekit.tcl.osx     ""
+        basekit.tcl.windows ""
+        basekit.tk.linux    ""
+        basekit.tk.osx      ""
+        basekit.tk.windows  ""
     }
 
     # pathof - Array of normalized paths to important directories
@@ -95,7 +110,12 @@ snit::type ::quillapp::env {
 
         # If not, try to find it in the environment
         if {$pathto($helper) eq ""} {
-            set pathto($helper) [$type GetPathTo $helper]
+            if {[string match "basekit.*" $helper]} {
+                lassign [split $helper .] dummy tcltk flavor
+                set pathto($helper) [$type GetBaseKit $tcltk $flavor]
+            } else {
+                set pathto($helper) [$type GetPathTo $helper]
+            }
         }
 
         if {$require && $pathto($helper) eq ""} {
@@ -174,63 +194,91 @@ snit::type ::quillapp::env {
         return [os pathfind [os exefile teapot-pkg]]
     }
 
-    # GetPathTo basekit.tcl
+    # GetBaseKit tcl|tk flavor
     #
-    # Returns the path to the non-GUI basekit for this platform,
-    # or "".
-
-    typemethod {GetPathTo basekit.tcl} {} {
-        $type GetBaseKit tcl
-    }
-
-    # GetPathTo basekit.tk
-    #
-    # Returns the path to the GUI basekit for this platform,
-    # or "".
-
-    typemethod {GetPathTo basekit.tk} {} {
-        $type GetBaseKit tk
-    }
-
-    # GetBaseKit tcl|tk
-    #
-    # tcl|tk   - Flavor of basekit desired.
+    # tcl|tk   - non-gui or gui basekit desired.
+    # flavor   - linux|osx|windows, or "" for this platform.
     #
     # Retrieves the path to the basekit, or "" if it can't find it.
     #
-    # TODO: Consider getting the basekit from the teapot.
+    # The following search is used:
+    #
+    # * First, if the flavor is [os flavor], then we look for it
+    #   with the locally installed basekits, and see if there's one
+    #   that matches the version number of the tclsh in use.
+    #
+    # * Next, if it's not there or the flavor is some other platform,
+    #   we look in ~/.quill/basekits/, to see if we've cached
+    #   one for the same version.
 
-    typemethod GetBaseKit {flavor} {
-        # FIRST, get the basekit prefix given the flavor
-        set prefix "base-${flavor}[info tclversion]-thread*"
+    typemethod GetBaseKit {tcltk flavor} {
+        # FIRST, get the flavor.
+        if {$flavor eq ""} {
+            set flavor [os flavor]
+        }
 
-        # NEXT, get the likely location given the platform.
-        # On OSX, we know it's in /Library/Tcl/basekits.  Otherwise,
-        # it's usually with the application
-        switch [os flavor] {
-            osx {
-                set basedir "/Library/Tcl/basekits"
-                set pattern [file join $basedir $prefix]
+        # NEXT, get the desired version.
+        set tclver [shortver [env versionof tclsh]]
+
+        if {$tclver eq ""} {
+            return ""
+        }
+
+        # NEXT, if the flavor is the flavor of the current platform,
+        # look where ActiveState installs basekits with the tclsh.
+        if {$flavor eq [os flavor]} {
+            # FIRST, get the basekit prefix given the flavor
+            set prefix "base-${tcltk}$tclver-thread*"
+
+            # NEXT, get the likely location given the platform.
+            # On OSX, we know it's in /Library/Tcl/basekits.  Otherwise,
+            # it's usually with the application
+            switch [os flavor] {
+                osx {
+                    set basedir "/Library/Tcl/basekits"
+                    set pattern [file join $basedir $prefix]
+                }
+                default {
+                    set basedir [file dirname [$type pathto tclsh]]
+                    set pattern [file join $basedir [os exefile $prefix]]
+                }
             }
-            default {
-                set basedir [file dirname [$type pathto tclsh]]
-                set pattern [file join $basedir [os exefile $prefix]]
+
+            # NEXT, there are usually library files alongside the
+            # executables.  Get all of the files, and discard the
+            # libraries.
+            foreach fname [glob -nocomplain $pattern] {
+                if {[file extension $fname] in {.dll .dylib .so}} {
+                    continue
+                }
+
+                return [file normalize $fname]
             }
         }
 
-        # NEXT, there are usually library files alongside the
-        # executables.  Get all of the files, and discard the
-        # libraries.
-        foreach fname [glob -nocomplain $pattern] {
-            if {[file extension $fname] in {.dll .dylib .so}} {
-                continue
-            }
+        # NEXT, either it wasn't in the usual place, or we requested
+        # the basekit for another platform.  Look in Quill's basekits
+        # repository.
+        #
+        # TODO: Add a routine for accessing the ~/.quill directory.
 
-            return [file normalize $fname]
-        }
+        set map [list %t $tcltk %v $tclver]
+        set filepattern [string map $map $basekitPattern($flavor)]
+        set fullpattern [file join ~ .quill basekits $filepattern]
 
-        return ""
+        # Return the most recent that matches the x.y version.
+        set choices [lsort -increasing [glob -nocomplain $fullpattern]]
+        return [lindex $choices end]
     } 
+
+    # shortver version
+    #
+    # Returns the x.y from a possibly longer version.
+
+    proc shortver {version} {
+        set vlist [split $version .]
+        return [join [lrange $vlist 0 1] .]
+    }
 
     #---------------------------------------------------------------------
     # Directory Paths

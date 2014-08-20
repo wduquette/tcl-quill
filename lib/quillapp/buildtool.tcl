@@ -137,11 +137,12 @@ snit::type ::quillapp::buildtool {
             -out $outfile
 
         # Prefix
+        # TODO: Support cross-platform builds.
         if {$apptype eq "exe"} {
             if {$guiflag} {
-                set basekit [env pathto basekit.tk]
+                set basekit [env pathto basekit.tk.[os flavor]]
             } else {
-                set basekit [env pathto basekit.tcl]
+                set basekit [env pathto basekit.tcl.[os flavor]]
             }
 
             if {$basekit eq ""} {
