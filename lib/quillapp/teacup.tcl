@@ -96,6 +96,60 @@ snit::type ::quillapp::teacup {
         return [file normalize $teapot]
     }
 
+    # getbase tcltk version flavor outdir
+    #
+    # tcltk   - tcl|tk
+    # version - Tcl version
+    # flavor  - linux|osx|windows
+    # outdir  - Output directory
+    #
+    # Retrieves the desired basekit from the ActiveState repository,
+    # saving it to the specified output directory.  Throws an error
+    # on failure.
+
+    typemethod getbase {tcltk version flavor outdir} {
+        # FIRST, get the right arch pattern.
+        switch $flavor {
+            linux    { set arch "linux-*-ix86"             }
+            osx      { set arch "macosx-*-x86_64"          }
+            windows  { set arch "win32-ix86"               }
+            default  { error "Unknown flavor: \"$flavor\"" }
+        }
+
+        # NEXT, get the list of possibilities
+        set table [teacup list --is application --all-platforms \
+                    base-$tcltk-thread]
+
+        # NEXT, search through the table for the entry that 
+        # matches the arch pattern and best matches the version.
+
+        set best(platform) ""
+        set best(version) 0.0
+
+        foreach record $table {
+            set v [dict get $record version]
+            set p [dict get $record platform]
+
+            if {![string match $arch $p]} {
+                continue
+            }
+
+            # If they asked for 8.5, say, make sure this is an 8.5.
+            if {![string match $version* $v]} {
+                continue
+            }
+
+            if {[package vcompare $v $best(version)] == 1} {
+                set best(platform) $p
+                set best(version)  $v
+            }
+        }
+
+        # NEXT, retrieve it.
+        call get --is application --output $outdir \
+            base-$tcltk-thread $best(version) $best(platform)
+    }
+
     # install pkg ver
     #
     # pkg    - a package name
