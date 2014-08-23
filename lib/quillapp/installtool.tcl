@@ -109,9 +109,18 @@ snit::type ::quillapp::installtool {
                 "No such application in project.quill: \"$app\""
         }
 
-        set source [project app target $app]
-        set dest [file normalize [file join ~ bin $app]]
-        puts "Installing app $app as $dest"
+        set apptypes [project app apptypes $app]
+        if {[os flavor] in $apptypes} {
+            set apptype [os flavor]
+        } elseif {"kit" in $apptypes} {
+            set apptype kit
+        } else {
+            throw FATAL "Application $app is never built for this platform."
+        }
+
+        set source [project app target $app $apptype]
+        set dest [file normalize [file join ~ bin [os exefile $app]]]
+        puts "Installing app [file tail $source] as $dest"
         file copy -force $source $dest
     }
 
