@@ -165,6 +165,17 @@ proc ::quillapp::prepare {var args} {
             }
         }
 
+        -listof {
+            set values [lshift args]
+
+            foreach val $theVar {
+                if {$val ni $values} {
+                    throw INVALID \
+            "Input \"$var\" isn't a list of ([join $values {, }]): \"$theVar\""
+                }
+            }
+        }
+
         -required {
             if {$theVar eq ""} {
                 throw INVALID \

@@ -76,32 +76,21 @@ in development via the "<tt quill run>" command, or by executing
 the loader script directly.<p>
 
 By default, the application will be built as a console-oriented
-<b uberkit>.  The following options may be used to customize how
+<b kit>.  The following options may be used to customize how
 the application is built:<p>
 
 <deflist options>
 <defopt {-gui}>
 If the <b -gui> option is specified, the application is a GUI application 
-and the Tk package will be required automatically.  When built as an "exe",
-a Tk basekit will be used.<p>
+and the Tk package will be required automatically.  When built as a 
+starpack, a Tk basekit will be used.<p>
 
-<defopt {-type kit | uberkit | exe}>
+<defopt {-apptypes kit | linux | osx | windows }>
 
-An application can be built as a Starkit or a Starpack.<p>
-
-If the type is <b kit>, it will be built as a Starkit; however, only
-the application's own code will be included in the <tt .kit> file.  The
-application will assume that all external dependencies will be available
-from the environment.<p>
-
-If the type is <b uberkit>, the application is built as a Starkit; however,
-all external dependencies are pulled into the <tt .kit> file.  It will 
-a <tt tclsh> to run against, but will not expect other external
-dependencies to be pre-installed.<p>
-
-If the type is <b exe>, the application is built as a Starpack: a 
-completely stand-alone executable.  It will be built for the platform
-upon which it is built (e.g., Windows).<p>  
+An application can be built for multiple platforms; the value of 
+<b -apptypes> can be a list of any of the above values.  The application
+will be built as a starpack for the given platforms.  The built 
+application will contain all external dependencies.<p>
 
 </deflist options>
 

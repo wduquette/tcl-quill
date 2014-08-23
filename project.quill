@@ -1,6 +1,6 @@
 project tcl-quill 0.2.0a0 "Quill Project Build System for Tcl/Tk"
 homepage http://github.com/wduquette/tcl-quill
-app quill -apptype exe
+app quill -apptypes {linux osx windows}
 provide quill
 
 require Tcl 8.6

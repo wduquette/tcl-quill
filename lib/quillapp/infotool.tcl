@@ -64,13 +64,7 @@ snit::type ::quillapp::infotool {
 				puts -nonewline "Console App: $app "
 			}
 
-			set apptype [project app apptype $app]
-			switch $apptype {
-				kit     { puts "(.kit)"                          }
-				uberkit { puts "(uber .kit)"                     }
-				exe     { puts "(standalone executable)"         }
-				default { error "Unknown app type: \"$apptype\"" }
-			}
+			puts "([join [project app apptypes $app] {, }])"
 		}
 
 		foreach lib [project provide names] {

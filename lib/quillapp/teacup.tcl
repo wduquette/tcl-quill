@@ -236,7 +236,7 @@ snit::type ::quillapp::teacup {
     typemethod remove {pkg {ver ""}} {
         # FIRST, if they want them all gone, remove all of them.
         if {$ver eq ""} {
-            call remove --is package $pkg >& stdout
+            call remove --is package $pkg >@ stdout
         }
 
         # NEXT, if they want all matching a version spec, we need to
@@ -247,7 +247,7 @@ snit::type ::quillapp::teacup {
             set v [dict get $item version]
 
             if {$p eq $pkg && [package vsatisfies $v $ver]} {
-                puts [call remove --is package $p $v >& stdout]
+                puts [call remove --is package $p $v >@ stdout]
             }
         }
     }

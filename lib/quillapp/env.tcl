@@ -38,7 +38,7 @@ snit::type ::quillapp::env {
     typevariable basekitPattern -array {
         linux   application-base-%t-thread-%v.*-linux-*-ix86
         osx     application-base-%t-thread-%v.*-macosx*
-        windows application-base-%t-thread-%v.*-win32-ix86
+        windows application-base-%t-thread-%v.*-win32-ix86.exe
     }
 
     #---------------------------------------------------------------------

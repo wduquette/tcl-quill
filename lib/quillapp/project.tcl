@@ -59,7 +59,8 @@ snit::type ::quillapp::project {
 	# homepage      - URL of the project home page.
     #
 	# apps          - List of application names
-	# apptype-$app  - Type of application $name: kit, uberkit, exe
+	# apptypes-$app - Types of application to build for app $app:
+	#                 a list of kit, linux, osx, windows.
 	# gui-$app      - Flag, 0 or 1: does package require Tk?
 	#
 	# requires      - List of required package names
@@ -278,14 +279,14 @@ snit::type ::quillapp::project {
 		return [project root bin $app.tcl]
 	}
 
-	# app apptype app
+	# app apptypes app
 	#
 	# app  - The app name
 	#
-	# Returns the application type, kit, uberkit, or exe
+	# Returns the application types, kit, linux, osx, windows.
 
-	typemethod {app apptype} {app} {
-		return $meta(apptype-$app)
+	typemethod {app apptypes} {app} {
+		return $meta(apptypes-$app)
 	}
 
 	# app gui app
@@ -302,14 +303,17 @@ snit::type ::quillapp::project {
 	#
 	# app  - The app name
 	#
-	# Returns the full path to built app, whether it's a kit or .exe,
-	# in the project bin directory.
+	# Returns the full path to built app given the apptype.
 
-	typemethod {app target} {app} {
-		if {$meta(apptype-$app) eq "exe"} {
-			return [project root bin [os exefile $app]]
-		} else {
-			return [project root bin $app.kit]
+	typemethod {app target} {app apptype} {
+		set base [project root bin $app]
+
+		switch $apptype {
+			kit       { return $base.kit                       }
+			linux     { return $base-linux                     }
+			osx       { return $base-osx                       }
+			windows   { return $base-windows.exe               }
+			default   { error "Invalid app type: \"$apptype\"" }
 		}
 	}
 
@@ -505,32 +509,32 @@ snit::type ::quillapp::project {
 	#
 	# name - The application name.
 	#
-	# -gui           - The application should be a GUI
-	# -apptype type  - One of kit, uberkit, exe
+	# -gui                - The application should be a GUI
+	# -apptypes typelist  - List of kit, linux, osx, windows.
 	#
 	# Specifies that this project builds an application called $name.
 
 	proc AppCmd {name args} {
 		# FIRST, get the option values
-		set gui     0
-		set apptype uberkit
+		set gui      0
+		set apptypes kit
 
 		foroption opt args -all {
 			-gui {
 				set gui 1
 			}
 
-			-apptype {
-				set apptype [lshift args]
-				prepare apptype -oneof {kit uberkit exe}
+			-apptypes {
+				set apptypes [lshift args]
+				prepare apptypes -listof {kit linux osx windows}
 			}
 		}
 
 		prepare name -required -file
 
-		ladd meta(apps)          $name
-		set  meta(apptype-$name) $apptype
-		set  meta(gui-$name)     $gui
+		ladd meta(apps)           $name
+		set  meta(apptypes-$name) $apptypes
+		set  meta(gui-$name)      $gui
 	}
 
 	# ProvideCmd name

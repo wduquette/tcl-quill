@@ -29,7 +29,7 @@ set ::quillapp::help(deps) {
     Quill installs the project's 'require''d packages into a local
     teapot repository (see 'quill help teapot').  Once installed, they 
     are available for use during development, and are included in 
-    "exe" and "uberkit" apps.
+    built applications.
 
     Called with no arguments, "quill deps" lists the project's 
     required packages and indicates whether each is available in the
@@ -118,6 +118,18 @@ snit::type ::quillapp::depstool {
             DisplayPackage $pkg $ver $status
         }
 
+        foreach basekit [GetRequiredBasekits] {
+            set kitpath [env pathto $basekit]
+            if {$kitpath ne ""} { 
+                set status "(OK)"
+            } {
+                set status "(Not installed)"
+            }
+
+            DisplayPackage $basekit "" $status
+
+        }
+
         if {$count > 0} {
             puts ""
             puts "$count required package(s) must be installed."
@@ -138,6 +150,31 @@ snit::type ::quillapp::depstool {
         puts [format "  %-28s %s" "$pkg $ver" $text]
     }
 
+    # GetRequiredBasekits
+    #
+    # Returns the set of basekit "pathto" symbols that we need 
+    # for this project.
+
+    proc GetRequiredBasekits {} {
+        set list [list]
+
+        foreach app [project app names] {
+            if {[project app gui $app]} {
+                set tcltk "tk"
+            } else {
+                set tcltk "tcl"
+            }
+
+            foreach apptype [project app apptypes $app] {
+                if {$apptype ne "kit"} {
+                    ladd list basekit.$tcltk.$apptype
+                }
+            }
+        }
+
+        return $list
+    }
+
     # UpdateDeps pkgnames
     #
     # Updates dependencies that are missing.
@@ -146,26 +183,19 @@ snit::type ::quillapp::depstool {
         puts "Updating required dependencies..."
         set count 0
 
+        set basekits [GetRequiredBasekits]
+
         if {[llength $pkgnames] == 0} {
-            set pkgnames [project require names]
+            set pkgnames [concat [project require names] $basekits]
         }
 
         foreach pkg $pkgnames {
-            if {$pkg ni [project require names -all]} {
+            if {$pkg in [project require names -all]} {
+                incr count [UpdatePackage $pkg]
+            } elseif {$pkg in $basekits} {
+                incr count [UpdateBasekit $pkg]
+            } else {
                 throw FATAL "The project doesn't require any package called \"$pkg\"."
-            }
-
-            if {$pkg in {Tcl Tk}} {
-                puts "Warning: $pkg cannot be updated this way."
-                continue
-            }
-
-            set ver [project require version $pkg]
-
-            if {![teacup installed $pkg $ver]} {
-                puts "Installing $pkg $ver"
-                teacup install $pkg $ver
-                incr count
             }
         }
 
@@ -177,44 +207,124 @@ snit::type ::quillapp::depstool {
         }
     }
 
+    # UpdatePackage pkg
+    #
+    # Updates the named package if it isn't installed, and returns
+    # 1 on update and 0 on no-op.
+    
+    proc UpdatePackage {pkg} {
+        if {$pkg in {Tcl Tk}} {
+            puts "Warning: $pkg cannot be updated this way."
+            return 0
+        }
+
+        set ver [project require version $pkg]
+
+        if {[teacup installed $pkg $ver]} {
+            return 0
+        }
+
+        puts "Installing $pkg $ver"
+        teacup install $pkg $ver
+        return 1
+    }
+
+    # UpdateBasekit basekit
+    #
+    # Retrieves the named basekit if it isn't installed, and returns
+    # 1 on update and 0 on no-op.
+
+    proc UpdateBasekit {basekit} {
+        if {[env pathto $basekit] ne ""} {
+            return 0
+        }
+
+        puts "Installing $basekit"
+        set ver [env versionof tclsh]
+        lassign [split $basekit .] dummy tcltk flavor
+        file mkdir [env appdata basekits]
+        teacup getbase $tcltk $ver $flavor [env appdata basekits]
+        return 1
+    }
+
     # RefreshDeps pkgnames
     #
-    # Refreshes dependencies.
+    # Refreshes existing dependencies and installs dependencies
+    # that are missing.
 
     proc RefreshDeps {pkgnames} {
         puts "Refreshing required dependencies..."
         set count 0
 
+        set basekits [GetRequiredBasekits]
+
         if {[llength $pkgnames] == 0} {
-            set pkgnames [project require names]
+            set pkgnames [concat [project require names] $basekits]
         }
 
         foreach pkg $pkgnames {
-            if {$pkg ni [project require names -all]} {
+            if {$pkg in [project require names -all]} {
+                incr count [RefreshPackage $pkg]
+            } elseif {$pkg in $basekits} {
+                incr count [RefreshBasekit $pkg]
+            } else {
                 throw FATAL "The project doesn't require any package called \"$pkg\"."
             }
-
-            set ver [project require version $pkg]
-
-            if {$pkg in {Tcl Tk}} {
-                puts "Warning: $pkg cannot be updated this way."
-                continue
-            }
-
-
-
-            if {[teacup installed $pkg $ver]} {
-                puts "Removing $pkg $ver"
-                teacup remove $pkg $ver
-            }
-
-            puts "Installing $pkg $ver"
-            teacup install $pkg $ver
-            incr count
         }
 
-        puts ""
-        puts "Refreshed $count package(s)."
+        if {$count > 0} {
+            puts ""
+            puts "Refreshed $count package(s)."
+        }
+    }
+
+    # RefreshPackage pkg
+    #
+    # Refreshes the named package, removing it and re-installing it, 
+    # and returns 1 on update and 0 on no-op.
+    
+    proc RefreshPackage {pkg} {
+        if {$pkg in {Tcl Tk}} {
+            puts "Warning: $pkg cannot be refreshed this way."
+            return 0
+        }
+
+        set ver [project require version $pkg]
+
+        if {[teacup installed $pkg $ver]} {
+            teacup remove $pkg $ver
+        }
+
+        puts "Refreshing $pkg $ver"
+        teacup install $pkg $ver
+        return 1
+    }
+
+
+
+    # RefreshBasekit basekit
+    #
+    # Removes the named basekit if it is installed, and re-installs it,
+    # and returns 1 on update and 0 on no-op.
+
+    proc RefreshBasekit {basekit} {
+        set kitpath [env pathto $basekit]
+
+        if {$kitpath ne ""} {
+            # It might be installed with tclsh.  Only refresh
+            # basekits in the application's data directory.
+            if {![string match "[env appdata]*" $kitpath]} {
+                return 0
+            }
+            file delete -force $kitpath
+        }
+
+        puts "Refreshing $basekit"
+        set ver [env versionof tclsh]
+        lassign [split $basekit .] dummy tcltk flavor
+        file mkdir [env appdata basekits]
+        teacup getbase $tcltk $ver $flavor [env appdata basekits]
+        return 1
     }
 
 }

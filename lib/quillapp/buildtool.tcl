@@ -156,12 +156,10 @@ snit::type ::quillapp::buildtool {
         }
 
         # Required packages
-        if {$apptype ne "kit"} {
-            foreach pkg [project require names] {
-                set ver [project require version $pkg]
-                lappend command \
-                    -pkgref "$pkg $ver"
-            }
+        foreach pkg [project require names] {
+            set ver [project require version $pkg]
+            lappend command \
+                -pkgref "$pkg $ver"
         }
 
         # Logging
