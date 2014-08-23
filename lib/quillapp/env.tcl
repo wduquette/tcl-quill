@@ -321,7 +321,12 @@ snit::type ::quillapp::env {
     typemethod {GetPathOf teapot} {} {
         set teacup [$type pathto teacup -require]
 
-        return [file normalize [exec $teacup default]]
+        try {
+            return [file normalize [exec $teacup default]]
+
+        } on error {} {
+            return ""
+        }
     }
 
     #---------------------------------------------------------------------

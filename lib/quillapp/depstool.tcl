@@ -108,7 +108,7 @@ snit::type ::quillapp::depstool {
         foreach pkg [project require names] {
             set ver [project require version $pkg]
 
-            if {[teapot installed $pkg $ver]} {
+            if {[teacup installed $pkg $ver]} {
                 set status "(OK)"
             } else {
                 incr count
@@ -162,8 +162,9 @@ snit::type ::quillapp::depstool {
 
             set ver [project require version $pkg]
 
-            if {![teapot installed $pkg $ver]} {
-                teapot install $pkg $ver
+            if {![teacup installed $pkg $ver]} {
+                puts "Installing $pkg $ver"
+                teacup install $pkg $ver
                 incr count
             }
         }
@@ -202,11 +203,13 @@ snit::type ::quillapp::depstool {
 
 
 
-            if {[teapot installed $pkg $ver]} {
-                teapot remove $pkg $ver
+            if {[teacup installed $pkg $ver]} {
+                puts "Removing $pkg $ver"
+                teacup remove $pkg $ver
             }
 
-            teapot install $pkg $ver
+            puts "Installing $pkg $ver"
+            teacup install $pkg $ver
             incr count
         }
 

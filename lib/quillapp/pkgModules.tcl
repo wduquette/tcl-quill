@@ -34,18 +34,24 @@ namespace eval ::quillapp:: {
 	variable library [file dirname [info script]]
 }
 
+# Application Infrastructure
 source [file join $::quillapp::library misc.tcl             ]
 source [file join $::quillapp::library env.tcl              ]
 source [file join $::quillapp::library config.tcl           ]
+source [file join $::quillapp::library teacup.tcl           ]
 source [file join $::quillapp::library teapot.tcl           ]
 source [file join $::quillapp::library version.tcl          ]
+source [file join $::quillapp::library project.tcl          ]
+
+# Project Trees and Elements
 source [file join $::quillapp::library element.tcl          ]
 source [file join $::quillapp::library element_app.tcl      ]
 source [file join $::quillapp::library element_package.tcl  ]
 source [file join $::quillapp::library element_quillinfo.tcl]
 source [file join $::quillapp::library tree.tcl             ]
 source [file join $::quillapp::library tree_app.tcl         ]
-source [file join $::quillapp::library project.tcl          ]
+
+# Tools
 source [file join $::quillapp::library buildtool.tcl        ]
 source [file join $::quillapp::library configtool.tcl       ]
 source [file join $::quillapp::library depstool.tcl         ]

@@ -136,12 +136,8 @@ snit::type ::quillapp::installtool {
             return
         }
 
-        set command ""
-        lappend command [env pathto teacup] install \
-            $source
-
         puts "Installing lib $lib to local teapot..."
-        puts [eval exec $command]
+        teacup installfile $source
     }
 
 }

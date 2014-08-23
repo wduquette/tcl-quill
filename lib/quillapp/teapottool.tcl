@@ -198,11 +198,10 @@ snit::type ::quillapp::teapottool {
 
     proc CreateQuillTeapot {} {
         set qpath [teapot quillpath]
-        set teacup [env pathto teacup]
 
         puts "Creating $qpath..."
-        puts [exec $teacup create $qpath]
-        puts [exec $teacup default $qpath]
+        puts [teacup create $qpath]
+        puts [teacup default $qpath]
         puts "OK."
     }
 
@@ -214,12 +213,11 @@ snit::type ::quillapp::teapottool {
     proc LinkQuillTeapot {} {
         set qpath  [teapot quillpath]
         set tclsh  [env pathto tclsh]
-        set teacup [env pathto teacup]
 
         puts "Linking $qpath with $tclsh"
 
         try {
-            puts [exec $teacup link make $qpath $tclsh]
+            puts [teacup link make $qpath $tclsh]
         } on error {result} {
             puts "Error making link: $result"
             puts "Did you run the command using 'sudo'?"

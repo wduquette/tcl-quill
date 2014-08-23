@@ -14,8 +14,8 @@ This is the official list of work to be done.
 
 * Add check on "teacup" executable for build 298288 or later.
 * Check "info(gottcl)" in appropriate spots, if it seems necessary.
-* quillapp(n) doesn't really need a namespace.  App packages don't
-  really need a namespace.
+* quillapp(n) doesn't really need a namespace.
+  * Make it go away, at least before plug-ins come in.
 
 # Requirements For Quill 0.2.0
 
