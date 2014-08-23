@@ -81,7 +81,9 @@ snit::type ::quillapp::buildtool {
                 set names [project app names]
             }
             foreach app $names {
-                BuildTclApp $app
+                foreach apptype [project app apptypes $app] {
+                    BuildTclApp $app $apptype
+                }
             }
         }
     }
@@ -89,22 +91,22 @@ snit::type ::quillapp::buildtool {
     #---------------------------------------------------------------------
     # Building Tcl Apps
 
-    # BuildTclApp app
+    # BuildTclApp app apptype
     #
-    # app  - The name of the application
+    # app     - The name of the application
+    # apptype - The desired apptype.
     #
     # Builds the application using tclapp.
 
-    proc BuildTclApp {app} {
+    proc BuildTclApp {app apptype} {
         # FIRST, make sure the app is known.
         if {$app ni [project app names]} {
             throw FATAL "App \"$app\" is not defined in project.quill."
         }
 
         # NEXT, get relevant data
-        set guiflag [project app gui     $app]
-        set apptype [project app apptype $app]
-        set outfile [project app target  $app]
+        set guiflag [project app gui    $app]
+        set outfile [project app target $app $apptype]
 
         # NEXT, tell the user what we are doing.
         if {$guiflag} {
@@ -137,12 +139,11 @@ snit::type ::quillapp::buildtool {
             -out $outfile
 
         # Prefix
-        # TODO: Support cross-platform builds.
-        if {$apptype eq "exe"} {
+        if {$apptype ne "kit"} {
             if {$guiflag} {
-                set basekit [env pathto basekit.tk.[os flavor]]
+                set basekit [env pathto basekit.tk.$apptype]
             } else {
-                set basekit [env pathto basekit.tcl.[os flavor]]
+                set basekit [env pathto basekit.tcl.$apptype]
             }
 
             if {$basekit eq ""} {

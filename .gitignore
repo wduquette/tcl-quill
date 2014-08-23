@@ -3,7 +3,9 @@
 /.quill
 *.kit
 *.exe
-/bin/quill
+/bin/*.exe
+/bin/*-osx
+/bin/*-linux
 teapot.txt
 
 # SublimeText files
