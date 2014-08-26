@@ -4,14 +4,6 @@ This is the official list of work to be done.
 
 # Next
 
-* Cross-platform builds:
-  * Make 'quill deps' check for a basekit in ~/.quill/basekits that 
-    matches the current os flavor.
-  * Make 'quill deps update' pull the basekit in.  On force, refresh it.
-  * Change 'app' to allow specifying a list of kit|windows|linux|osx.
-  * 'quill deps' then looks for and retrieves all required basekits.
-  * 'quill build' builds all required version.
-
 * Add check on "teacup" executable for build 298288 or later.
 * Check "info(gottcl)" in appropriate spots, if it seems necessary.
 * quillapp(n) doesn't really need a namespace.
@@ -22,11 +14,11 @@ This is the official list of work to be done.
 * Support for other versions of TCL/TK.
   * I.e, use Quill for Tcl 8.5 or 8.6 projects.  Can also support 8.4 if
     anyone wants it.
-  * Support cross-platform starpack build.
-  * Support for 'quill package' to package up a distribution for different
+  * Support cross-platform starpack build. DONE
+  * Support for 'quill dist' to package up a distribution for different
     platforms.
     * Includes bin/, docs/, provided lib .zip's, README, LICENSE, etc.
-    * Use vfs::zip to create the .zip file.
+    * Use zipfile::encode to create the .zip file.
 * Update Tools
   * quill new
     * Create library tree
