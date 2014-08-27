@@ -14,7 +14,7 @@
 #-----------------------------------------------------------------------
 
 # -quill-provide-begin DO NOT EDIT BY HAND
-package provide quillapp 0.2.0a0
+package provide quillapp 0.2.0a1
 # -quill-provide-end
 
 #-----------------------------------------------------------------------
@@ -22,7 +22,7 @@ package provide quillapp 0.2.0a0
 
 # -quill-require-begin INSERT PACKAGE REQUIRES HERE
 package require snit 2.3
-package require quill 0.2.0a0
+package require quill 0.2.0a1
 # -quill-require-end
 
 namespace import quill::*

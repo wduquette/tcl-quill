@@ -252,6 +252,26 @@ snit::type ::quillapp::teacup {
         }
     }
 
+    # repos
+    #
+    # Returns a list of the teapot repositories linked to the 
+    # active tclsh, with the primary repo first.
+
+    typemethod repos {} {
+        set repos [list [env pathof teapot]]
+
+        set out [$type link info [env pathto tclsh -require]]
+
+        set len [string length "Repository "]
+        foreach line [split $out \n] {
+            if {[string match "Repository *" $line]} {
+                ladd repos [file normalize [string range $line $len end]]
+            }
+        }
+
+        return $repos
+    }
+
     #---------------------------------------------------------------------
     # Calling the teacup executable
 

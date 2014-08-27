@@ -112,7 +112,7 @@ snit::type ::quillapp::buildtool {
         if {$guiflag} {
             puts "Building GUI app $app as '$apptype' $outfile"
         } else {
-            puts "Building Console app $app as '$apptype' $outfile"
+            puts "Building Console app $app as [file tail $outfile]"
         }
 
         # NEXT, build up the command
@@ -131,8 +131,9 @@ snit::type ::quillapp::buildtool {
         }
 
         # Archive
-        lappend command \
-            -archive [env pathof teapot]
+        foreach repo [teacup repos] {
+            lappend command -archive $repo
+        }
 
         # Output file
         lappend command \
@@ -157,6 +158,9 @@ snit::type ::quillapp::buildtool {
         }
 
         # Required packages
+        lappend command \
+            -follow
+
         foreach pkg [project require names] {
             set ver [project require version $pkg]
             lappend command \
