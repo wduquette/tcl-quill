@@ -363,7 +363,8 @@ snit::type ::quillapp::env {
         }
 
         # NEXT, create a script to query it.
-        set query [project root .quill query.tcl]
+        set query [env appdata temp query.tcl]
+        
         writefile $query [outdent {
             puts [info patchlevel]
         }]
