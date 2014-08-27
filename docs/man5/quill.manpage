@@ -133,6 +133,31 @@ If the <b -local> option is included, then Quill assumes the
 dependency is a locally-developed package, and will not attempt
 to retrieve it from ActiveState's teapot repository.<p>
 
+<defitem dist {dist <i name patterns>}>
+
+Defines a distribution with the given <i name> and file <i patterns>.
+The <tt quill dist> command will produce a distribution .zip file for
+each named distribution; the file will be called<p>
+
+<i project>-<i version>-<i name>.zip<p>
+
+The contents of the file is determined by the <i patterns>, which is a 
+list of glob-patterns relative to the project's root directory.  For 
+example, the following distribution includes the application, the 
+README file, and the .html files in the <tt docs/> folder:<p>
+
+<pre>
+dist install {
+    bin/myapp.kit
+    README.md
+    docs/*.html
+}
+</pre>
+
+The list of patterns can also include the special pattern
+<b %libs>, which adds in the teapot .zip files for each of the library
+packages provided by the project.  These files can be added directly into
+a local teapot using the <tt teacup install> command.<p>
 
 </deflist statements>
 

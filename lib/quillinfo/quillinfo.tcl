@@ -17,7 +17,26 @@
 
 namespace eval ::quillinfo {
     variable meta
-    array set meta {version-zipfile::encode 0.3 gui-quill 0 apptypes-quill {linux osx windows} url http://my.home.page description {Quill Project Build System for Tcl/Tk} provides quill homepage http://github.com/wduquette/tcl-quill requires {Tcl snit textutil::expander zipfile::encode} version-textutil::expander 1.3.1 version-snit 2.3 local-Tcl 0 apps quill local-zipfile::encode 0 local-textutil::expander 0 local-snit 0 version 0.2.0a1 version-Tcl 8.6 project tcl-quill}
+    array set meta {distpat-osx {
+	bin/quill-osx
+	%docs
+	%libs
+	LICENSE
+	README.md
+} version-zipfile::encode 0.3 gui-quill 0 apptypes-quill {linux osx windows} url http://my.home.page description {Quill Project Build System for Tcl/Tk} provides quill homepage http://github.com/wduquette/tcl-quill requires {Tcl snit textutil::expander zipfile::encode} distpat-windows {
+	bin/quill-windows.exe
+	docs/*.html
+	docs/*/*.html
+	docs/*.md
+	%libs
+	LICENSE
+	README.md
+} version-textutil::expander 1.3.1 version-snit 2.3 local-Tcl 0 apps quill local-zipfile::encode 0 distpat-linux {
+	bin/quill-linux
+	%docs
+	LICENSE
+	README.md
+} local-textutil::expander 0 local-snit 0 version 0.2.0a1 version-Tcl 8.6 project tcl-quill dists {linux osx windows}}
 
     namespace export \
         project      \

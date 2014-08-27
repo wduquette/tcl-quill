@@ -7,18 +7,22 @@ This is the official list of work to be done.
 * Building exes:
   * Allow "exe" apptype for building in just the local flavor, whatever it is.
 * Add check on "teacup" executable for build 298288 or later.
-* Check "info(gottcl)" in appropriate spots, if it seems necessary.
 * quillapp(n) doesn't really need a namespace.
   * Make it go away, at least before plug-ins come in.
+
+* New tool architecture
+* Infrastructure for tabular output
+* Improved 'quill info' output
+* 'quill teapot list' to list contents of local teapot.
 
 # Requirements For Quill 0.2.0
 
 * Support for other versions of TCL/TK.
   * I.e, use Quill for Tcl 8.5 or 8.6 projects.  Can also support 8.4 if
-    anyone wants it.
+    anyone wants it. DONE
   * Support cross-platform starpack build. DONE
   * Support for 'quill dist' to package up a distribution for different
-    platforms.
+    platforms. DONE.
     * Includes bin/, docs/, provided lib .zip's, README, LICENSE, etc.
     * Use zipfile::encode to create the .zip file.
 * Update Tools
@@ -77,21 +81,7 @@ Quill should provide the following tools.
 * quill add
   * Add a lib or app to the project.
 
-* quill config
-  * Global configuration for Quill
-  * Quill tries to find all helpers, etc., automatically.  This is the
-    escape hatch; use it to establish locations of TDK, etc.
-  * We might have other configuration items eventually.
-    * E.g., on Windows, which command shell is in use?  bash?  Powershell?
-      the old-fashioned "DOS" shell?
-
 * quill deploy
   * Upload project libraries to remote repository
     * TBD: Which repository?  By what mechanism?
-
-* quill editing tools (?)
-  * Project search and replace commands.
-
-* quill run
-  * Run the main app (or a given app) with a given command line.
 

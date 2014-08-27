@@ -68,6 +68,9 @@ snit::type ::quillapp::project {
 	# local-$req    - Flag, 0 or 1: is package local?
 	#
 	# provides      - List of names of exported library packages.
+	# dists         - List of distribution names
+	#
+	# distpat-$dist - List of file patterns for dist $dist
 
 
 	typevariable meta -array {
@@ -79,6 +82,7 @@ snit::type ::quillapp::project {
 		provides    {}
 		requires    {Tcl}
 		version-Tcl 8.6
+		dists       {}
 	}
 
 	#---------------------------------------------------------------------
@@ -231,6 +235,7 @@ snit::type ::quillapp::project {
 	typemethod description     {} { return $meta(description) }
 	typemethod {app names}     {} { return $meta(apps)        }
 	typemethod {provide names} {} { return $meta(provides)    }
+	typemethod {dist names}    {} { return $meta(dists)       }
 
 	# header
 	#
@@ -354,6 +359,16 @@ snit::type ::quillapp::project {
 		return $meta(local-$pkg)
 	}
 
+	# dist patterns name
+	#
+	# name - A distribution name
+	#
+	# Returns the list of patterns associated with $name.
+
+	typemethod {dist patterns} {name} {
+		return $meta(distpat-$name)
+	}
+
 	#---------------------------------------------------------------------
 	# Sanity Check
 
@@ -440,6 +455,9 @@ snit::type ::quillapp::project {
 
 		$interp smartalias require {name version ?options?} 2 - \
 			[myproc RequireCmd]
+
+		$interp smartalias dist {name patterns} 2 2 \
+			[myproc DistCmd]
 
 		# NEXT, try to parse the file.  The commands will throw
 		# SYNTAX errors if they detect a problem.
@@ -576,6 +594,26 @@ snit::type ::quillapp::project {
 		set  meta(version-$name) $version
 		set  meta(local-$name)   $local
 	}
+
+	# DistCmd name patterns
+	#
+	# name     - The distribution name.
+	# patterns - A list of file patterns for distribution
+	#
+	# Specifies that this project creates a distribution .zip file
+	# with the given name.
+
+	proc DistCmd {name patterns} {
+		prepare name -required -file
+
+		if {$name in [project dist names]} {
+			throw SYNTAX "Duplicate distribution: \"$name\""
+		}
+
+		ladd meta(dists) $name
+		set  meta(distpat-$name) $patterns
+	}
+
 
 	#---------------------------------------------------------------------
 	# Saving project metadata
