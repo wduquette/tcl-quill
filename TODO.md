@@ -6,9 +6,6 @@ This is the official list of work to be done.
 
 * Building exes:
   * Allow "exe" apptype for building in just the local flavor, whatever it is.
-  * When building cross-platform, add http://teapot.activestate.com
-    (and make sure that works).
-  * Then, try adding zipfile::encode and make sure it works.
 * Add check on "teacup" executable for build 298288 or later.
 * Check "info(gottcl)" in appropriate spots, if it seems necessary.
 * quillapp(n) doesn't really need a namespace.

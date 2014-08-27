@@ -22,6 +22,7 @@ package provide quillapp 0.2.0a1
 
 # -quill-require-begin INSERT PACKAGE REQUIRES HERE
 package require snit 2.3
+package require zipfile::encode 0.3
 package require quill 0.2.0a1
 # -quill-require-end
 
