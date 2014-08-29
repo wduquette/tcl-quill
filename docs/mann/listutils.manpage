@@ -20,6 +20,29 @@ listutils(n) defines the following commands:<p>
 
 <deflist commands>
 
+<defitem got {got <i list>}>
+
+Returns 1 if the list contains any elements, and 0 if the list is empty.
+This allows the programmer to write
+
+<pre>
+if {[got $someListThatMightBeEmpty]} {
+	...
+}
+</pre>
+
+instead of<p>
+
+<pre>
+if {[llength $someListThatMightBeEmpty] > 0} {
+	...
+}
+</pre>
+
+Which seems somewhat trivial, but it reads better, and I'm less likely
+to mistype it than the "llength" version, which I seem to mistype about
+half the time.<p>
+
 <defitem interleave {interleave <i alist blist>}>
 
 Given two lists, returns the result of interleaving the elements of the

@@ -29,6 +29,21 @@ namespace import ::quill::*
 # Setup
 
 #-------------------------------------------------------------------------
+# got
+
+test got-1.1 {empty} -body {
+    got {}
+} -result {0}
+
+test got-1.2 {one item} -body {
+    got {a}
+} -result {1}
+
+test got-1.3 {two item} -body {
+    got {a b}
+} -result {1}
+
+#-------------------------------------------------------------------------
 # interleave
 
 test interleave-1.1 {two empty lists} -body {

@@ -18,6 +18,7 @@
 
 namespace eval ::quill:: {
 	namespace export \
+        got          \
         interleave   \
         ladd         \
         ldelete      \
@@ -28,6 +29,15 @@ namespace eval ::quill:: {
 #-------------------------------------------------------------------------
 # Command Definitions
 
+# got list
+#
+# list  - A list
+#
+# Returns 1 if the list has any elements, and 0 otherwise.
+
+proc ::quill::got {list} {
+    expr {[llength $list] > 0}
+}
 
 # ladd listvar value...
 #
