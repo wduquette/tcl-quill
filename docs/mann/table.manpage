@@ -1,0 +1,81 @@
+<manpage table(n) "Table Formatting" quill(n)>
+
+<section SYNOPSIS>
+
+<pre>
+package require quill <version>
+namespace import ::quill::*
+</pre>
+
+<itemlist>
+
+<section DESCRIPTION>
+
+table(n) is a module for formatting plain text tables, represented
+as lists of dictionaries.  The primary constraint is that the dictionaries
+must all have the same keys (or the caller must limit the output to 
+those keys the dictionaries have in common).  It is intended primarily
+to simplify the creation of console output.<p>
+
+<section COMMANDS>
+
+table(n) defines the following commands:<p>
+
+<deflist commands>
+
+<defitem "table format" {table format <i table> ?<i options...>?}>
+
+Given a "table", a list of dictionaries, this command formats the
+table as a multi-column table.  Each dictionary is output on its
+own row, with one column for each dictionary key.  There are no 
+headers, and all keys are included; the order of the columns is 
+the order of the keys in the first item in the table.<p>
+
+The following options may be used to customize the output:<p>
+
+<deflist options>
+<defopt {-leader <i text>}>
+
+Specifies a leader string to put at the beginning of each line.  
+To indent the table four spaces, use a leader of four spaces.  Defaults
+to the empty string.<p>
+
+<defopt {-sep <i text>}>
+
+Specifies the separator to go between columns.  Defaults to one space
+character.<p>
+
+<defopt {-columns <i list>}>
+
+Specifies a list of dictionary keys.  The command will include just these
+keys in the output, in order from left to right.<p>
+
+<defopt {-showheaders}>
+
+If this option is given, the table will include column headers.<p>
+
+<defopt {-headers <i dict>}>
+
+By default, the column headers are simply the names of the column keys.
+If given, the value of <b -headers> should be a dictionary of header label
+strings by column key.<p>
+
+</deflist options>
+
+<defitem "table puts" {table puts <i table> <i options...>}>
+
+Formats the <i table> and writes it to <b stdout>.  The options are
+as for <xref "#table format">.<p>
+
+</deflist commands>
+
+
+<section AUTHOR>
+
+Will Duquette<p>
+
+<section "SEE ALSO">
+
+<xref quill(n)>.
+
+</manpage>

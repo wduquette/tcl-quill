@@ -4,11 +4,11 @@ This is the official list of work to be done.
 
 # Next
 
+* quill new lib
+* Update release docs.
 * Building exes:
   * Allow "exe" apptype for building in just the local flavor, whatever it is.
 * Add check on "teacup" executable for build 298288 or later.
-* quillapp(n) doesn't really need a namespace.
-  * Make it go away, at least before plug-ins come in.
 
 * New tool architecture
 * Infrastructure for tabular output
@@ -29,16 +29,18 @@ This is the official list of work to be done.
   * quill new
     * Create library tree
 
+# Desired changes
+
+* quillapp(n) doesn't really need a namespace.
+  * Make it go away, at least before plug-ins come in.
+
+
 # Possibilities for Quill 0.2.0
 
-* Automate building a release .zip or .tar.gz file
 * New Tools
+  * quill new lib
   * quill add
     * Add apps and provides to existing project
-* Update Tools
-  * quill build
-    * Support icons and .app builds
-* Support for C/C++ library packages
 
 
 ## Needed Tests
@@ -74,7 +76,8 @@ Quill's existing tools should provide the following additional features:
     when running with no app loader
   * Allow user to specify script to execute on command line.
 
-## Missing Tools
+
+## Missing Tools and features
 
 Quill should provide the following tools.
 
@@ -84,4 +87,6 @@ Quill should provide the following tools.
 * quill deploy
   * Upload project libraries to remote repository
     * TBD: Which repository?  By what mechanism?
+
+* Support for C/C++ library packages
 
