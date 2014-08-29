@@ -46,6 +46,9 @@ set ::quillapp::help(teapot) {
         using "sudo", as follows:
 
             $ sudo -E quill teapot link
+
+    quill teapot list
+        As a convenience, this lists the contents of the local teapot.
 }
 
 #-------------------------------------------------------------------------
@@ -83,6 +86,9 @@ snit::type ::quillapp::teapottool {
             }
             link {
                 LinkQuillTeapot
+            }
+            list {
+                ListQuillTeapot
             }
             default {
                 throw FATAL "Unknown subcommand: \"quill teapot $sub\""
@@ -187,6 +193,29 @@ snit::type ::quillapp::teapottool {
 
     proc DisplayItem {label text} {
         puts [format "    %-10s %s" $label $text]
+    }
+
+    #---------------------------------------------------------------------
+    # Listing Teapot Contents.
+
+    proc ListQuillTeapot {} {
+        puts ""
+
+        set table [teacup list --at-default]
+
+        if {[llength $table] == 0} {
+            puts "The teapot is empty."
+            return
+        }
+
+        table puts $table \
+            -showheaders \
+            -headers {
+                entity  "Entity Type" 
+                name    "Name" 
+                version "Version" 
+                platform "Platform"
+            }
     }
 
     #---------------------------------------------------------------------
