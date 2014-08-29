@@ -109,15 +109,18 @@ snit::type ::quill::os {
     typemethod pathfind {program} {
         global env
 
-        # FIRST, do we have a PATH?
-        if {![info exists env(PATH)]} {
+        # FIRST, do we have a PATH?  Note that there's no good way
+        # to see if PATH is empty on Windows without throwing an error.
+        set thePath ""
+        catch {set thePath $env(PATH)}
+        if {$thePath eq ""} {
             return ""
         }
 
         # NEXT, if we're on Windows try ";" as a 
         # PATH separator.
         if {[$type flavor] eq "windows"} {
-            set result [FindWith [split $env(PATH) ";"] $program]
+            set result [FindWith [split $thePath ";"] $program]
 
             if {$result ne ""} {
                 return $result
@@ -126,7 +129,7 @@ snit::type ::quill::os {
 
         # NEXT, we're on a Unix flavor, or on Windows using a Unix
         # shell, so the path separator is ":".
-        return [FindWith [split $env(PATH) ":"] $program]
+        return [FindWith [split $thePath ":"] $program]
     }
 
     # FindWith dirlist program
