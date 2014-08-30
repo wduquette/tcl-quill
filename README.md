@@ -4,16 +4,22 @@ Quill is a build tool for Tcl/Tk projects, inspired by
 [Leiningen](http://leiningen.org).  It is intended to:
 
 * Create new skeleton project trees.
+* Run test suites
+* Format HTML documentation
 * Manage dependencies
   * External and internal
-* Run tests
+* Execute your project
+* Execute arbitrary scripts in the context of your project's code base
 * Build deployment targets:
   * Standalone executables ("starpacks")
   * Lightweight executables ("starkits")
-  * Reusable packages (teapot modules, .tm or .zip)
+  * Reusable packages (teapot .zip modules)
 * Make it easy to build and deploy Tcl applications and libraries.
-* Support formatted HTML documentation
 * Run cross-platform (Windows, OS X, Linux)
+
+As such, it is intended to reduce the ancillary costs of defining and
+deploying a Tcl package or executable to as close to zero as possible, by
+automating everything but the actual writing of the code and documentation. 
 
 ## Building and Installation
 
@@ -24,10 +30,10 @@ To build Quill from scratch, see [docs/BUILD.md](./docs/BUILD.md).
 
 ## Basic Use Case
 
-Assuming you have ActiveTcl 8.6.1 or later installed, with the installation's
+Assuming you have ActiveTcl 8.5 or later installed, with the installation's
 `tclsh` on your path, you should be able to do the following:
 
-**Download and install `quill.kit` in your ~/bin directory (or wherever).**
+**Download and install `quill.exe` in your ~/bin directory (or wherever).**
 See [docs/INSTALL.md](./docs/INSTALL.md).
 
 **Create a new skeleton project tree:**
@@ -82,6 +88,13 @@ $ quill shell
 ... (Invokes Tkcon; does not run the application's "main" proc)
 ```
 
+** Install your application and libraries for local use:**
+
+```
+$ quill install
+... (Copies the executable to your ~/bin, and libraries to your teapot)
+```
+
 ## Other Features
 
 Quill can also build library packages and install them into your local
@@ -94,27 +107,37 @@ Then, you can add `require` statements to your `project.quill` file
 the required packages into your local teapot when you execute 
 `quill deps update`.
 
+Finally, if you define a distribution in `project.quill`, Quill will build
+distribution .zip file for you.
+
 See the [quill(5)](./docs/man5/quill.manpage) man page for information about
 the contents of the `project.quill` file, and enter `quill help` at the
 command line for help on Quill and its subcommands.
 
-## Assumptions
+## Dependencies
 
-At present, Quill relies heavily on ActiveState's package repository
-tool-chain, and particularly on "teacup" (delivered with ActiveTcl)
-and "tclapp" (delivered as part of TclDevKit).  In particular, Quill
-assumes the following:
+How much Quill can do for you depends on what ancillary tools you have 
+installed.  You will need a Tcl interpreter at the very least.
 
-* ActiveTcl 8.6.1 or later is installed on the system.
-* ActiveTcl is on the path, and can be run as "tclsh" at the
-  command line
-* For building executables, TclDevKit 5.0 or later is installed on
-  the system, and the "tclapp" tool can be run as "tclapp" at the
-  command line.
-* For Unix-based systems, including Mac OS X, it is assumed for
-  certain operations that either ActiveTcl is installed in the
-  user's home directory or the user has access to the "sudo"
-  command.
+With just an arbitrary Tcl interpreter, Quill can:
+
+* Create new project trees for you.
+* Run your tests
+* Format your documentation
+* Make it easier to run your code, either from the system command line or 
+  from an interactive Tcl shell.
+* Create distribution .zip files.
+
+With [ActiveTcl](http://www.activestate.com/activetcl), Quill can:
+
+* Manage external dependencies, pulling packages from ActiveState's
+  teapot repository and keeping them up to date in your environment.
+
+With [TclDevKit 5.0](http://www.activestate.com/tcl-dev-kit), Quill can:
+
+* Build standalone executables for Linux, OS X, and Windows
+* Build libraries as teapot packages, for installation into a local
+  teapot repository. 
 
 ## Ways to Help
 
@@ -139,6 +162,8 @@ with that is also welcome.
 ## Acknowledgements
 
 Thanks to the following people who have contributed bug reports, patches,
-or ideas to Quill:
+or ideas to Quill, or helped in other ways:
 
 * Stephan Effelsberg
+* Andreas Kupries
+

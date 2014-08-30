@@ -4,6 +4,7 @@ This is the official list of work to be done.
 
 # Next
 
+* Fix the distributions in project.quill; they contain different things.
 * quill new lib
 * Update release docs.
 * Building exes:

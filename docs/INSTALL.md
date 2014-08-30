@@ -1,45 +1,36 @@
 # Installing Quill
 
-## Dependencies
+To use Quill for your own projects, you can build Quill from scratch 
+(see [BUILD.md]) or you can download the distribution file for your
+platform from the 
+[Quill Release Page at GitHub](https://github.com/wduquette/tcl-quill/releases).
+This file explains how to install the distribution.
 
-In principle, Quill could be used with any installation of Tcl 8.4 or later.
-At present, however, Quill requires some version of ActiveTcl, because of
-ActiveTcl's support for "teapot" repositories).
-
-Further, in order to build executables and libraries for deployment 
-Quill currently relies on TclDevKit 5.
-
-These requirements may be relaxed over time; for example, Quill could
-in principle support FreeWrap.
-
-## Installation
-
-1. Install ActiveTcl 8.4 or later on your development machine.  Make
-   sure that `tclsh` at your command shell of choice invokes
-   this version of Tcl.
-
-2. To build executables and libraries for deployment, install 
-   TclDevKit 5.1 so that the `tclapp` and `teapot-pkg` executables 
-   are on your PATH.  (Note: Quill can do quite a lot for you even
-   without TDK installed.)
-
-3. Download the Quill distribution for your platform.  It contains the 
-   following:
+1. Download the Quill distribution for your platform, and unzip it.  It
+   contains the following:
 
    * `README.md`
-   * `bin\quill` of `bin\quill.exe`
+   * `bin\quill-{platform}` or `bin\quill-windows.exe`
    * `docs\index.html`
    * `docs\...`
+   * package-quill-{version}-tcl.zip
 
-4. Copy `bin\quill` to your ~/bin directory (or wherever), and make sure it
-   is marked executable.
+2. Copy the executable from `bin/` to your `~/bin` directory (or wherever
+   you prefer), renaming it to `quill` or `quill.exe`.
 
-5. Put the documentation somewhere where you can find it.
+3. Put the documentation somewhere you can find it, and bookmark 
+   `docs/index.html`.
 
-6. You should now be able to enter the command
+4. If desired, install the [quill(n) package](mann/index.html) into your
+   local teapot.
 
-    `$ quill version`
+    $ teacup install package-quill-{version}-tcl.zip
 
-   This will tell you which version of Quill you are running, and what
-   helper commands (e.g., `tclsh`, `teacup`, etc.) it has found and will
-   use.
+5. You should now be able to enter these commands:
+
+    $ quill help
+    $ quill env
+
+   etc.
+
+See the README.md file for more on Quill's capabilities.
