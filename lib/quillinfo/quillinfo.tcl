@@ -41,7 +41,7 @@ namespace eval ::quillinfo {
 	%libs
 	LICENSE
 	README.md
-} local-textutil::expander 0 local-snit 0 version 0.2.0 version-Tcl 8.6 project tcl-quill dists {linux osx windows}}
+} local-textutil::expander 0 local-snit 0 version 0.2.1a0 version-Tcl 8.6 project tcl-quill dists {linux osx windows}}
 
     namespace export \
         project      \
