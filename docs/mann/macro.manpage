@@ -142,6 +142,16 @@ using this mechanism:<p>
 ...
 </pre>
 
+<deflist expand {expand <i text>}>
+
+Expands <i text> and returns the result.  This is useful for 
+macros that take a body of text: they can expand macros recursively.<p>
+
+<deflist template {template <i args...>}>
+<deflist tsubst {tsubst <i args...>}>
+
+Template support; see <xref template(n)> for details.<p>
+
 </deflist macros>
 
 <section AUTHOR>

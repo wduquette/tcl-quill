@@ -1,0 +1,452 @@
+<manpage quilldoc(5) "Quill Documentation Syntax">
+
+<do {
+template tag {name args} {
+    if {$args ne ""} {
+        set args " [expand $args]"
+    }
+} {[tt][lb]${name}$args[rb][/tt]}
+}>
+
+<section SYNOPSIS>
+
+<itemlist>
+
+<section DESCRIPTION>
+
+quilldoc(5) is a format for producing technical documents with section
+numbers, cross-references, and tables of contents.  The Quill User's
+Guide is written using quilldoc(5).  It is an HTML-like format in which 
+the tags are actually <i macros>: Tcl commands which return text.  The 
+tags are replaced by the returned text.  See <xref macro(n)> for an
+explanation of how macros are handled.<p>
+
+quilldoc(5) defines a number of macros suitable for formatting the
+content of documents.  Individual documents can define additional
+macros as needed.<p>
+
+The <xref quilldoc(n)> processor translates quilldoc(5) files into
+HTML; in principle, however, additional back-ends could be defined to
+translate the format into other kinds of output.<p>
+
+This section explains how to prepare document files for use with
+<xref quilldoc(n)>.
+
+<subsection "Document Structure">
+
+A document consists of a number of sections contained within 
+<tt><lb>document<rb>...<lb>/document<rb></tt> tags.  There are several
+kinds of sections:<p>
+
+<topiclist>
+<topic "Preface Sections">
+Preface sections have titles but no section numbers.  They generally
+go at the beginning of the document.<p>
+
+Preface sections are begun with a <tag preface> tag which states the
+section's ID and title:<p>
+
+<pre>
+<tag preface intro Introduction>
+...
+</pre>
+
+The ID is used in cross-references to the preface.<p>
+
+<topic "Numbered Sections">
+Numbered sections have titles and automatically generated section numbers,
+e.g., "1.", "1.2", "1.2.3". They are used in the body of the document.<p>
+
+Numbered sections are begun with a <tag section> tag which states the 
+section's ID and title.  The ID can consist of multiple components,
+separated by periods; these indicate the relation of the sections.<p>
+
+For example, these sections might be numbered "1.", "1.1", and "1.1.1":<p>
+
+<pre>
+<tag section overview Overview>
+...
+<tag section overview.part {Overview of Some Part}>
+...
+<tag section overview.part.detail {Detail of Som Part}>
+...
+</pre>
+
+<topic "Appendix Sections">
+Appendix sections have titles and automatically generated section numbers,
+e.g., "Appendix A", "Appendix B.1", "Appendix C.1.2".  They are used at the
+end of the document.<p>
+
+Appendices are begun with an <tag appendix> tag that states the section's
+ID and title.  IDs are defined as for numbered sections; for example,
+these appendices might be numbered "Appendix A", "Appendix A.1", and
+"Appendix A.1.1":<p>
+
+<pre>
+<tag appendix background Background>
+...
+<tag appendix background.part {Background of Some Part}>
+...
+<tag appendix background.part.detail {Detail of Som Part}>
+...
+</pre>
+
+</topiclist>
+
+<subsection "Prose Formatting">
+
+<b TBD:> as for man pages, mostly.  Give details.  Also, need to factor
+out the shared code from manpage.<p>
+
+<subsection "Cross-References">
+
+<b TBD:> Update, as this is the manpage(5) description.<p>
+
+The <xref #xref> macro creates cross-reference links to sections within
+the same quilldoc or to other quilldocs or, in fact, to arbitrary web
+pages.  Cross-reference links may be specified in a number of ways.
+
+<topiclist xrefs>
+<topic "<tt>#<i section></tt>">
+<topic "<tt>#<i item></tt>">
+References a section or subsection, given its title, or an
+item, given its name, within the current man page.  E.g.,
+"<tt #DESCRIPTION>" or "<tt #xref>".<p>
+
+<topic "<tt><i name>(<i sec>)</tt>">
+References the named man page, e.g., "<tt quilldoc(5)>"<p>
+
+<topic "<tt><i name>(<i sec>)#<i section></tt>">
+<topic "<tt><i name>(<i sec>)#<i item></tt>">
+References a section by its title or an item by its name within
+the named man page.   E.g.,
+"<tt quilldoc(5)#DESCRIPTION>" or "<tt quilldoc(5)#xref>".<p>
+
+<topic "<tt><i url></tt>">
+References a web page by its URL.  At present, only "http" URLs
+are supported.  E.g., "<tt http://my.sample.url>"<p>
+
+</topiclist xrefs>
+
+
+<section MACROS>
+
+The following macros may be used in quilldoc(5) documents.<p>
+
+<subsection "Structural Macros">
+
+These macros are used to define the structure of the man page.
+They are presented in the order in which they are ordinarily used.
+
+<deflist structural>
+
+<defitem quilldoc {quilldoc <i>name title</i> ?<i>parent</i>?}>
+
+This macro should be the first to appear in every man page file.
+The <i>name</i> is the man page's name.
+The <i>title</i> is a short description of the documented module.
+For example,<p>
+
+<pre>
+<lb>quilldoc quilldoc(1) "quilldoc(5) formatting tool"<rb>
+</pre>
+
+If the documented module is part of a larger package, then
+<i parent> should be the name of that package's overall man page.<p>
+
+<defitem section {section <i>title</i>}>
+
+Defines a major section within the man page; the section title will be
+added to the table of contents, and can be used as an
+<xref #xref> reference.  By convention, section titles are in
+ALL CAPS.  For example,<p>
+
+<pre>
+<lb>section DESCRIPTION<rb>
+   .
+   .
+   .
+<lb>section "SEE ALSO"<rb>
+</pre>
+
+<defitem subsection {subsection <i>title</i>}>
+
+Defines a subsection of a major section.  The subsection title will be
+added to the table of contents, and can be used as an
+<xref #xref> reference.  By convention, subsection titles are in
+Mixed Case.  For example,<p>
+
+<pre>
+<lb>section DESCRIPTION<rb>
+   .
+   .
+   .
+<lb>subsection "The Specifics"<rb>
+</pre>
+
+<defitem /quilldoc {/quilldoc}>
+
+This macro ends the man page, and should be the final macro in the 
+file.<p>
+
+</deflist structural>
+
+<subsection "Definition List Macros">
+
+Definition lists are the primary means of documenting items of code:
+Tcl commands and subcommands, macros, and anything else that should be
+listed in the "SYNOPSIS" section.<p>
+
+The following macros are used to define definition lists.
+
+<deflist definition lists>
+
+<defitem deflist {deflist <i>args...</i>}>
+
+Begins a definition list.  The <i>args</i> are ignored.  By
+convention, each <xref #deflist> macro includes arguments which
+indicate the kind of thing being listed; the <xref #/deflist> macro
+repeats them.  This avoids confusion when definition lists are nested.
+For example,<p>
+
+<pre>
+<lb>section COMMANDS<rb>
+
+This module defines the following commands:<lb>p<rb>
+
+<lb>deflist commands<rb>
+    .
+    .
+    .
+<lb>/deflist commands<rb>
+</pre>
+
+Items are defined within a definition list using <xref #defitem>.<p>
+
+<defitem defitem {defitem <i>name text</i>}>
+
+Begins the documentation of an item in a definition list.  The
+<i>name</i> is the item's name, by which it will be linked.  In a list
+of commands, for example, <i>name</i> is the command name.  The
+<i>text</i> is the complete representation of the item.  For a
+command, <i>text</i> would be the signature of the command.  For example,<p>
+
+<pre>
+<lb>defitem section {section <lb>i<rb>title<lb>/i<rb>}<rb>
+</pre>
+
+Tcl conventions are followed for command signatures.  Literal text is
+in normal type, dummy arguments are in <i>italics</i>, optional
+arguments are bracketed by question marks, and arguments which can be
+repeated include "...".  In this example,<p>
+
+<pre>
+<lb>defitem xref {xref <lb>i<rb>ref<lb>/i<rb> ?<lb>i<rb>text<lb>/i<rb>?}<rb>
+</pre>
+
+"xref" is the literal macro name, "<lb>i<rb>ref<lb>/i<rb>" is a dummy argument,
+and "?<lb>i<rb>text<lb>/i<rb>?" is an optional argument.<p>
+
+<defitem defopt {defopt <i>option text</i>}>
+
+Begins the documentation of an option in a definition list of options.
+For example,<p>
+
+<pre>
+<lb>defopt -myoption {-myoption <i>value</i>}<rb>
+</pre>
+
+At present options are not listed in the <xref #itemlist>, but that may
+change in the future.<p>
+
+<defitem /deflist {/deflist <i>args...</i>}>
+
+Ends a definition list.  As with <xref #deflist>, the <i>args</i>
+are ignored.<p>
+
+<defitem itemlist {itemlist}>
+
+This macro returns a list of links to the items defined in the page.
+It's usually placed in the "SYNOPSIS" section.<p>
+
+</deflist definition lists>
+
+<subsection "Topic List Macros">
+
+Topic lists are similar to 
+<xref "#Definition List Macros" "definition lists"> 
+but do not define items for inclusion in the "SYNOPSIS" 
+section.<p>
+
+<deflist topic lists>
+
+<defitem topiclist {topiclist <i>args...</i>}>
+
+Begins a topic list.  As with definition lists, the <i>args</i> 
+are ignored.  By convention, each <xref #topiclist> macro 
+includes arguments which indicate the kind of thing being listed; 
+the <xref #/topiclist> macro repeats them.  This avoids confusion when
+topic lists are nested. For example,<p>
+
+<pre>
+<lb>topiclist man page section types<rb>
+    .
+    .
+    .
+<lb>/topiclist man page section types<rb>
+</pre>
+
+Topics are defined within a topic list using <xref #topic>.<p>
+
+<defitem topic {topic <i>text</i>}>
+
+Begins the documentation of a topic in a topic list.  The
+<i>text</i> is the complete representation of the topic; it may
+include nested macros.<p>
+
+<defitem /topiclist {/topiclist <i>args...</i>}>
+
+Ends a topic list.  As with <xref #topiclist>, the <i>args</i>
+are ignored.<p>
+
+</deflist topic lists>
+
+<subsection "Cross-Reference Macros">
+
+<deflist cross-references>
+
+<defitem xref {xref <i>ref</i> ?<i>text</i>?}>
+
+Creates a cross-reference link to the page/anchor identified by
+<i>ref</i>; see <xref #Cross-References> for the many kinds of
+reference understood by <xref #xref>.<p>
+
+If <i>text</i> is given, it is used as the link text.  Otherwise,
+if <i>ref</i> explicitly names an anchor, i.e., a section title or
+item name, the anchor is used; otherwise, the page name is used.<p>
+
+This reference links to the named man page, and uses the man page name
+as the link text:<p>
+
+<pre>
+<lb>xref quilldoc(1)<rb>
+</pre>
+
+This reference links to the "COMMANDS" section and uses the section
+title as the link text:<p>
+
+<pre>
+<lb>xref #COMMANDS<rb>
+</pre>
+
+This reference links to the "xref" item in "quilldoc(5)", and uses the
+item name as the link text:<p>
+
+<pre>
+<lb>xref quilldoc(5)#xref<rb>
+</pre>
+
+This reference links to the "xref" item, but uses "cross-reference"
+as the link text:<p>
+
+<pre>
+<lb>xref #xref "cross-reference"<rb>
+</pre>
+
+</deflist cross-references>
+
+<subsection "HTML Equivalent Macros">
+
+quilldoc(5) format was designed to translate easily to HTML, but also to
+support other back-end translations.  Thus, it defines a number of macros that have direct HTML equivalents.<p>
+
+<deflist html macros>
+
+<defitem li {<lb>li<rb>...<lb>/li<rb>}>
+<defitem ol {<lb>ol<rb>...<lb>/ol<rb>}>
+<defitem p  {<lb>p<rb>...<lb>/p<rb>}>
+<defitem ul {<lb>ul<rb>...<lb>/ul<rb>}>
+
+These macros map directly to their HTML namesakes.<p>
+
+<defitem b {<lb>b<rb>...<lb>/b<rb> or <lb>b <i text>...<rb>}>
+<defitem code {<lb>code<rb>...<lb>/code<rb> or <lb>code <i text>...<rb>}>
+<defitem em {<lb>em<rb>...<lb>/em<rb> or <lb>em <i text>...<rb>}>
+<defitem i {<lb>i<rb>...<lb>/i<rb> or <lb>i <i text>...<rb>}>
+<defitem pre {<lb>pre<rb>...<lb>/pre<rb> or <lb>pre <i text>...<rb>}>
+<defitem strong {<lb>strong<rb>...<lb>/strong<rb> or <lb>strong <i text>...<rb>}>
+<defitem tt {<lb>tt<rb>...<lb>/tt<rb> or <lb>tt <i text>...<rb>}>
+
+These style tags have two forms, an HTML-like form and a convenience
+form.  For example,<p>
+
+<pre><lb>i this is italics<rb></pre>
+
+is identical to<p>
+
+<pre><lb>i<rb>this is italics<lb>/i<rb></pre>
+
+Note that when convenience form is used, the <i text...> may not contain nested macros.  For example, the following will not yield bold italic
+text:<p>
+
+<pre><lb>b <lb>i this is not bold italics<rb><rb></pre>
+
+</deflist html macros>
+
+<subsection "Other Macros">
+
+<deflist other macros>
+
+<defitem do {do <i>script</i>}>
+
+The <i>script</i> is evaluated in the global context, and any return
+value is thrown away.  Use this to load required packages and define
+module-specific macros.<p>
+
+<defitem lb {lb}>
+
+Returns the left macro expansion bracket, "<lb>".<p>
+
+<defitem link {link <i url> ?<i text>?}>
+
+Returns a link to the given <i url>.  If <i text> is given, 
+it is used as the link text; otherwise, the <i url> is displayed.<p>
+
+<defitem rb {rb}>
+
+Returns the right macro expansion bracket, "<rb>".<p>
+
+<defitem version {version}>
+
+Returns the version number string given to the 
+<xref quilldoc(n)> object's <xref quilldoc(n)#format> subcommand.<p>
+
+</deflist other macros>
+
+<section BUGS>
+
+<ul>
+  <li> Section titles and item names are in the same namespace, and so
+       can conflict.  As item names are usually lower case and titles
+       are usually mixed case with initial caps, this isn't generally
+       a problem.<p>
+
+  <li> <xref #defopt> options are not included in the itemlist.<p>
+
+  <li> <xref #defopt> options cannot be linked to!<p>
+</ul>
+
+<section HISTORY>
+
+This is a new format and macro set, based loosely on many similar efforts
+I've written in the past in other contexts.<p>
+
+<section AUTHOR>
+
+Will Duquette.<p>
+
+<section "SEE ALSO">
+
+<xref macro(n)>, <xref manpage(n)>.<p>
+
+</manpage>

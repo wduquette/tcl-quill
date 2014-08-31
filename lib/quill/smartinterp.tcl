@@ -105,7 +105,7 @@ snit::type ::quill::smartinterp {
     # Clones the named targetProc into the interpreter as srcProc.
 
     method clone {srcProc targetProc} {
-        set def [lreplace [uplevel 1 [list getproc $targetProc]] 1 1 $srcProc]
+        set def [lreplace [uplevel 1 [list code getproc $targetProc]] 1 1 $srcProc]
         $interp eval $def
     }
 

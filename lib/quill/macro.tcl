@@ -193,8 +193,11 @@ snit::type ::quill::macro {
             return
         }
 
-        # TBD Clone "template" in, once I've added template to the
-        # quill(n) library.
+        $interp smartalias expand {text} 1 1 \
+            [mymethod expandonce]
+
+        $interp clone template ::quill::template
+        $interp clone tsubst   ::quill::tsubst
     }
 }
 
