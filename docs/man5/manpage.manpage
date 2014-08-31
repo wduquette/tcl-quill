@@ -29,21 +29,21 @@ Following Unix conventions, it is pretended that the manual pages
 written using manpage(5) fall into one of the standard Unix manual
 sections.  At present, manpage(5) supports sections:<p>
 
-<topiclist>
-<topic "Section 1: Applications">
+<deflist>
+<def "Section 1: Applications">
 I.e., commands that can be entered at the command-line.<p>
 
-<topic "Section 5: File formats">
+<def "Section 5: File formats">
 E.g., this man page.<p>
 
-<topic "Section n: Tcl commands">
+<def "Section n: Tcl commands">
 For some reason Tcl documents its commands in section "n", and 
 so we will follow suit.<p>
 
-<topic "Section i: Tcl interfaces">
+<def "Section i: Tcl interfaces">
 This is a new section, used to define standard Tcl interfaces that 
 are shared by many different objects.<p>
-</topiclist>
+</deflist>
 
 Most man pages written with manpage(5) will fit into one of these
 sections; however, <xref manpage(n)> allows the client to define 
@@ -82,34 +82,34 @@ is manpage(5).  The source for this page is
 <subsection "Man Page Sections">
 
 Each man page is divided into sections, and possibly into
-subsections, using the <xref #section> and <xref #subsection>
+subsections, using the <xtag section> and <xtag subsection>
 macros.  The standard sections are as follows:<p>
 
-<topiclist sections>
-<topic "SYNOPSIS">
+<deflist sections>
+<def "SYNOPSIS">
 A brief statement of the calling sequence of the application
 (section 1) or library (section n), possibly followed by a list
 of <xref "#Man Page Items"> defined in the man page.<p>
 
-<topic "DESCRIPTION">
+<def "DESCRIPTION">
 An overview of the documented command, format, or library,
 possibly with subsections describing its background or use.<p>
 
-<topic "COMMANDS">
+<def "COMMANDS">
 For section n, Tcl commands defined by the man page.<p>
 
-<topic "BUGS">
+<def "BUGS">
 Any known bugs.<p>
 
-<topic "HISTORY">
+<def "HISTORY">
 The module's history.<p>
 
-<topic "AUTHOR">
+<def "AUTHOR">
 The man page/module's author.<p>
 
-<topic "SEE ALSO">
+<def "SEE ALSO">
 Links to related man pages and other documents.<p>
-</topiclist sections>
+</deflist sections>
 
 Other sections may be defined as needed.<p>
 
@@ -119,61 +119,61 @@ A single man page will often document a series of "items".  A section
 n man page will document the Tcl commands in a library, for example,
 and this man page documents a collection of <xref #MACROS> used to
 write man pages.  Items are documented in definition lists using
-the <xref #deflist> macro; each item in a definition list is defined
-using the <xref #defitem> macro.  Each <xref #defitem> macro is
+the <xtag deflist> macro; each item in a definition list is defined
+using the <xtag defitem> macro.  Each <xtag defitem> macro is
 followed by prose documenting the item.  Each definition list is
-concluded by a <xref #/deflist> macro.<p>
+concluded by a <xtag /deflist> macro.<p>
 
 <subsection "Cross-References">
 
-The <xref #xref> macro creates cross-reference links to sections within
+The <xtag xref> macro creates cross-reference links to sections within
 the same manpage or to other manpages or, in fact, to arbitrary web
 pages.  Cross-reference links may be specified in a number of ways.
 
-<topiclist xrefs>
-<topic "<tt>#<i section></tt>">
-<topic "<tt>#<i item></tt>">
+<deflist xrefs>
+<def "<tt>#<i section></tt>">
+<def "<tt>#<i item></tt>">
 References a section or subsection, given its title, or an
 item, given its name, within the current man page.  E.g.,
-"<tt #DESCRIPTION>" or "<tt #xref>".<p>
+"<tt>#DESCRIPTION</tt>" or "<tt>#xref</tt>".<p>
 
-<topic "<tt><i name>(<i sec>)</tt>">
+<def "<tt><i name>(<i sec>)</tt>">
 References the named man page, e.g., "<tt manpage(5)>"<p>
 
-<topic "<tt><i name>(<i sec>)#<i section></tt>">
-<topic "<tt><i name>(<i sec>)#<i item></tt>">
+<def "<tt><i name>(<i sec>)#<i section></tt>">
+<def "<tt><i name>(<i sec>)#<i item></tt>">
 References a section by its title or an item by its name within
 the named man page.   E.g.,
 "<tt manpage(5)#DESCRIPTION>" or "<tt manpage(5)#xref>".<p>
 
-<topic "<tt><i url></tt>">
+<def "<tt><i url></tt>">
 References a web page by its URL.  At present, only "http" URLs
-are supported.  E.g., "<tt http://my.sample.url>"<p>
+are supported.  E.g., "<tt http://example.com>"<p>
 
-</topiclist xrefs>
+</deflist xrefs>
 
 <subsection "Man Page Skeleton">
 
 A man page file defines a single man page.<p>
 
-Each man page file begins with a <xref #manpage> macro which names and
+Each man page file begins with a <xtag manpage> macro which names and
 titles the man page.  This is followed by one or sections and
 subsections, each introduced by the <xref #section> or
-<xref #subsection> macro.  The "SYNOPSIS" section will frequently
-contain an <xref #itemlist> macro, which expands to a list of links
+<xtag subsection> macro.  The "SYNOPSIS" section will frequently
+contain an <xtag itemlist> macro, which expands to a list of links
 to each of the items defined in the body of the web page.<p>
 
 Other sections may contain definition lists, which
 define one or more items (i.e, commands, macros, etc.).  Each
-definition list begins with a <xref #deflist> macro and ends with a
-<xref #/deflist> macro; individual items begin with
-the <xref #defitem> macro, followed by prose which documents the
+definition list begins with a <xtag deflist> macro and ends with a
+<xtag /deflist> macro; individual items begin with
+the <xtag defitem> macro, followed by prose which documents the
 item.<p>
 
 Prose may contain cross-references, defined using the
-<xref #xref> macro.<p>
+<xtag xref> macro.<p>
 
-Each man page file ends with the <xref #/manpage> macro.<p>
+Each man page file ends with the <xtag /manpage> macro.<p>
 
 <section MACROS>
 
@@ -186,7 +186,7 @@ They are presented in the order in which they are ordinarily used.
 
 <deflist structural>
 
-<defitem manpage {manpage <i>name title</i> ?<i>parent</i>?}>
+<defitem manpage {<lb>manpage <i>name title</i> ?<i>parent</i>?<rb>}>
 
 This macro should be the first to appear in every man page file.
 The <i>name</i> is the man page's name.
@@ -200,11 +200,11 @@ For example,<p>
 If the documented module is part of a larger package, then
 <i parent> should be the name of that package's overall man page.<p>
 
-<defitem section {section <i>title</i>}>
+<defitem section {<lb>section <i>title</i><rb>}>
 
 Defines a major section within the man page; the section title will be
 added to the table of contents, and can be used as an
-<xref #xref> reference.  By convention, section titles are in
+<xtag xref> reference.  By convention, section titles are in
 ALL CAPS.  For example,<p>
 
 <pre>
@@ -215,11 +215,11 @@ ALL CAPS.  For example,<p>
 <lb>section "SEE ALSO"<rb>
 </pre>
 
-<defitem subsection {subsection <i>title</i>}>
+<defitem subsection {<lb>subsection <i>title</i><rb>}>
 
 Defines a subsection of a major section.  The subsection title will be
 added to the table of contents, and can be used as an
-<xref #xref> reference.  By convention, subsection titles are in
+<xtag xref> reference.  By convention, subsection titles are in
 Mixed Case.  For example,<p>
 
 <pre>
@@ -230,7 +230,7 @@ Mixed Case.  For example,<p>
 <lb>subsection "The Specifics"<rb>
 </pre>
 
-<defitem /manpage {/manpage}>
+<defitem /manpage {<lb>/manpage<rb>}>
 
 This macro ends the man page, and should be the final macro in the 
 file.<p>
@@ -247,11 +247,11 @@ The following macros are used to define definition lists.
 
 <deflist definition lists>
 
-<defitem deflist {deflist <i>args...</i>}>
+<defitem deflist {<lb>deflist <i>args...</i><rb>}>
 
 Begins a definition list.  The <i>args</i> are ignored.  By
-convention, each <xref #deflist> macro includes arguments which
-indicate the kind of thing being listed; the <xref #/deflist> macro
+convention, each <xtag deflist> macro includes arguments which
+indicate the kind of thing being listed; the <xtag /deflist> macro
 repeats them.  This avoids confusion when definition lists are nested.
 For example,<p>
 
@@ -267,9 +267,15 @@ This module defines the following commands:<lb>p<rb>
 <lb>/deflist commands<rb>
 </pre>
 
-Items are defined within a definition list using <xref #defitem>.<p>
+Items are defined within a definition list using <xtag defitem>.<p>
 
-<defitem defitem {defitem <i>name text</i>}>
+<defitem def {<lb>def <i text><rb>}>
+
+The <xtag def> macro is used in lists of items that are not included in the
+"SYNOPSIS" section.  The <i text> is the complete representation of
+the item; it may contain macros to be expanded.<p>
+
+<defitem defitem {<lb>defitem <i>name text</i><rb>}>
 
 Begins the documentation of an item in a definition list.  The
 <i>name</i> is the item's name, by which it will be linked.  In a list
@@ -293,7 +299,7 @@ repeated include "...".  In this example,<p>
 "xref" is the literal macro name, "<lb>i<rb>ref<lb>/i<rb>" is a dummy argument,
 and "?<lb>i<rb>text<lb>/i<rb>?" is an optional argument.<p>
 
-<defitem defopt {defopt <i>option text</i>}>
+<defitem defopt {<lb>defopt <i>option text</i><rb>}>
 
 Begins the documentation of an option in a definition list of options.
 For example,<p>
@@ -302,15 +308,15 @@ For example,<p>
 <lb>defopt -myoption {-myoption <i>value</i>}<rb>
 </pre>
 
-At present options are not listed in the <xref #itemlist>, but that may
+At present options are not listed in the <xtag itemlist>, but that may
 change in the future.<p>
 
-<defitem /deflist {/deflist <i>args...</i>}>
+<defitem /deflist {<lb>/deflist <i>args...</i><rb>}>
 
-Ends a definition list.  As with <xref #deflist>, the <i>args</i>
+Ends a definition list.  As with <xtag deflist>, the <i>args</i>
 are ignored.<p>
 
-<defitem itemlist {itemlist}>
+<defitem itemlist {<lb>itemlist<rb>}>
 
 This macro returns a list of links to the items defined in the page.
 It's usually placed in the "SYNOPSIS" section.<p>
@@ -319,6 +325,10 @@ It's usually placed in the "SYNOPSIS" section.<p>
 
 <subsection "Topic List Macros">
 
+<b NOTE:> Topic list macros are deprecated, as they have been replaced
+by the <xtag def> macro, which may be used within a
+<xtag deflist> to achieve the same effect.<p>
+
 Topic lists are similar to 
 <xref "#Definition List Macros" "definition lists"> 
 but do not define items for inclusion in the "SYNOPSIS" 
@@ -326,12 +336,12 @@ section.<p>
 
 <deflist topic lists>
 
-<defitem topiclist {topiclist <i>args...</i>}>
+<defitem topiclist {<lb>topiclist <i>args...</i><rb>}>
 
 Begins a topic list.  As with definition lists, the <i>args</i> 
-are ignored.  By convention, each <xref #topiclist> macro 
+are ignored.  By convention, each <xtag topiclist> macro 
 includes arguments which indicate the kind of thing being listed; 
-the <xref #/topiclist> macro repeats them.  This avoids confusion when
+the <xtag /topiclist> macro repeats them.  This avoids confusion when
 topic lists are nested. For example,<p>
 
 <pre>
@@ -342,17 +352,17 @@ topic lists are nested. For example,<p>
 <lb>/topiclist man page section types<rb>
 </pre>
 
-Topics are defined within a topic list using <xref #topic>.<p>
+Topics are defined within a topic list using <xtag topic>.<p>
 
-<defitem topic {topic <i>text</i>}>
+<defitem topic {<lb>topic <i>text</i><rb>}>
 
 Begins the documentation of a topic in a topic list.  The
 <i>text</i> is the complete representation of the topic; it may
 include nested macros.<p>
 
-<defitem /topiclist {/topiclist <i>args...</i>}>
+<defitem /topiclist {<lb>/topiclist <i>args...</i><rb>}>
 
-Ends a topic list.  As with <xref #topiclist>, the <i>args</i>
+Ends a topic list.  As with <xtag topiclist>, the <i>args</i>
 are ignored.<p>
 
 </deflist topic lists>
@@ -361,11 +371,11 @@ are ignored.<p>
 
 <deflist cross-references>
 
-<defitem xref {xref <i>ref</i> ?<i>text</i>?}>
+<defitem xref {<lb>xref <i>ref</i> ?<i>text</i>?<rb>}>
 
 Creates a cross-reference link to the page/anchor identified by
 <i>ref</i>; see <xref #Cross-References> for the many kinds of
-reference understood by <xref #xref>.<p>
+reference understood by <xtag xref>.<p>
 
 If <i>text</i> is given, it is used as the link text.  Otherwise,
 if <i>ref</i> explicitly names an anchor, i.e., a section title or
@@ -396,8 +406,13 @@ This reference links to the "xref" item, but uses "cross-reference"
 as the link text:<p>
 
 <pre>
-<lb>xref #xref "cross-reference"<rb>
+<lb>xtag xref "cross-reference"<rb>
 </pre>
+
+<defitem xtag {<lb>xtag <i name><rb>}>
+
+Creates a cross-reference to an item defining a macro, in man pages
+(like this one) that define macros.<p>
 
 </deflist cross-references>
 
@@ -443,26 +458,43 @@ text:<p>
 
 <deflist other macros>
 
-<defitem do {do <i>script</i>}>
+<defitem do {<lb>do <i>script</i><rb>}>
 
 The <i>script</i> is evaluated in the global context, and any return
 value is thrown away.  Use this to load required packages and define
 module-specific macros.<p>
 
-<defitem lb {lb}>
+<defitem expand {<lb>expand <i text><rb>}>
+
+Expands <i text> and returns the result.  This is useful for 
+macros that take a body of text: they can expand macros recursively.<p>
+
+<defitem lb {<lb>lb<rb>}>
 
 Returns the left macro expansion bracket, "<lb>".<p>
 
-<defitem link {link <i url> ?<i text>?}>
+<defitem link {<lb>link <i url> ?<i text>?<rb>}>
 
 Returns a link to the given <i url>.  If <i text> is given, 
 it is used as the link text; otherwise, the <i url> is displayed.<p>
 
-<defitem rb {rb}>
+<defitem rb {<lb>rb<rb>}>
 
 Returns the right macro expansion bracket, "<rb>".<p>
 
-<defitem version {version}>
+<defitem tag {<lb>tag <i name> ?<i text>?<rb>}>
+
+The <tag tag> macro is provided for use in man pages that define 
+macros.  It expands to the macro as it would appear in 
+<xref manpage(5)> input.  The text, if included, represents macro
+arguments and may contain macros for expansion.<p>
+
+<defitem template {<lb>template <i args...><rb>}>
+<defitem tsubst {<lb>tsubst <i args...><rb>}>
+
+Template support; see <xref template(n)> for details.<p>
+
+<defitem version {<lb>version<rb>}>
 
 Returns the version number string given to the 
 <xref manpage(n)> object's <xref manpage(n)#format> subcommand.<p>
@@ -477,9 +509,9 @@ Returns the version number string given to the
        are usually mixed case with initial caps, this isn't generally
        a problem.<p>
 
-  <li> <xref #defopt> options are not included in the itemlist.<p>
+  <li> <xtag defopt> options are not included in the itemlist.<p>
 
-  <li> <xref #defopt> options cannot be linked to!<p>
+  <li> <xtag defopt> options cannot be linked to!<p>
 </ul>
 
 <section HISTORY>

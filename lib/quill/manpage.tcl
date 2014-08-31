@@ -433,6 +433,9 @@ snit::type ::quill::manpage {
 
         $macro alias deflist $self Deflist
 
+        $macro smartalias def {text} 1 1 \
+            [mymethod Def]
+
         $macro smartalias defitem {name text} 2 2 \
             [mymethod Defitem]
 
@@ -463,6 +466,18 @@ snit::type ::quill::manpage {
             }
 
             return "<a href=\"$url\">$text</a>"
+        }
+
+        $macro proc tag {name {text ""}} {
+            if {$text ne ""} {
+                return "[tt][lb]$name [expand $text][rb][/tt]"
+            } else {
+                return "[tt][lb]$name[rb][/tt]"
+            }
+        }
+
+        $macro proc xtag {name} {
+            return "[tt][lb][xref #$name][rb][/tt]"
         }
 
         $macro alias version $self Version
@@ -674,6 +689,24 @@ snit::type ::quill::manpage {
 
         return "<dl>\n"
     }
+
+    # Macro: def text
+    #
+    # text   - The text to define.
+    #
+    # Begins documentation for the definition item.
+
+    method Def {text} {
+        # pass 1: do nothing for now.
+        if {[$macro pass] == 1} {
+            return
+        }
+        
+        # pass 2: Format the item.
+        set text [$macro expandonce $text]
+        return "<dt><b>$text</b><dd>\n"
+    }
+
 
     # Macro: defitem name text
     #

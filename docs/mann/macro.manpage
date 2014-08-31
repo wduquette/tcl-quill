@@ -128,7 +128,7 @@ macro(n) defines the following macros by default:<p>
 
 <deflist macros>
 
-<deflist do {do <i script>}>
+<defitem do {do <i script>}>
 
 Evaluates the script in the context of the macro expansion interpreter,
 and returns nothing.  Text to be expanded can define its own macros
@@ -142,13 +142,13 @@ using this mechanism:<p>
 ...
 </pre>
 
-<deflist expand {expand <i text>}>
+<def {expand <i text>}>
 
 Expands <i text> and returns the result.  This is useful for 
 macros that take a body of text: they can expand macros recursively.<p>
 
-<deflist template {template <i args...>}>
-<deflist tsubst {tsubst <i args...>}>
+<defitem template {template <i args...>}>
+<defitem tsubst {tsubst <i args...>}>
 
 Template support; see <xref template(n)> for details.<p>
 
