@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Quill by wduquette</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Quill</h1>
+        <h2>Build tool for Tcl/Tk projects</h2>
+        <a href="https://github.com/wduquette/tcl-quill" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="quill" class="anchor" href="#quill"><span class="octicon octicon-link"></span></a>Quill</h1>
+
+<p>Quill is a build tool for Tcl/Tk projects, inspired by
+<a href="http://leiningen.org">Leiningen</a>.  It is intended to:</p>
+
+<ul>
+<li>Create new skeleton project trees.</li>
+<li>Run test suites</li>
+<li>Format HTML documentation</li>
+<li>Manage dependencies
+
+<ul>
+<li>External and internal</li>
+</ul>
+</li>
+<li>Execute your project</li>
+<li>Execute arbitrary scripts in the context of your project's code base</li>
+<li>Build deployment targets:
+
+<ul>
+<li>Standalone executables ("starpacks")</li>
+<li>Lightweight executables ("starkits")</li>
+<li>Reusable packages (teapot .zip modules)</li>
+</ul>
+</li>
+<li>Make it easy to build and deploy Tcl applications and libraries.</li>
+<li>Run cross-platform (Windows, OS X, Linux)</li>
+</ul><p>As such, it is intended to reduce the ancillary costs of defining and
+deploying a Tcl package or executable to as close to zero as possible, by
+automating everything but the actual writing of the code and documentation. </p>
+
+<h2>
+<a name="building-and-installation" class="anchor" href="#building-and-installation"><span class="octicon octicon-link"></span></a>Building and Installation</h2>
+
+<p>To install Quill, see <a href="./docs/INSTALL.md">docs/INSTALL.md</a>.</p>
+
+<p>To build Quill from scratch, see <a href="./docs/BUILD.md">docs/BUILD.md</a>.</p>
+
+<h2>
+<a name="basic-use-case" class="anchor" href="#basic-use-case"><span class="octicon octicon-link"></span></a>Basic Use Case</h2>
+
+<p>Assuming you have ActiveTcl 8.5 or later installed, with the installation's
+<code>tclsh</code> on your path, you should be able to do the following:</p>
+
+<p><strong>Download and install <code>quill.exe</code> in your ~/bin directory (or wherever).</strong>
+See <a href="./docs/INSTALL.md">docs/INSTALL.md</a>.</p>
+
+<p><strong>Create a new skeleton project tree:</strong></p>
+
+<pre><code>$ cd ~/work
+$ quill new app my-application myapp
+...
+</code></pre>
+
+<p><strong>Run your new application:</strong></p>
+
+<pre><code>$ cd my-application
+$ ./bin/myapp.tcl a b c
+my-application 0.0a0
+
+Args: &lt;a b c&gt;
+</code></pre>
+
+<p><strong>Run the application test suite:</strong></p>
+
+<pre><code>$ quill test
+... Runs dummy test (which will fail)
+</code></pre>
+
+<p><strong>Build the project's HTML documentation:</strong></p>
+
+<pre><code>$ quill docs
+... (You'll have to write some)
+</code></pre>
+
+<p><strong>Build the Application (if TDK is installed) as a .kit or standalone
+executable:</strong></p>
+
+<pre><code>$ quill build
+...
+$ ./bin/myapp.kit a b c
+my-application 0.0a0
+
+Args: &lt;a b c&gt;
+</code></pre>
+
+<p><strong>Load the application and its libraries into Tkcon for interactive
+testing:</strong></p>
+
+<pre><code>$ quill shell
+... (Invokes Tkcon; does not run the application's "main" proc)
+</code></pre>
+
+<p>** Install your application and libraries for local use:**</p>
+
+<pre><code>$ quill install
+... (Copies the executable to your ~/bin, and libraries to your teapot)
+</code></pre>
+
+<h2>
+<a name="other-features" class="anchor" href="#other-features"><span class="octicon octicon-link"></span></a>Other Features</h2>
+
+<p>Quill can also build library packages and install them into your local
+teapot repository for general use; and if your local teapot is located
+somewhere that requires "root" or "admin" privileges to touch, it can
+also create a new teapot repository for you in your home page.</p>
+
+<p>Then, you can add <code>require</code> statements to your <code>project.quill</code> file
+(created for you by <code>quill new</code>), and Quill will take care of downloading
+the required packages into your local teapot when you execute 
+<code>quill deps update</code>.</p>
+
+<p>Finally, if you define a distribution in <code>project.quill</code>, Quill will build
+distribution .zip file for you.</p>
+
+<p>See the <a href="./docs/man5/quill.manpage">quill(5)</a> man page for information about
+the contents of the <code>project.quill</code> file, and enter <code>quill help</code> at the
+command line for help on Quill and its subcommands.</p>
+
+<h2>
+<a name="dependencies" class="anchor" href="#dependencies"><span class="octicon octicon-link"></span></a>Dependencies</h2>
+
+<p>How much Quill can do for you depends on what ancillary tools you have 
+installed.  You will need a Tcl interpreter at the very least.</p>
+
+<p>With just an arbitrary Tcl interpreter, Quill can:</p>
+
+<ul>
+<li>Create new project trees for you.</li>
+<li>Run your tests</li>
+<li>Format your documentation</li>
+<li>Make it easier to run your code, either from the system command line or 
+from an interactive Tcl shell.</li>
+<li>Create distribution .zip files.</li>
+</ul><p>With <a href="http://www.activestate.com/activetcl">ActiveTcl</a>, Quill can:</p>
+
+<ul>
+<li>Manage external dependencies, pulling packages from ActiveState's
+teapot repository and keeping them up to date in your environment.</li>
+</ul><p>With <a href="http://www.activestate.com/tcl-dev-kit">TclDevKit 5.0</a>, Quill can:</p>
+
+<ul>
+<li>Build standalone executables for Linux, OS X, and Windows</li>
+<li>Build libraries as teapot packages, for installation into a local
+teapot repository. </li>
+</ul><h2>
+<a name="ways-to-help" class="anchor" href="#ways-to-help"><span class="octicon octicon-link"></span></a>Ways to Help</h2>
+
+<p>I'm developing Quill on OS X, but I'm trying to write it so that will work 
+on OS X, Linux, and Windows, and on Unix in general.  For Windows I'm 
+expecting that Quill is being used from a MinGW bash shell rather than 
+PowerShell or the basic Command Shell, but I'm trying not to rely on that.</p>
+
+<p>However, I only have access to OS X.  Thus, it would be 
+a great help to me to have users try it out on other platforms and submit
+bug reports and patches.</p>
+
+<p>Note that platform-specific code is concentrated in <code>lib/quillapp/plat.tcl</code>.
+That's where Quill finds external programs like <code>tkcon</code> and <code>teacup</code>, for
+example.</p>
+
+<p>In addition, I've focussed on using ActiveState's "teapot" package 
+repository and TclDevKit tool chain, because I have access to those.
+I'm open to extending Quill to use other tool chains as well; and help
+with that is also welcome.</p>
+
+<h2>
+<a name="acknowledgements" class="anchor" href="#acknowledgements"><span class="octicon octicon-link"></span></a>Acknowledgements</h2>
+
+<p>Thanks to the following people who have contributed bug reports, patches,
+or ideas to Quill, or helped in other ways:</p>
+
+<ul>
+<li>Stephan Effelsberg</li>
+<li>Andreas Kupries</li>
+</ul>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/wduquette/tcl-quill/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/wduquette/tcl-quill/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/wduquette/tcl-quill"></a> is maintained by <a href="https://github.com/wduquette">wduquette</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
