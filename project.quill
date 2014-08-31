@@ -1,4 +1,4 @@
-project tcl-quill 0.2.0a1 "Quill Project Build System for Tcl/Tk"
+project tcl-quill 0.2.0 "Quill Project Build System for Tcl/Tk"
 homepage http://github.com/wduquette/tcl-quill
 app quill -apptypes {linux osx windows}
 provide quill
@@ -10,14 +10,19 @@ require zipfile::encode 0.3
 
 dist linux {
 	bin/quill-linux
-	%docs
+    docs/*.html
+    docs/*/*.html
+    docs/*.md
+	%libs
 	LICENSE
 	README.md
 }
 
 dist osx {
 	bin/quill-osx
-	%docs
+    docs/*.html
+    docs/*/*.html
+    docs/*.md
 	%libs
 	LICENSE
 	README.md

@@ -7,6 +7,7 @@
 /bin/*-osx
 /bin/*-linux
 teapot.txt
+/*.zip
 
 # SublimeText files
 *.sublime-*

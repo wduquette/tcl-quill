@@ -108,6 +108,8 @@ snit::type ::quillapp::teacup {
     # on failure.
 
     typemethod getbase {tcltk version flavor outdir} {
+        puts "Looking for TCL $version on $flavor"
+
         # FIRST, get the right arch pattern.
         switch $flavor {
             linux    { set arch "linux-*-ix86"             }
@@ -120,39 +122,86 @@ snit::type ::quillapp::teacup {
         set table [teacup list --is application --all-platforms \
                     base-$tcltk-thread]
 
-        # NEXT, search through the table for the entry that 
-        # matches the arch pattern and best matches the version.
+        # NEXT, filter the list for the correct platform.
+        set ptable [list]
 
-        set best(platform) ""
-        set best(version) 0.0
+        foreach record $table {
+            set p [dict get $record platform]
+
+            if {[string match $arch $p]} {
+                lappend ptable $record
+            }
+        }
+        set table $ptable
+
+        # NEXT, search through the table for the entry that 
+        # most exactly matches the version, which is an x.y.z.
+        lassign [ExactBasekitVersion $table $version] bv bp
+
+        if {$bv eq ""} {
+            set version [VerXY $version]
+            lassign [ExactBasekitVersion $table $version] bv bp
+        }
+
+        if {$bv eq ""} {
+            throw NOTFOUND [outdent "
+                Could not find basekit for $tcltk $version on $flavor 
+            "]
+        }
+
+
+        puts "Best match: base-$tcltk-thread $bv $bp"
+
+        # NEXT, retrieve it.
+        call get --is application --output $outdir \
+            base-$tcltk-thread $bv $bp
+    }
+
+    # VerXY version
+    #
+    # version - an x.y.z... version string
+    #
+    # Returns the x.y.
+
+    proc VerXY {version} {
+        return [join [lrange [split $version .] 0 1] .]
+    }
+
+    # ExactBasekitVersion table version
+    #
+    # table   - The table of basekits
+    # version - The desired version, either x.y.z or x.y
+    #
+    # Finds the best matching version, and returns a list
+    # "version platform", or the empty string on failure.
+
+    proc ExactBasekitVersion {table version} {
+        set bp ""
+        set bv 0.0
 
         foreach record $table {
             set v [dict get $record version]
             set p [dict get $record platform]
 
-            if {![string match $arch $p]} {
-                continue
-            }
 
             # If they asked for 8.5, say, make sure this is an 8.5.
-            if {![string match $version* $v]} {
+            if {![string match $version.* $v]} {
                 continue
             }
 
-            if {[package vcompare $v $best(version)] == 1} {
-                set best(platform) $p
-                set best(version)  $v
+            if {[package vcompare $v $bv] == 1} {
+                set bp $p
+                set bv $v
             }
         }
 
-        # NEXT, retrieve it.
-        call get --is application --output $outdir \
-            base-$tcltk-thread $best(version) $best(platform)
+        if {$bv ne "0.0"} {
+            return [list $bv $bp]
+        }
+
+        return ""
     }
 
-    # install pkg ver
-    #
-    # pkg    - a package name
     # ver    - A version number
     #
     # Installs the specified package from the default teapot;

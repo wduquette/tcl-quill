@@ -19,7 +19,9 @@ namespace eval ::quillinfo {
     variable meta
     array set meta {distpat-osx {
 	bin/quill-osx
-	%docs
+    docs/*.html
+    docs/*/*.html
+    docs/*.md
 	%libs
 	LICENSE
 	README.md
@@ -33,10 +35,13 @@ namespace eval ::quillinfo {
 	README.md
 } version-textutil::expander 1.3.1 version-snit 2.3 local-Tcl 0 apps quill local-zipfile::encode 0 distpat-linux {
 	bin/quill-linux
-	%docs
+    docs/*.html
+    docs/*/*.html
+    docs/*.md
+	%libs
 	LICENSE
 	README.md
-} local-textutil::expander 0 local-snit 0 version 0.2.0a1 version-Tcl 8.6 project tcl-quill dists {linux osx windows}}
+} local-textutil::expander 0 local-snit 0 version 0.2.0 version-Tcl 8.6 project tcl-quill dists {linux osx windows}}
 
     namespace export \
         project      \

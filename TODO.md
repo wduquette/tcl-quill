@@ -6,7 +6,6 @@ This is the official list of work to be done.
 
 * Fix the distributions in project.quill; they contain different things.
 * quill new lib
-* Update release docs.
 * Building exes:
   * Allow "exe" apptype for building in just the local flavor, whatever it is.
 * Add check on "teacup" executable for build 298288 or later.
