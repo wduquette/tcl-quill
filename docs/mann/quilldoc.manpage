@@ -1,0 +1,104 @@
+<manpage quilldoc(n) "Quill Document Processor" quill(n)>
+
+<section SYNOPSIS>
+
+<pre>
+package require quill <version>
+namespace import ::quill::*
+</pre>
+
+<itemlist>
+
+<section DESCRIPTION>
+
+The quilldoc(n) module provides formatting for traditional documents
+with section numbers and cross-references written in 
+<xref quilldoc(5)> format.  <xref quilldoc(5)> is an HTML-like format
+in which the "tags" are <xref macro(n)> macros.  quilldoc(n) formats the
+document nicely, and adds a table of contents and cross-reference
+links.<p>
+
+At present, quilldoc(n) produces HTML output only; however, there is
+no reason why it could not be provided with multiple back-ends, each
+supporting a different output format.<p>
+
+<subsection "Man Page Links">
+
+quilldoc(n) supports links to <xref manpage(5)> manpages provided
+that the <b -manroot> option is set when calling <xref "#format">.<p>
+
+<section COMMANDS>
+
+quilldoc(n) defines the following commands:<p>
+
+<deflist commands>
+
+<defitem manpage {manpage <i name>}>
+
+This command creates a new instance of quilldoc(n) called 
+<i name>, returning the fully-qualified name.<p>
+
+</deflist commands>
+
+<section "INSTANCE COMMANDS">
+
+An instance of quilldoc(n) provides the following subcommands:
+
+<deflist instance>
+
+<defitem eval   {<i obj> eval <i args...>}>
+<defitem expand {<i obj> expand <i text>}>
+<defitem lb     {<i obj> lb}>
+<defitem rb     {<i obj> rb}>
+
+These commands are all delegated to the object's internal instance of
+<xref macro(n)>.  <xref #eval> and <xref #expand> are primarily useful
+for debugging.<p>
+
+<defitem format {<i obj> format <i infile> ?<i options>?}>
+
+Formats the given <i infile>, producing (by default) a matching
+".html" file in the same directory.<p>
+
+The following options may be used:<p>
+
+<deflist options>
+<defopt {-outfile <i outfile>}>
+Specifies the output file name, overriding the default.<p>
+
+<defopt {-header <i text>}>
+Specifies the text for the banner at the top of the document.  
+Defaults to "Project Documentation". This text should usually
+identify the project name and version.<p>
+
+<defopt {-version <i version>}>
+Specifies the project version number.  It can be accessed using the
+<xref quilldoc(5)#version> macro.<p>
+
+<defopt {-manroot <i manroot>}>
+
+Specifies the root of the man page tree (i.e., the parent of the 
+"<tt>man<i sec></tt>" directories) relative to the location of the
+output file.  Defaults to ".".<p>
+
+</deflist options>
+
+
+</deflist instance>
+
+<section MACROS>
+
+The macros used to write man pages are defined in the
+<xref quilldoc(5)> man page.<p>
+
+</deflist macros>
+
+<section AUTHOR>
+
+Will Duquette<p>
+
+<section "SEE ALSO">
+
+<xref quill(n)>, <xref quilldoc(5)>, <xref macro(n)>, <xref manpage(5)>.
+
+</manpage>

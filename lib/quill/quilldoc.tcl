@@ -179,7 +179,7 @@ snit::type ::quill::quilldoc {
         set outfile       [file rootname $infile].html
         set trans(header) "Project Documentation"
         set trans(version) 0.0.0
-        set trans(manroot) ""
+        set trans(manroot) "."
         set trans(toc)     0
         set trans(ids)     {}
 
