@@ -15,7 +15,7 @@ The Tcllib package <b textutil::expander> is a useful too for building
 documentation; however, by default it expands macros in the main
 interpreter.  It is possible use a slave interpreter, but error messages
 for macros aliased into the slave are ugly.  In addition, one usually
-wants two-pass expansion, and <b textutil::expander>> doesn't provide
+wants two-pass expansion, and <b textutil::expander> doesn't provide
 this out-of-the-box.  This package combines <b textutil::expander> with 
 <xref smartinterp(n)> to provide a more helpful infrastructure for
 macro processing.<p>
@@ -47,6 +47,13 @@ interpreter.  By default, <b all> standard Tcl commands are available.
 If <b safe> is specified, macro(n) creates a "safe" interpreter; and if
 <b none> is specified, macro(n) begins with a "safe" interpreter and
 then removes all commands from the global namespace.<p>
+
+<defopt {-passcommand <i commmand>}>
+
+This option specifies a <i command> to call when the first expansion pass
+is complete but before the second pass begins.  This allows the client 
+to build up metadata during the first pass and then operate on it (e.g.,
+to define section numbers) before the second pass begins.<p>
 
 </deflist options>
 </deflist commands>

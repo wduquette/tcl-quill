@@ -1,4 +1,13 @@
 <document "Quill <version> User's Guide">
-
+<preface preface "Preface">
+<preface ack     "Acknowledgements">
 <section intro "Introduction">
+<section intro.sub1 "Intro Sub1">
+<section intro.sub1.subsub1 "Intro Sub1 SubSub1">
+<section intro.sub2 "Intro Sub2">
+<section body "Body of Document">
+<section body.part "Body Part">
+<appendix this "This Appendix">
+<appendix this.part "This Appendix Part">
+<appendix that "That Appendix">
 </document>

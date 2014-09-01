@@ -52,6 +52,11 @@ snit::type ::quill::macro {
         -default   all \
         -type     {snit::enum -values {all safe none}}
 
+    # -passcommand command
+    #
+    # Command to call between the expansion passes.
+
+    option -passcommand
 
     # -brackets pair
     #
@@ -140,6 +145,7 @@ snit::type ::quill::macro {
         try {
             set info(pass) 1
             $exp expand $text
+            callwith $options(-passcommand)
             set info(pass) 2
             set output [$exp expand $text]
             set info(pass) 1

@@ -43,32 +43,13 @@ snit::type ::quill::quilldoc {
         body {
             color: black;
             background-color: white;
-            margin-left: 0.5in;
-            margin-right: 0.5in;
         }
 
         /* For the page header */
         h1.header {
             position: relative;
-            left: -0.4in;
             background-color: red;
             color: black;
-        }
-
-        /* The title and section headers are outdented. */
-        h1 {
-            position: relative;
-            left: -0.4in;
-        }
-
-        h2 {
-            position: relative;
-            left: -0.4in;
-        }
-
-        h3 {
-            position: relative;
-            left: -0.2in;
         }
 
         /* Preformatted text has a special background */
@@ -124,6 +105,7 @@ snit::type ::quill::quilldoc {
         }
     }
 
+
     #---------------------------------------------------------------------
     # Components
 
@@ -135,10 +117,19 @@ snit::type ::quill::quilldoc {
 
     # trans array: Transient data
     #
-    # infile   - The input file name.
-    # header   - Header for the page
-    # version  - Project version
-    # manroot  - Root directory for manpage references
+    # This array is initialized by [quilldoc format], and used
+    # during the formatting process.
+    #
+    # infile        - The input file name.
+    # header        - Header for the page
+    # version       - Project version
+    # manroot       - Root directory for manpage references
+    #
+    # ids           - List of section IDs, in the order of definition.
+    # stype-$id     - Section type: preface|section|appendix
+    # title-$id     - Section title
+    # number-$id    - Assigned after pass 1; "" for preface sections
+    # linktext-$id  - Assigned after pass 1; default link text.
 
     variable trans -array {
     }
@@ -154,7 +145,8 @@ snit::type ::quill::quilldoc {
     constructor {} {
         # FIRST, create the components
         install macro using macro ${selfns}::macro \
-            -brackets {< >}
+            -passcommand [mymethod PassCmd]        \
+            -brackets    {< >}
 
         # NEXT, define the macros initially.
         $self ResetMacros
@@ -186,11 +178,13 @@ snit::type ::quill::quilldoc {
 
     method format {infile args} {
         # FIRST, get the options
+        array unset trans
         set trans(infile) $infile
         set outfile       [file rootname $infile].html
         set trans(header) "Project Documentation"
         set trans(version) 0.0.0
         set trans(manroot) ""
+        set trans(ids)     {}
 
         foroption opt args -all {
             -outfile { set trans(outfile) [lshift args]}
@@ -203,6 +197,66 @@ snit::type ::quill::quilldoc {
         $self ResetMacros
 
         writefile $outfile [$macro expandfile $infile]
+    }
+
+    # PassCmd
+    #
+    # This command assigns all section numbers and computes all link text.
+
+    method PassCmd {} {
+        set nums [list 0]
+
+        set pid ""
+        set pidx 0
+        set ptype  ""
+        foreach id $trans(ids) {
+            # The idx is the index of the level in $nums.
+            set idx [expr {[llength [split $id .]] - 1}]
+            set stype $trans(stype-$id)
+
+            if {$stype ne $ptype} {
+                set nums [list 0]
+            } elseif {$idx > $pidx} {
+                lappend nums 0
+            } elseif {$idx < $pidx} {
+                set nums [lrange $nums 0 $idx]
+            }
+
+            set digit [lindex $nums $idx]
+            lset nums $idx [expr {$digit + 1}]
+
+            set fullnum [join $nums .]
+
+            if {$idx == 0} {
+                append fullnum "."
+            }
+
+            switch $trans(stype-$id) {
+                preface {
+                    set trans(number-$id) ""
+                    set trans(linktext-$id) $trans(title-$id)
+                }
+
+                section {
+                    set trans(number-$id) $fullnum
+                    set trans(linktext-$id) "Section $fullnum"
+                }
+
+                appendix {
+                    set fullnum [AppendixNum $fullnum]
+                    set trans(number-$id) $fullnum
+                    set trans(linktext-$id) "Appendix $fullnum"
+                }
+
+                default {
+                    error "Unknown section type: \"$trans(stype-$id)\""
+                }
+            }
+
+            set pid   $id
+            set pidx  $idx
+            set ptype $stype
+        }
     }
 
     #---------------------------------------------------------------------
@@ -310,7 +364,8 @@ snit::type ::quill::quilldoc {
         }
 
         # Pass 2: Format the Output
-        # FIXME: Allow user to specify project name
+        set title [$macro expandonce $title]
+
         append result                        \
             "<html>\n"                       \
             "<head>\n"                       \
@@ -325,7 +380,7 @@ snit::type ::quill::quilldoc {
             "<h1 class=\"header\">$trans(header)</h1>\n"
 
         append result \
-            "<h1>[$macro expandonce $title]</h1>\n"
+            "<h1>$title</h1>\n"
 
         return $result
     }
@@ -357,6 +412,34 @@ snit::type ::quill::quilldoc {
     #---------------------------------------------------------------------
     # Man Page Sections and Subsections
 
+    # preface id title
+    #
+    # id      - The section ID
+    # title   - The section title
+    #
+    # Produces the section header, and provides for cross-references
+
+    method {macro preface} {id title} {
+        # Pass 1: Catalog this section.
+        if {[$macro pass] == 1} {
+            # FIRST, validate the id
+            $self CheckSyntax $id
+            $self CheckUniqueness $id
+            $self CheckPrevious $id preface {preface}
+            $self CheckLevel $id preface
+
+            # NEXT, save the data.
+            lappend trans(ids) $id
+            set trans(stype-$id) preface
+            set trans(title-$id) $title
+            return
+        }
+
+        # Pass 2: Produce the section header and anchor
+        set title [$macro expandonce $title]
+        return [Header $id $title]
+    }
+
     # section id title
     #
     # id      - The section ID
@@ -367,22 +450,62 @@ snit::type ::quill::quilldoc {
     method {macro section} {id title} {
         # Pass 1: Catalog this section.
         if {[$macro pass] == 1} {
-            # TBD
+            # FIRST, validate the id
+            $self CheckSyntax $id
+            $self CheckUniqueness $id
+            $self CheckPrevious $id section {preface section}
+            try {
+                $self CheckLevel $id section
+            } on error {result} {
+                puts "Error: $result\n$::errorInfo"
+            }
+
+            # NEXT, save the data.
+            lappend trans(ids) $id
+            set trans(stype-$id) section
+            set trans(title-$id) $title
             return
         }
 
         # Pass 2: Produce the section header and anchor
         set title [$macro expandonce $title]
-        return "<h2><a name=\"$id\">$title</a></h2>\n"
+        return [Header $id "$trans(number-$id) $title"]
     }
 
+    # appendix id title
+    #
+    # id      - The section ID
+    # title   - The section title
+    #
+    # Produces the section header, and provides for cross-references
 
-    # Contents
+    method {macro appendix} {id title} {
+        # Pass 1: Catalog this section.
+        if {[$macro pass] == 1} {
+            # FIRST, validate the id
+            $self CheckSyntax $id
+            $self CheckUniqueness $id
+            $self CheckPrevious $id appendix {preface section appendix}
+            $self CheckLevel $id appendix
+
+            # NEXT, save the data.
+            lappend trans(ids) $id
+            set trans(stype-$id) appendix
+            set trans(title-$id) $title
+            return
+        }
+
+        # Pass 2: Produce the section header and anchor
+        set title [$macro expandonce $title]
+        return [Header $id "$trans(number-$id) $title"]
+    }
+
+    # contents
     #
     # Formats the section/subsection table of contents.  This is
     # used automatically by Manpage.
 
-    method Contents {} {
+    method contents {} {
         # Pass 1: do nothing
         if {[$macro pass] == 1} {
             return
@@ -574,6 +697,182 @@ snit::type ::quill::quilldoc {
         $macro proc /$tag {} [format {
             return "</%s>"
         } $tag]
+    }
+
+    # CheckIdSyntax id
+    #
+    # id    - The ID
+    #
+    # Throws INVALID if a section ID is syntactically incorrect.
+
+    method CheckSyntax {id} {
+        # FIRST, validate the segments
+        foreach segment [split $id .] {
+            if {![regexp {^[a-z]\w*$} $segment]} {
+                throw INVALID "Invalid section ID: \"$id\""
+            }
+        }
+    }
+
+    # CheckUniqueness id
+    #
+    # Checks whether the ID is already in use.
+
+    method CheckUniqueness {id} {
+        if {$id in $trans(ids)} {
+            throw INVALID "Duplicate section ID: \"$id\""
+        }
+    }
+
+    # CheckPrevious id stypes
+    #
+    # id      - The section ID
+    # stype   - This section's stype
+    # stypes  - Valid stypes
+    #
+    # Throws INVALID if the previous section type is non-empty and
+    # not one of the listed types.
+
+    method CheckPrevious {id stype stypes} {
+        # FIRST, any section type can come first.
+        if {![got $trans(ids)]} {
+            return
+        }
+
+        # NEXT, check previous section's type.
+        set prev  [lindex $trans(ids) end]
+        set ptype $trans(stype-$prev)
+
+        if {$ptype ni $stypes} {
+            set stype [Article $stype]
+            set ptype [Article $ptype]
+            throw INVALID [outdent "
+                $is is $stype, and $stype cannot follow a $ptype.
+            "]
+        }
+    }
+
+    # CheckLevel id stype
+    #
+    # id      - The section ID
+    # stype   - This section's stype
+    #
+    # Verifies that this ID doesn't break the logical structure
+    # of the document.
+
+    method CheckLevel {id stype} {
+        # FIRST, analyze the ID
+        set segments  [split $id .]
+        set level     [llength $segments]
+
+        # NEXT, analyze the previous ID
+        set pid [lindex $trans(ids) end]
+        
+        if {$pid ne ""} {
+            set ptype     $trans(stype-$pid)
+            set psegments [split $pid .]
+            set plevel    [llength $psegments]
+        } else {
+            set ptype ""
+        }
+
+        # NEXT, if it's a preface it can't be a child.
+        if {$stype eq "preface" && $level > 1} {
+            throw INVALID [outdent "
+                Invalid section level: $id is a level $level section ID,
+                but preface sections cannot have subsections.
+            "]
+        }
+
+        # NEXT, if the IDs are of different types, this must be
+        # a toplevel ID.
+        if {$stype ne $ptype && $level != 1} {
+            throw INVALID [outdent "
+                Invalid section level: $id is a level $level section ID, but
+                as the first $stype in the document it must be a 
+                level 1 ID.
+            "]
+        }
+
+        # NEXT, if this is a toplevel section, we're good.
+        if {$level == 1} {
+            return
+        }
+
+        # NEXT, it's a child.  Is it a valid child of a previous section?
+        # All segments but the last must match the segments of the previous
+        # section.
+
+        set i 0
+        foreach segment [lrange $segments 0 end-1] {
+            set psegment [lindex $psegments $i]
+            if {$segment ne $psegment} {
+                throw INVALID [outdent "
+                    Section ID $id cannot logically follow section $prev.
+                "] 
+            }
+
+            incr i
+        }
+
+        return
+    }
+
+    # Header id title
+    #
+    # id     - A section ID
+    # title  - A section title
+    #
+    # Outputs returns an HTML header appropriate for the section level.
+
+    proc Header {id title} {
+        set level [llength [split $id .]]
+
+        if {$level == 1} {
+            return "<h2><a name=\"$id\">$title</a></h2>\n"
+        } else {
+            return "<h3><a name=\"$id\">$title</a></h3>\n"
+        }
+    }
+
+    # Article thing
+    #
+    # Adds "a" or "an" to the thing.
+
+    proc Article {thing} {
+        if {[string index $thing 0] in {a e i o u}} {
+            return "an $thing"
+        } else {
+            return "a $thing"
+        }
+    }
+
+    # AppendixNum num
+    #
+    # num   - A numeric section number.
+    #
+    # Replaces the first digit with a letter.
+
+    proc AppendixNum {num} {
+        set map "ABCEDFGHIJKLMNOPQRSTUVWXYZ"
+        set len [string length $map]
+
+        set nums [split $num .]
+        set first [expr {[lindex $nums 0] - 1}]
+
+        set letter ""
+
+        while {$first >= 0} {
+            set idx [expr {$first % $len}]
+            append letter [string index $map $idx]
+            incr first -$len
+        }
+
+        lset nums 0 $letter
+
+        return [join $nums .]
+
+
     }
 }
 
