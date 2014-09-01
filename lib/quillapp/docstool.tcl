@@ -181,11 +181,21 @@ snit::type ::quillapp::docstool {
 
         foreach doc $doclist {
             puts "Writing [file rootname $doc].html"
+            set header \
+                "[project name] [project version] -- [project description]"
 
-            $qd format $doc \
-                -header "[project name] [project version] -- [project description]" \
-                -version [project version] \
-                -manroot [GetManRoot $doc]
+            try {
+                $qd format $doc \
+                    -header  $header \
+                    -version [project version] \
+                    -manroot [GetManRoot $doc]
+            } trap SYNTAX {result} {
+                throw FATAL $result
+            } on error {result eopts} {
+                # Rethrow other errors
+                return {*}$eopts $result
+            }
+
         }
     }
 
