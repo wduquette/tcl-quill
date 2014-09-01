@@ -4,10 +4,12 @@ This is the official list of work to be done.
 
 # For Quill 0.2.x
 
-* docstool's clean feature needs to clean up all *.html
 * Fix bugs as found and reported.
+* docstool's clean feature needs to clean up all *.html
 * Improved output using table(n)
   * quill info, quill env
+* quilldoc(n) package
+  * Mostly done; there will be tweaks and aditions.
 * Quill user's guide
   * Documents how to use Quill
   * Documents Quill conventions, e.g., where to require packages, and the
@@ -15,6 +17,11 @@ This is the official list of work to be done.
   * Requires quilldoc(n) package.
 * quillapp(n) doesn't really need a namespace.
   * Make it go away
+* Idea: macro sets
+  * To be installed in macro(n).
+  * Macro set plugins.
+* How does Quill manage with multiple test targets?
+  * Add quillapp tests, and make sure it makes sense.
 
 # For Quill 0.3.0
 

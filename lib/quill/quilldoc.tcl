@@ -53,8 +53,15 @@ snit::type ::quill::quilldoc {
         /* Preformatted text has a special background */
         pre {
             border: 1px solid blue;
-            background-color: #FFFF66;
+            background-color: #FAF1AA;
             padding: 2px;
+        }
+
+        div.marker {
+            border: 1px solid black;
+            background-color: cyan;
+            border-radius: 5px;
+            width: auto;
         }
 
         /* Use for indenting */

@@ -1,38 +1,189 @@
 <document "Quill <version> User's Guide">
+
+By Will Duquette<br>
+September, 2014<p>
+
 <hrule>
 <contents>
 <hrule>
-<preface preface "Preface">
-<preface ack     "Acknowledgements">
-<section intro "Introduction">
 
-This is some text.<p>
-<deflist mylist>
-<def {Topic <i One>}>
-Floo bar ba.<p>
-<def {Topic <i Two>}>
-Fllo bara baba.<p>
+<do {
+# Define some infrastructure.
+proc tclref {name} {
+	return [link http://www.tcl.tk/man/tcl8.6/TclCmd/$name.htm ${name}(n)]
+}
+# For comment bars
+proc == {args} {hrule}
 
-</deflist mylist>
+# For project-relative paths
+proc root {path} {
+	return "[tt][i project]/$path[/tt]"
+}
 
-<section intro.sub1 "Intro Sub1">
+proc listing {text} {
+	set lines [list]
+	set i 0
+	foreach line [split [string trim $text] \n] {
+		lappend lines [format "%03d  %s" [incr i] $line] 
+	}
 
-Cross-references:
+	return "<pre>\n[join $lines \n]\n</pre>\n"
+}
+}>
+
+<preface intro "Introduction">
+
+TODO: Why Quill came to be written.
+
+<preface ack "Acknowledgements">
+
+Many thanks to the following people who have helped with Quill development:<p>
 
 <ul>
-<li> To another section: <xref this.part>
-<li> To a man page: <xref quilldoc(5)>
-<li> To a URL: <xref http://github.com>
-<li> To another section: <xref this.part "Custom Link Text 1">
-<li> To a man page: <xref quilldoc(5) "Custom Link Text 2">
-<li> To a URL: <xref http://github.com "Custom Link Text 3">
+<li> Stephan Effelsberg
+<li> Andreas Kupries
 </ul>
 
-<section intro.sub1.subsub1 "Intro Sub1 SubSub1">
-<section intro.sub2 "Intro Sub2">
-<section body "Body of Document">
-<section body.part "Body Part">
-<appendix this "This Appendix">
-<appendix this.part "This Appendix Part">
-<appendix that "That Appendix">
+<section over "Quill Overview">
+
+TODO: Gosh, there's a lot of work to be done here.<p>
+
+<section over.tree "The Project Tree">
+<section over.pfile "The Project File">
+
+<== ====================================================================>
+
+<section lib "Library Packages">
+
+TBD.<p>
+
+<section lib.stdfiles "Standard Files">
+
+TBD: Discuss pkgIndex.tcl, pkgModules.tcl.
+
+<== ====================================================================>
+
+<section testing "Project Testing">
+
+Quill provides easy management of your project test suite using the 
+<tclref tcltest> test harness.  To execute all project tests,<p>
+
+<pre>
+$ quill test
+...
+</pre>
+
+Quill will run all test targets, and output the results. Alternatively,
+Quill will run a single test target given its name:<p>
+
+<pre>
+$ quill test mylib
+...
+</pre>
+
+Test targets are defined by adding subdirectories to <root test/>; 
+the name of the subdirectory is the name of the target.<p>
+
+Each test directory contains an <tt all_tests.test> file, and one or
+more normal <tclref tcltest> files, e.g., <tt mymodule.test>.  To run
+a specific test file, add its name to the command line:<p>
+
+<pre>
+$quill test mylib mymodule
+</pre>
+
+Finally, any options are passed along to <tt tcltest>:<p>
+
+<pre>
+$quill test mylib mymodule -match "mytest-1.*"
+</pre>
+
+
+<section testing.stdfiles "Standard Test Files">
+
+Each test 
+subdirectory is assumed to contain a file called 
+<tt all_tests.test>, plus any number of normal <tclref tcltest> files,
+e.g., <tt mymodule.test>.<p>
+
+The content of <tt all_tests.test> is pure boilerplate; it simply arranges
+to execute all other <tt *.test> files in the directory, each in its 
+own instance of the Tcl interpreter, and accumulate the results.  It is
+generally created automatically by Quill, or by copying 
+<tt all_tests.test> from an existing test subdirectory.<p>
+
+Here is the skeleton of a typical module test script, as created by
+Quill:<p>
+
+<listing {
+#-------------------------------------------------------------------------
+# TITLE:
+#    mymodule.test
+#
+# PROJECT:
+#    myproject: Description of my project
+#
+# DESCRIPTION:
+#    mymodule(n): Test Suite
+#-------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------
+# Load the tcltest package
+
+if {[lsearch [namespace children] ::tcltest] == -1} {
+    package require tcltest 2.3
+    eval ::tcltest::configure $argv
+}
+
+namespace import ::tcltest::test
+
+#-------------------------------------------------------------------------
+# Load the package to be tested
+
+source ../../lib/mymodule/pkgModules.tcl
+namespace import ::mymodule::*
+
+#-------------------------------------------------------------------------
+# dummy
+
+test dummy-1.1 {dummy test} -body {
+    set a false
+} -result {true}
+}>
+
+There are several things to note in the above listing:
+
+<deflist>
+
+<def {On line 20:}>
+Only the <tt test> command is imported from the <tt tcltest::> namespace.
+Used fully-qualified names for other <tclref tcltest> commands, or edit
+this line to import additional commands.<p>
+
+<def {On line 25:}>
+Quill generally creates library packages and test directories together,
+and assumes that the tests in the directory are for the package in the
+<root lib> subdirectory of the same name.<p>
+
+The test script uses <tt source> to load the package, rather than
+<tt package require>; if the library package is installed into the
+local environment (not unusual), it can be difficult to ensure that 
+<tt package require> always loads the code in the project tree.<p>
+
+Also, notice that the test script sources the library package's 
+<tt pkgModules.tcl> file.  By convention, all library packages in a 
+Quill project have such a file; see <xref lib.stdfiles> for details.<p>
+
+</deflist>
+
+<section testing.new "Adding New Test Targets">
+
+At present each Quill project contains one test target, for the 
+application's implementation package.  Ultimately, you will be
+able to use the <tt quill add> command (FIXME) to add new library
+packages, and each of these will get its own test directory.<p>
+
+In the meantime, test directories must be added by hand, usually by
+copying an existing directory and changing the names.<p>
+
 </document>
