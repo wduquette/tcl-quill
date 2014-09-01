@@ -5,7 +5,29 @@
 <preface preface "Preface">
 <preface ack     "Acknowledgements">
 <section intro "Introduction">
+
+This is some text.<p>
+<deflist mylist>
+<def {Topic <i One>}>
+Floo bar ba.<p>
+<def {Topic <i Two>}>
+Fllo bara baba.<p>
+
+</deflist mylist>
+
 <section intro.sub1 "Intro Sub1">
+
+Cross-references:
+
+<ul>
+<li> To another section: <xref this.part>
+<li> To a man page: <xref quilldoc(5)>
+<li> To a URL: <xref http://github.com>
+<li> To another section: <xref this.part "Custom Link Text 1">
+<li> To a man page: <xref quilldoc(5) "Custom Link Text 2">
+<li> To a URL: <xref http://github.com "Custom Link Text 3">
+</ul>
+
 <section intro.sub1.subsub1 "Intro Sub1 SubSub1">
 <section intro.sub2 "Intro Sub2">
 <section body "Body of Document">

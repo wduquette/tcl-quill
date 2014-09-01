@@ -352,6 +352,10 @@ module-specific macros.<p>
 Expands <i text> and returns the result.  This is useful for 
 macros that take a body of text: they can expand macros recursively.<p>
 
+<defitem hrule {<lb>hrule<rb>}>
+
+Adds a horizontal rule across the width of the document.<p>
+
 <defitem lb {<lb>lb<rb>}>
 
 Returns the left macro expansion bracket, "<lb>".<p>

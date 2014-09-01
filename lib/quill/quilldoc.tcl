@@ -28,7 +28,6 @@ snit::type ::quill::quilldoc {
     #---------------------------------------------------------------------
     # Lookup Tables
 
-    # TODO: Devise an HTML-base on top of macro(n)?
     typevariable quilldocCSS {
         /* Links should be displayed with no underline */
         :link {
@@ -337,10 +336,10 @@ snit::type ::quill::quilldoc {
             [mymethod macro deflist]
 
         $macro smartalias def {text} 1 1 \
-            [mymethod def]
+            [mymethod macro def]
 
-        $macro smartalias /deflist {} 0 0 \
-            [mymethod /deflist]
+        $macro smartalias /deflist {?args...?} 0 - \
+            [mymethod macro /deflist]
 
 
         # NEXT, other macros
@@ -349,7 +348,7 @@ snit::type ::quill::quilldoc {
         $macro proc rb {}    { return "&gt;"   }
 
         $macro smartalias version {} 0 0 \
-            [mymethod version]
+            [mymethod macro version]
     }
 
     #---------------------------------------------------------------------
@@ -562,7 +561,7 @@ snit::type ::quill::quilldoc {
     # but are convenient for matching up the deflist with
     # its /deflist.
 
-    method deflist {args} {
+    method {macro deflist} {args} {
         return "<dl>\n"
     }
 
@@ -572,7 +571,7 @@ snit::type ::quill::quilldoc {
     #
     # Begins documentation for the definition item.
 
-    method def {text} {
+    method {macro def} {text} {
         # pass 1: do nothing for now.
         if {[$macro pass] == 1} {
             return
@@ -592,7 +591,7 @@ snit::type ::quill::quilldoc {
     # but are convenient for matching up the deflist with
     # its /deflist, especially when deflists are nested.
 
-    method /deflist {args} {
+    method {macro /deflist} {args} {
         return "</dl>\n"
     }
 
@@ -626,19 +625,29 @@ snit::type ::quill::quilldoc {
     #                    URL.  The ref may includ an "#anchor".
     #
 
-    # FIXME
-    method xref {pageref {text ""}} {
+    method {macro xref} {ref {text ""}} {
         # Pass 1: Do nothing
         if {[$macro pass] == 1} {
             return
         }
 
-        # Pass 2: Parse the pageref, and format the link.
-        set pageref [split  $pageref "#"]
+        # Pass 2: Format the link.
+
+        # FIRST, if it's a section ID, just return in the link.
+        if {$ref in $trans(ids)} {
+            set href "#$ref"
+            if {$text eq ""} {
+                set text $trans(linktext-$ref)
+            }
+
+            return "<a href=\"$href\">$text</a>"
+        }
+
+        set pageref [split $ref "#"]
         lassign $pageref pageId anchor
 
-        if {[llength $pageref] > 2 || $pageId eq "" && $anchor eq ""} {
-            error "Invalid pageref: \"$pageref\""
+        if {[llength $pageref] > 2 || $pageId eq ""} {
+            throw INVALID "Invalid xref: \"$ref\""
         }
 
         # Set the link text, if not set.
@@ -655,17 +664,13 @@ snit::type ::quill::quilldoc {
             set url ""
         } elseif {[string match "http*" $pageId]} {
             set url $pageId
-        } elseif {[manref parse $pageId name num]} {
-            set url "../man$num/$name.html"
-        } else {
-            error "Unrecognized pageId: \"$pageId\""
-        }
-
-        # Next, make sure we know the anchor
-        if {$pageId eq ""} {
-            if {![$self AnchorExists $anchor]} {
-                puts "Warning: unknown anchor, \"$anchor\""
+        } elseif {[manpage::manref parse $pageId name num]} {
+            if {$trans(manroot) eq ""} {
+                throw INVALID "Invalid xref, man page references are not enabled."
             }
+            set url "$trans(manroot)/man$num/$name.html"
+        } else {
+            throw INVALID "Unrecognized xref: \"$pageId\""
         }
 
         if {$anchor ne ""} {
@@ -683,7 +688,7 @@ snit::type ::quill::quilldoc {
     # Returns the project version number, as given by the -version
     # option.
 
-    method version {} {
+    method {macro version} {} {
         return $trans(version)
     }
 
