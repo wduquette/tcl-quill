@@ -21,7 +21,6 @@
 
         /* For the page header */
         h1.header {
-            position: relative;
             background-color: red;
             color: black;
         }
@@ -34,48 +33,45 @@
         }
 
         /* Use for indenting */
-        .indent0 { }
+        .indent0 { 
+            position: relative;
+            left: 0.25in
+        }
         .indent1 {
             position: relative;
-            left: 0.4in
+            left: 0.5in
         }
         .indent2 {
             position: relative;
-            left: 0.8in
+            left: 0.75in
         }
         .indent3 {
             position: relative;
-            left: 1.2in
+            left: 1.0in
         }
         .indent4 {
             position: relative;
-            left: 1.6in
+            left: 1.25in
         }
         .indent5 {
             position: relative;
-            left: 2.0in
+            left: 1.5in
         }
         .indent6 {
             position: relative;
-            left: 2.4in
+            left: 1.75in
         }
         .indent7 {
             position: relative;
-            left: 2.8in
+            left: 2.0in
         }
         .indent8 {
             position: relative;
-            left: 3.2in
+            left: 2.25in
         }
         .indent9 {
             position: relative;
-            left: 3.6in
-        }
-
-        /* Outdent to margin */
-        .outdent {
-            position: relative;
-            left: -0.4in;
+            left: 2.5in
         }
     -->
 </style>
@@ -84,31 +80,49 @@
 <h1 class="header">Project Documentation</h1>
 <h1>Quill 0.0.0 User's Guide</h1>
 
-<h2><a name="preface">Preface</a></h2>
+<hr>
 
-<h2><a name="ack">Acknowledgements</a></h2>
+<h2><a name="_toc">Table of Contents</a></h2>
 
-<h2><a name="intro">1. Introduction</a></h2>
+<span class="indent0"><a href="#preface">Preface</a></span><br>
+<span class="indent0"><a href="#ack">Acknowledgements</a></span><br>
+<span class="indent0"><a href="#intro">1. Introduction</a></span><br>
+<span class="indent1"><a href="#intro.sub1">1.1 Intro Sub1</a></span><br>
+<span class="indent2"><a href="#intro.sub1.subsub1">1.1.1 Intro Sub1 SubSub1</a></span><br>
+<span class="indent1"><a href="#intro.sub2">1.2 Intro Sub2</a></span><br>
+<span class="indent0"><a href="#body">2. Body of Document</a></span><br>
+<span class="indent1"><a href="#body.part">2.1 Body Part</a></span><br>
+<span class="indent0"><a href="#this">A. This Appendix</a></span><br>
+<span class="indent1"><a href="#this.part">A.1 This Appendix Part</a></span><br>
+<span class="indent0"><a href="#that">B. That Appendix</a></span><br>
+<p>
+<hr>
 
-<h3><a name="intro.sub1">1.1 Intro Sub1</a></h3>
+<h2><a name="preface" href="#_toc">Preface</a></h2>
 
-<h3><a name="intro.sub1.subsub1">1.1.1 Intro Sub1 SubSub1</a></h3>
+<h2><a name="ack" href="#_toc">Acknowledgements</a></h2>
 
-<h3><a name="intro.sub2">1.2 Intro Sub2</a></h3>
+<h2><a name="intro" href="#_toc">1. Introduction</a></h2>
 
-<h2><a name="body">2. Body of Document</a></h2>
+<h3><a name="intro.sub1" href="#_toc">1.1 Intro Sub1</a></h3>
 
-<h3><a name="body.part">2.1 Body Part</a></h3>
+<h3><a name="intro.sub1.subsub1" href="#_toc">1.1.1 Intro Sub1 SubSub1</a></h3>
 
-<h2><a name="this">A. This Appendix</a></h2>
+<h3><a name="intro.sub2" href="#_toc">1.2 Intro Sub2</a></h3>
 
-<h3><a name="this.part">A.1 This Appendix Part</a></h3>
+<h2><a name="body" href="#_toc">2. Body of Document</a></h2>
 
-<h2><a name="that">B. That Appendix</a></h2>
+<h3><a name="body.part" href="#_toc">2.1 Body Part</a></h3>
 
-<hr class="outdent">
-<span class="outdent">
-<i>Generated from ug.quilldoc on Mon Sep 01 10:52:35 PDT 2014</i>
+<h2><a name="this" href="#_toc">A. This Appendix</a></h2>
+
+<h3><a name="this.part" href="#_toc">A.1 This Appendix Part</a></h3>
+
+<h2><a name="that" href="#_toc">B. That Appendix</a></h2>
+
+<hr>
+<span>
+<i>Generated from ug.quilldoc on Mon Sep 01 11:18:21 PDT 2014</i>
 </span>
 </body>
 </html>

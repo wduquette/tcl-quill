@@ -47,7 +47,6 @@ snit::type ::quill::quilldoc {
 
         /* For the page header */
         h1.header {
-            position: relative;
             background-color: red;
             color: black;
         }
@@ -60,48 +59,45 @@ snit::type ::quill::quilldoc {
         }
 
         /* Use for indenting */
-        .indent0 { }
+        .indent0 { 
+            position: relative;
+            left: 0.25in
+        }
         .indent1 {
             position: relative;
-            left: 0.4in
+            left: 0.5in
         }
         .indent2 {
             position: relative;
-            left: 0.8in
+            left: 0.75in
         }
         .indent3 {
             position: relative;
-            left: 1.2in
+            left: 1.0in
         }
         .indent4 {
             position: relative;
-            left: 1.6in
+            left: 1.25in
         }
         .indent5 {
             position: relative;
-            left: 2.0in
+            left: 1.5in
         }
         .indent6 {
             position: relative;
-            left: 2.4in
+            left: 1.75in
         }
         .indent7 {
             position: relative;
-            left: 2.8in
+            left: 2.0in
         }
         .indent8 {
             position: relative;
-            left: 3.2in
+            left: 2.25in
         }
         .indent9 {
             position: relative;
-            left: 3.6in
-        }
-
-        /* Outdent to margin */
-        .outdent {
-            position: relative;
-            left: -0.4in;
+            left: 2.5in
         }
     }
 
@@ -125,6 +121,7 @@ snit::type ::quill::quilldoc {
     # version       - Project version
     # manroot       - Root directory for manpage references
     #
+    # toc           - 1 if we have table of contents, and 0 otherwise.
     # ids           - List of section IDs, in the order of definition.
     # stype-$id     - Section type: preface|section|appendix
     # title-$id     - Section title
@@ -184,6 +181,7 @@ snit::type ::quill::quilldoc {
         set trans(header) "Project Documentation"
         set trans(version) 0.0.0
         set trans(manroot) ""
+        set trans(toc)     0
         set trans(ids)     {}
 
         foroption opt args -all {
@@ -207,27 +205,26 @@ snit::type ::quill::quilldoc {
         set nums [list 0]
 
         set pid ""
-        set pidx 0
+        set plevel 0
         set ptype  ""
         foreach id $trans(ids) {
-            # The idx is the index of the level in $nums.
-            set idx [expr {[llength [split $id .]] - 1}]
+            set level [IdLevel $id]
             set stype $trans(stype-$id)
 
             if {$stype ne $ptype} {
                 set nums [list 0]
-            } elseif {$idx > $pidx} {
+            } elseif {$level > $plevel} {
                 lappend nums 0
-            } elseif {$idx < $pidx} {
-                set nums [lrange $nums 0 $idx]
+            } elseif {$level < $plevel} {
+                set nums [lrange $nums 0 $level]
             }
 
-            set digit [lindex $nums $idx]
-            lset nums $idx [expr {$digit + 1}]
+            set digit [lindex $nums $level]
+            lset nums $level [expr {$digit + 1}]
 
             set fullnum [join $nums .]
 
-            if {$idx == 0} {
+            if {$level == 0} {
                 append fullnum "."
             }
 
@@ -253,9 +250,9 @@ snit::type ::quill::quilldoc {
                 }
             }
 
-            set pid   $id
-            set pidx  $idx
-            set ptype $stype
+            set pid    $id
+            set plevel $level
+            set ptype  $stype
         }
     }
 
@@ -328,6 +325,12 @@ snit::type ::quill::quilldoc {
             $self Identity /$tag
         }
 
+        foreach tag {
+            br
+        } {
+            $self Identity $tag
+        }
+
 
         # NEXT, definition list tags.
         $macro smartalias deflist {?args...?} 0 - \
@@ -341,8 +344,9 @@ snit::type ::quill::quilldoc {
 
 
         # NEXT, other macros
-        $macro proc lb {} { return "&lt;"}
-        $macro proc rb {} { return "&gt;"}
+        $macro proc hrule {} { return "<hr>\n" }
+        $macro proc lb {}    { return "&lt;"   }
+        $macro proc rb {}    { return "&gt;"   }
 
         $macro smartalias version {} 0 0 \
             [mymethod version]
@@ -399,8 +403,8 @@ snit::type ::quill::quilldoc {
         set fname [file tail $trans(infile)]
 
         append result \
-            "<hr class=\"outdent\">\n"                \
-            "<span class=\"outdent\">\n"              \
+            "<hr>\n"                \
+            "<span>\n"              \
             "<i>Generated from $fname on $ts</i>\n"   \
             "</span>\n"                               \
             "</body>\n"                               \
@@ -423,6 +427,7 @@ snit::type ::quill::quilldoc {
         # Pass 1: Catalog this section.
         if {[$macro pass] == 1} {
             # FIRST, validate the id
+
             $self CheckSyntax $id
             $self CheckUniqueness $id
             $self CheckPrevious $id preface {preface}
@@ -437,7 +442,7 @@ snit::type ::quill::quilldoc {
 
         # Pass 2: Produce the section header and anchor
         set title [$macro expandonce $title]
-        return [Header $id $title]
+        return [$self Header $id $title]
     }
 
     # section id title
@@ -469,7 +474,7 @@ snit::type ::quill::quilldoc {
 
         # Pass 2: Produce the section header and anchor
         set title [$macro expandonce $title]
-        return [Header $id "$trans(number-$id) $title"]
+        return [$self Header $id "$trans(number-$id) $title"]
     }
 
     # appendix id title
@@ -497,31 +502,47 @@ snit::type ::quill::quilldoc {
 
         # Pass 2: Produce the section header and anchor
         set title [$macro expandonce $title]
-        return [Header $id "$trans(number-$id) $title"]
+        return [$self Header $id "$trans(number-$id) $title"]
     }
 
-    # contents
+    # contents ?depth?
     #
-    # Formats the section/subsection table of contents.  This is
-    # used automatically by Manpage.
+    # depth - Max number of levels to include in table.
+    #
+    # Formats the table of contents.
 
-    method contents {} {
+    method {macro contents} {{depth 4}} {
         # Pass 1: do nothing
         if {[$macro pass] == 1} {
+            set trans(toc) 1
             return
         }
 
         # Pass 2: Format the section table of contents
-        set result ""
+        set result "<h2><a name=\"_toc\">Table of Contents</a></h2>\n\n"
 
-        foreach item $trans(sections) {
-            lassign $item depth title
+        foreach id $trans(ids) {
+            set level [IdLevel $id]
+            if {$level >= $depth} {
+                continue
+            }
+
+            set level [expr {min($level,9)}]
+            set indent "indent$level"
+
+            if {$trans(stype-$id) eq "preface"} {
+                set linktext $trans(title-$id)
+            } else {
+                set linktext "$trans(number-$id) $trans(title-$id)"
+            }
+
+            set link "<a href=\"#$id\">$linktext</a>"
 
             if {$depth == 0} {
-                append result "[$self Xref #$title]<br>\n"
+                append result "$link<br>\n"
             } else {
                 append result \
-                "<span class=\"indent1\">[$self Xref #$title]</span><br>\n" 
+                "<span class=\"$indent\">$link</span><br>\n" 
             }
         }
 
@@ -763,7 +784,7 @@ snit::type ::quill::quilldoc {
     method CheckLevel {id stype} {
         # FIRST, analyze the ID
         set segments  [split $id .]
-        set level     [llength $segments]
+        set level     [IdLevel $id]
 
         # NEXT, analyze the previous ID
         set pid [lindex $trans(ids) end]
@@ -771,13 +792,13 @@ snit::type ::quill::quilldoc {
         if {$pid ne ""} {
             set ptype     $trans(stype-$pid)
             set psegments [split $pid .]
-            set plevel    [llength $psegments]
+            set plevel    [IdLevel $pid]
         } else {
             set ptype ""
         }
 
         # NEXT, if it's a preface it can't be a child.
-        if {$stype eq "preface" && $level > 1} {
+        if {$stype eq "preface" && $level > 0} {
             throw INVALID [outdent "
                 Invalid section level: $id is a level $level section ID,
                 but preface sections cannot have subsections.
@@ -786,16 +807,16 @@ snit::type ::quill::quilldoc {
 
         # NEXT, if the IDs are of different types, this must be
         # a toplevel ID.
-        if {$stype ne $ptype && $level != 1} {
+        if {$stype ne $ptype && $level != 0} {
             throw INVALID [outdent "
                 Invalid section level: $id is a level $level section ID, but
                 as the first $stype in the document it must be a 
-                level 1 ID.
+                level 0 ID.
             "]
         }
 
         # NEXT, if this is a toplevel section, we're good.
-        if {$level == 1} {
+        if {$level == 0} {
             return
         }
 
@@ -818,6 +839,15 @@ snit::type ::quill::quilldoc {
         return
     }
 
+    # IdLevel id
+    #
+    # Returns the level of the ID, which is 1 less than the number of
+    # segments.
+
+    proc IdLevel {id} {
+        expr {[llength [split $id .]] - 1}
+    }
+
     # Header id title
     #
     # id     - A section ID
@@ -825,13 +855,19 @@ snit::type ::quill::quilldoc {
     #
     # Outputs returns an HTML header appropriate for the section level.
 
-    proc Header {id title} {
-        set level [llength [split $id .]]
+    method Header {id title} {
+        set level [IdLevel $id]
 
-        if {$level == 1} {
-            return "<h2><a name=\"$id\">$title</a></h2>\n"
+        if {$trans(toc)} {
+            set href { href="#_toc"}
         } else {
-            return "<h3><a name=\"$id\">$title</a></h3>\n"
+            set href ""
+        }
+
+        if {$level == 0} {
+            return "<h2><a name=\"$id\"$href>$title</a></h2>\n"
+        } else {
+            return "<h3><a name=\"$id\"$href>$title</a></h3>\n"
         }
     }
 

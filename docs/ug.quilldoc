@@ -1,4 +1,7 @@
 <document "Quill <version> User's Guide">
+<hrule>
+<contents>
+<hrule>
 <preface preface "Preface">
 <preface ack     "Acknowledgements">
 <section intro "Introduction">
