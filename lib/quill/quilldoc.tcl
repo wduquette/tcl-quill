@@ -458,11 +458,7 @@ snit::type ::quill::quilldoc {
             $self CheckSyntax $id
             $self CheckUniqueness $id
             $self CheckPrevious $id section {preface section}
-            try {
-                $self CheckLevel $id section
-            } on error {result} {
-                puts "Error: $result\n$::errorInfo"
-            }
+            $self CheckLevel $id section
 
             # NEXT, save the data.
             lappend trans(ids) $id

@@ -4,6 +4,7 @@ This is the official list of work to be done.
 
 # For Quill 0.2.x
 
+* docstool's clean feature needs to clean up all *.html
 * Fix bugs as found and reported.
 * Improved output using table(n)
   * quill info, quill env
