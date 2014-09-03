@@ -117,19 +117,11 @@ snit::type ::quill::os {
             return ""
         }
 
-        # NEXT, if we're on Windows try ";" as a 
-        # PATH separator.
-        if {[$type flavor] eq "windows"} {
-            set result [FindWith [split $thePath ";"] $program]
+        # NEXT, split the path using the platform's path separator.
+        set dirlist [split $thePath $::tcl_platform(pathSeparator)]
 
-            if {$result ne ""} {
-                return $result
-            }
-        }
-
-        # NEXT, we're on a Unix flavor, or on Windows using a Unix
-        # shell, so the path separator is ":".
-        return [FindWith [split $thePath ":"] $program]
+        # NEXT, try to find the file on the path.
+        return [FindWith $dirlist $program]
     }
 
     # FindWith dirlist program
@@ -143,10 +135,10 @@ snit::type ::quill::os {
 
     proc FindWith {dirlist program} {
         foreach dir $dirlist {
-            set files [glob -nocomplain [file join $dir $program]]
+            set fullname [file join $dir $program]
 
-            if {[llength $files] == 1} {
-                return [file normalize [lindex $files 0]]
+            if {[file isfile $fullname]} {
+                return [file normalize $fullname]
             }
         }
 

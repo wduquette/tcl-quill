@@ -131,11 +131,10 @@ test pathfind-1.1 {no path found if PATH ""} -setup {
     cleanup
 } -result {}
 
-test pathfind-1.2 {PATH can use ";" on Windows} -setup {
+test pathfind-2.1 {Windows: can find} -constraints win -setup {
     set dir [file dirname [info nameofexecutable]]
     set app [file tail [info nameofexecutable]]
     set ::env(PATH) "C:/foo;$dir;C:/bar"
-    set ::tcl_platform(os) "Windows NT"
 } -body {
     set a [os pathfind $app]
     set b [file normalize [info nameofexecutable]]
@@ -144,28 +143,37 @@ test pathfind-1.2 {PATH can use ";" on Windows} -setup {
     cleanup
 } -result {1}
 
-test pathfind-1.3 {PATH can use ":" on others} -constraints {macOrUnix} -setup {
-    set dir [file dirname [info nameofexecutable]]
-    set app [file tail [info nameofexecutable]]
-    set ::env(PATH) "/foo:$dir:/bar"
-    set ::tcl_platform(os) "Darwin"
-} -body {
-    set a [os pathfind $app]
-    set b [file normalize [info nameofexecutable]]
-    expr {$a eq $b}
-} -cleanup {
-    cleanup
-} -result {1}
-
-test pathfind-1.4 {no path found if exe is missing} -setup {
+test pathfind-2.2 {Windows: not found} -constraints win -setup {
     set app [file tail [info nameofexecutable]]
     set ::env(PATH) "/foo:/bar"
-    set ::tcl_platform(os) "Darwin"
 } -body {
     os pathfind $app
 } -cleanup {
     cleanup
 } -result {}
+
+test pathfind-3.1 {Others: can find} -constraints macOrUnix -setup {
+    set dir [file dirname [info nameofexecutable]]
+    set app [file tail [info nameofexecutable]]
+    set ::env(PATH) "/foo:$dir:/bar"
+} -body {
+    set a [os pathfind $app]
+    set b [file normalize [info nameofexecutable]]
+    expr {$a eq $b}
+} -cleanup {
+    cleanup
+} -result {1}
+
+test pathfind-3.2 {Others: not found} -constraints macOrUnix -setup {
+    set app [file tail [info nameofexecutable]]
+    set ::env(PATH) "/foo:/bar"
+} -body {
+    os pathfind $app
+} -cleanup {
+    cleanup
+} -result {}
+
+
 
 #-------------------------------------------------------------------------
 # setexecutable
