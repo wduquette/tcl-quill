@@ -468,6 +468,8 @@ snit::type ::quillapp::project {
 			throw FATAL "Error in $projectFile: $result"
 		} trap SYNTAX {result} {
 			throw FATAL "Error in $projectFile: $result"
+		} trap {TCL LOOKUP COMMAND} {result} {
+			throw FATAL "Error in $projectFile: $result"
 		} trap {TCL WRONGARGS} {result} {
 			throw FATAL "Error in $projectFile: $result"
 		}
