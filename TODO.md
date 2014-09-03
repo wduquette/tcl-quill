@@ -4,12 +4,15 @@ This is the official list of work to be done.
 
 # For Quill 0.2.x
 
+* quilldoc(5) Changes:
+  Add better <topiclist>: two columns, topic on left, discussion on the
+  right.  Make it easy to use marker and marker ref (mark & ref?)
 * Fix bugs as found and reported.
 * docstool's clean feature needs to clean up all *.html
+* 'quill docs' individual file feature should be relative to <root>
+* Move more quilldoc(5)/manpage(5) formatting into CSS.
 * Improved output using table(n)
   * quill info, quill env
-* quilldoc(n) package
-  * Mostly done; there will be tweaks and aditions.
 * Quill user's guide
   * Documents how to use Quill
   * Documents Quill conventions, e.g., where to require packages, and the

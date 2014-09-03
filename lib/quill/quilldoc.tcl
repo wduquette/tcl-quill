@@ -57,6 +57,10 @@ snit::type ::quill::quilldoc {
             padding: 2px;
         }
 
+        span.prelabel {
+            background-color: #DEDC87;
+        }
+
         div.marker {
             border: 1px solid black;
             background-color: cyan;
@@ -105,6 +109,28 @@ snit::type ::quill::quilldoc {
             position: relative;
             left: 2.5in
         }
+
+        div.marker {
+            position: absolute;
+            border: 1px solid black;
+            background-color: red;
+            font-family: Verdana;
+            border-radius: 5px;
+            display: inline;
+            padding-left: 2px;
+            padding-right: 2px;
+        }
+
+        div.markerref {
+            border: 1px solid black;
+            background-color: red;
+            font-family: Verdana;
+            border-radius: 5px;
+            display: inline;
+            padding-left: 2px;
+            padding-right: 2px;
+        }
+
     }
 
 
@@ -356,6 +382,17 @@ snit::type ::quill::quilldoc {
 
         $macro smartalias version {} 0 0 \
             [mymethod macro version]
+
+        $macro smartalias listing {} 0 0 \
+            [mymethod macro listing]
+
+        $macro smartalias /listing {} 0 0 \
+            [mymethod macro /listing]
+
+
+        $macro proc marker {symbol} {
+            return "<div class=\"marker\">$symbol</div>"
+        }
     }
 
     #---------------------------------------------------------------------
@@ -693,6 +730,23 @@ snit::type ::quill::quilldoc {
 
     method {macro version} {} {
         return $trans(version)
+    }
+
+    method {macro listing} {} {
+        $macro cpush listing
+    }
+
+    method {macro /listing} {} {
+        set text [$macro cpop listing]
+
+        set lines [list]
+        set i 0
+        foreach line [split [string trim $text] \n] {
+            lappend lines \
+                [format "<span=\"prelabel\">%04d</span> %s" [incr i] $line] 
+        }
+
+        return "<pre>\n[join $lines \n]\n</pre>\n"
     }
 
     #---------------------------------------------------------------------

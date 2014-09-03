@@ -20,15 +20,6 @@ proc root {path} {
 	return "[tt][i project]/$path[/tt]"
 }
 
-proc listing {text} {
-	set lines [list]
-	set i 0
-	foreach line [split [string trim $text] \n] {
-		lappend lines [format "%03d  %s" [incr i] $line] 
-	}
-
-	return "<pre>\n[join $lines \n]\n</pre>\n"
-}
 }>
 
 <preface intro "Introduction">
@@ -115,7 +106,7 @@ generally created automatically by Quill, or by copying
 Here is the skeleton of a typical module test script, as created by
 Quill:<p>
 
-<listing {
+<listing>
 #-------------------------------------------------------------------------
 # TITLE:
 #    mymodule.test
@@ -130,17 +121,17 @@ Quill:<p>
 #-------------------------------------------------------------------------
 # Load the tcltest package
 
-if {[lsearch [namespace children] ::tcltest] == -1} {
+if {[lsearch [namespace children] ::tcltest] == -1} { <marker A>
     package require tcltest 2.3
     eval ::tcltest::configure $argv
 }
 
-namespace import ::tcltest::test
+namespace import ::tcltest::test <marker B>
 
 #-------------------------------------------------------------------------
 # Load the package to be tested
 
-source ../../lib/mymodule/pkgModules.tcl
+source ../../lib/mymodule/pkgModules.tcl <marker C>
 namespace import ::mymodule::*
 
 #-------------------------------------------------------------------------
@@ -149,18 +140,21 @@ namespace import ::mymodule::*
 test dummy-1.1 {dummy test} -body {
     set a false
 } -result {true}
-}>
+</listing>
 
 There are several things to note in the above listing:
 
 <deflist>
+<def {At marker A:}>
+The <tclref tcltest> package is loaded, and any options
+passed to <tt quill test> are passed along to <tt tcltest>.<p>
 
-<def {On line 20:}>
+<def {At marker B:}>
 Only the <tt test> command is imported from the <tt tcltest::> namespace.
 Used fully-qualified names for other <tclref tcltest> commands, or edit
 this line to import additional commands.<p>
 
-<def {On line 25:}>
+<def {At marker C:}>
 Quill generally creates library packages and test directories together,
 and assumes that the tests in the directory are for the package in the
 <root lib> subdirectory of the same name.<p>
