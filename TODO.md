@@ -6,6 +6,12 @@ This is the official list of work to be done.
 
 * quilldoc(5) Changes:
   * Revise manpage to use the "tag" macro for all defitems.
+  * Add <example>...</example> macros, and use them instead of <pre>
+    to manpage(5) and quilldoc(5).
+  * Replace <topiclist> in manpage(5) with the quilldoc(5) code.
+  * Figure out how to share code between manpage(5) and quilldoc(5).
+  * Should manpage(5) be quillman(5)?  Probably.
+  * Put blocks in that show what the examples look like.
 
 * Fix bugs as found and reported.
 * docstool's clean feature needs to clean up all *.html

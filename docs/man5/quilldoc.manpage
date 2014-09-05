@@ -27,7 +27,7 @@ This section explains how to prepare document files for use with
 <subsection "Document Structure">
 
 A document consists of a number of sections contained within 
-<xtag document>...<xtag /document> macros.  There are several
+<xtag document>...<tag /document> macros.  There are several
 kinds of sections:<p>
 
 <deflist>
@@ -156,21 +156,24 @@ They are presented in the order in which they are ordinarily used.
 
 <deflist structural>
 
-<defitem document {<lb>document <i title><rb>}>
+<defitem document {<tag document "<i title>">...<tag /document>}>
 
-This macro should be the first to appear in every document file.
-It begins the document, and provides all of the HTML header boilerplate.<p>
+These tags should be the first and last to appear in every document file.
+The tag <tag document> tag begins the document, and provides all of the HTML header boilerplate.  Similarly, the <tag /document> tag provides the 
+HTML footer and boilerplate.<p>
 
 <pre>
 <tag document {"Quill User's Guide"}>
+...
+<tag /document>
 </pre>
 
-<defitem contents {<lb>contents<rb>}>
+<defitem contents {<tag contents>}>
 
 This macro is replaced with a formatted table of contents of all 
 sections in the document.<p>
 
-<defitem preface {<lb>preface <i id title><rb>}>
+<defitem preface {<tag preface "<i id title>">}>
 
 This macro begins a "preface" section, an unnumbered section usually found
 at the beginning of the document  The <i id> must be a valid identifier
@@ -182,7 +185,7 @@ cross-references.<p>
 ...
 </pre><p>
 
-<defitem section {<lb>section <i id title><rb>}>
+<defitem section {<tag section "<i id title>">}>
 
 Defines a numbered section within the document.  Sections are numbered
 automatically, based on the structure of their IDs.  A top-level section
@@ -206,21 +209,17 @@ correct reading order.<p>
 <tag section {bbb "Another Top Level Section"}>
 </pre><p>
 
-<defitem appendix {<lb>appendix <i id title><rb>}>
+<defitem appendix {<tag appendix "<i id title>">}>
 
 Defines an appendix within the document.  Appendices are just like
 sections, with this few differences:<p>
 
 <ul>
-<li> All appendices must appear after all <xref "#section"> macros.
+<li> All appendices must appear after all <xtag section> macros.
 <li> Top-level appendix sections are numbered as "Appendix A", 
 "Appendix B", and so forth.
 </ul><p>
 
-<defitem /document {<lb>/document<rb>}>
-
-This macro ends the document, and should be the final macro in the 
-file.<p>
 
 </deflist structural>
 
@@ -235,36 +234,40 @@ The following macros are used to define definition lists.
 
 <deflist definition lists>
 
-<defitem deflist {<lb>deflist <i>args...</i><rb>}>
+<defitem deflist {<tag deflist "<i args...>">...<tag /deflist "<i args...>">}>
 
-Begins a definition list.  The <i>args</i> are ignored.  By
-convention, each <xtag deflist> macro includes arguments which
-indicate the kind of thing being listed; the <xtag /deflist> macro
-repeats them.  This avoids confusion when definition lists are nested.
+These tags contain a definition list.  The <i>args</i> are ignored.  By
+convention, each <tag deflist> tag includes arguments which
+indicate the kind of thing being listed; the <tag /deflist> tag
+echoes them.  This avoids confusion when definition lists are nested.
 For example,<p>
 
 <pre>
-This module defines the following commands:<lb>p<rb>
+This application has the following features:<lb>p<rb>
 
-<lb>deflist commands<rb>
-    .
-    .
-    .
-<lb>/deflist commands<rb>
+<tag deflist features>
+...
+<tag /deflist features>
 </pre><p>
 
 Items are defined within a definition list using <xtag def>.<p>
 
-<defitem def {<lb>def <i>text</i><rb>}>
+<defitem def {<tag def "<i text>">}>
 
 Begins the documentation of an item in a definition list.  The
 <i text> may contain macros for expansion.<p>
 
 
-<defitem /deflist {<lb>/deflist <i>args...</i><rb>}>
+<pre>
+The following features are of interest:<lb>p<rb>
 
-Ends a definition list.  As with <xref #deflist>, the <i>args</i>
-are ignored.<p>
+<tag deflist features>
+...
+<tag def "{This feature contains <tag i italics>.}">
+...
+<tag /deflist features>
+</pre><p>
+
 
 </deflist definition lists>
 
@@ -273,9 +276,9 @@ are ignored.<p>
 Topic lists are the secondary means of documenting a list of items.
 The topics to be defined and their descriptions are displayed in 
 parallel columns, with the topics in boldface.  Topic lists are useful
-when the topic text is narrow (as when <xtag bigmark>s are used as
+when the topic text is narrow (as when <xtag bigmark>'s are used as
 topics), and when documenting record structures.<p>
-
+ 
 The following macros are used to define topic lists.
 
 <deflist topic lists>
@@ -293,6 +296,36 @@ and end tags appears on the right.  The <i topic> may contain
 macros to be expanded.<p>
 
 </deflist topic lists>
+
+For example, here's a topic list with text topics:<p>
+
+<pre>
+<tag topiclist>
+<tag topic {"Topic 1:"}>
+...Text elaborating on the topic...
+<tag /topic>
+
+<tag topic {"Topic 2:"}>
+...Text elaborating on the topic...
+<tag /topic>
+<tag /topiclist>
+</pre>
+
+And here's a topic list using <xtag bigmark>'s, presumably annotating
+a <xtag listing>:<p>
+
+<pre>
+<tag topiclist>
+<tag topic {"<tag bigmark A>"}>
+...Text annotating mark A...
+<tag /topic>
+
+<tag topic {"<tag bigmark B>"}>
+...Text annotating mark B...
+<tag /topic>
+<tag /topiclist>
+</pre>
+
 
 <subsection "Listing Macros">
 
@@ -324,15 +357,33 @@ Adds a big annotation mark.  <tag bigmark>'s look just like normal
 
 </deflist listings>
 
+For example, a listing with marks might look like this:<p>
+
+<pre>
+<tag listing>
+proc ::quill::ladd {listvar args} { <tag mark A>
+    upvar 1 $listvar theList <tag mark B>
+
+    foreach value $args {
+        if {$value ni $theList} {
+            lappend theList $value <tag mark C>
+        }
+    }
+
+    return $theList
+}
+<tag /listing>
+</pre>
+
 <subsection "Cross-Reference Macros">
 
 <deflist macros>
 
-<defitem xref {<lb>xref <i>ref</i> ?<i>text</i>?<rb>}>
+<defitem xref {<tag xref "<i ref> ?<i text>?">}>
 
 Creates a cross-reference link to the page/anchor identified by
 <i>ref</i>; see <xref #Cross-References> for the many kinds of
-reference understood by <xref #xref>.<p>
+reference understood by <xtag xref>.<p>
 
 If <i>text</i> is given, it is used as the link text.  Otherwise,
 the link text depends on the kind of cross reference.<p>
@@ -362,20 +413,20 @@ support other back-end translations.  Thus, it defines a number of macros that h
 
 <deflist html macros>
 
-<defitem li {<lb>li<rb>...<lb>/li<rb>}>
-<defitem ol {<lb>ol<rb>...<lb>/ol<rb>}>
-<defitem p  {<lb>p<rb>...<lb>/p<rb>}>
-<defitem ul {<lb>ul<rb>...<lb>/ul<rb>}>
+<defitem li {<tag li>...<tag /li>}>
+<defitem ol {<tag ol>...<tag /ol>}>
+<defitem p  {<tag p>...<tag /p>}>
+<defitem ul {<tag ul>...<tag /ul>}>
 
 These macros map directly to their HTML namesakes.<p>
 
-<defitem b {<lb>b<rb>...<lb>/b<rb> or <lb>b <i text>...<rb>}>
-<defitem code {<lb>code<rb>...<lb>/code<rb> or <lb>code <i text>...<rb>}>
-<defitem em {<lb>em<rb>...<lb>/em<rb> or <lb>em <i text>...<rb>}>
-<defitem i {<lb>i<rb>...<lb>/i<rb> or <lb>i <i text>...<rb>}>
-<defitem pre {<lb>pre<rb>...<lb>/pre<rb> or <lb>pre <i text>...<rb>}>
-<defitem strong {<lb>strong<rb>...<lb>/strong<rb> or <lb>strong <i text>...<rb>}>
-<defitem tt {<lb>tt<rb>...<lb>/tt<rb> or <lb>tt <i text>...<rb>}>
+<defitem b {<tag b>...<tag /b> or <tag b "<i text>...">}>
+<defitem code {<tag code>...<tag /code> or <tag code "<i text>...">}>
+<defitem em {<tag em>...<tag /em> or <tag em "<i text>...">}>
+<defitem i {<tag i>...<tag /i> or <tag i "<i text>...">}>
+<defitem pre {<tag pre>...<tag /pre> or <tag pre "<i text>...">}>
+<defitem strong {<tag strong>...<tag /strong> or <tag strong "<i text>...">}>
+<defitem tt {<tag tt>...<tag /tt> or <tag tt "<i text>...">}>
 
 These style tags have two forms, an HTML-like form and a convenience
 form.  For example,<p>
@@ -395,46 +446,53 @@ text:<p>
 
 <subsection "Other Macros">
 
+quilldoc(5) provides a number of other macros, some inherited from 
+<xref macro(n)>; here they are.<p>
+
 <deflist other macros>
 
-<defitem do {<lb>do <i>script</i><rb>}>
+<defitem do {<tag do "<i script>">}>
 
 The <i>script</i> is evaluated in the global context, and any return
-value is thrown away.  Use this to load required packages and define
-module-specific macros.<p>
+value is thrown away.  Use this define
+document-specific macros.<p>
 
-<defitem expand {<lb>expand <i text><rb>}>
+<defitem expand {<tag expand "<i text>">}>
 
-Expands <i text> and returns the result.  This is useful for 
-macros that take a body of text: they can expand macros recursively.<p>
+Expands <i text> and returns the result.  This is primarily useful 
+when defining document-specific macros as procs in a <xtag do> block;  
+macros that take a body of text can expand macros recursively.<p>
 
-<defitem hrule {<lb>hrule<rb>}>
+<defitem hrule {<tag hrule>}>
 
 Adds a horizontal rule across the width of the document.<p>
 
-<defitem lb {<lb>lb<rb>}>
+<defitem lb {<tag lb>}>
 
 Returns the left macro expansion bracket, "<lb>".<p>
 
-<defitem link {<lb>link <i url> ?<i text>?<rb>}>
+<defitem link {<tag link "<i url> ?<i text>?">}>
 
 Returns a link to the given <i url>.  If <i text> is given, 
 it is used as the link text; otherwise, the <i url> is displayed.<p>
 
-<defitem rb {<lb>rb<rb>}>
+<defitem rb {<tag rb>}>
 
 Returns the right macro expansion bracket, "<rb>".<p>
 
-<defitem template {<lb>template <i args...><rb>}>
-<defitem tsubst {<lb>tsubst <i args...><rb>}>
+<defitem template {<tag template "<i args...>">}>
+<defitem tsubst {<tag tsubst "<i args...>">}>
 
-Template support; see <xref template(n)> for details.<p>
+These templating commands can be used directly in documents, or more
+likely when defining macros as procs in a <xtag do> block.  See
+<xref template(n)> for what these commands do and how they are used.<p>
 
 
-<defitem version {<lb>version<rb>}>
+<defitem version {<tag version>}>
 
 Returns the version number string given to the 
-<xref quilldoc(n)> object's <xref quilldoc(n)#format> subcommand.<p>
+<xref quilldoc(n)> object's <xref quilldoc(n)#format> subcommand  This
+is usually the project's version number..<p>
 
 </deflist other macros>
 
