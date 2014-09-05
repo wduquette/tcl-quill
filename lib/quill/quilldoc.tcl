@@ -113,7 +113,7 @@ snit::type ::quill::quilldoc {
             border: 1px solid black;
             background-color: black;
             color: white;
-            border-radius: 5px;
+            border-radius: 10px;
             padding-left: 2px;
             padding-right: 2px;
             display: inline;
@@ -125,10 +125,19 @@ snit::type ::quill::quilldoc {
             border: 1px solid black;
             background-color: black;
             color: white;
-            border-radius: 5px;
+            border-radius: 10px;
             padding-left: 2px;
             padding-right: 2px;
             display: inline;
+        }
+
+        /* Topic List Styles */
+        tr.topicrow {
+            vertical-align: baseline;
+        }
+
+        tr.topicname {
+            font-weight: bold;
         }
     }
 
@@ -377,6 +386,18 @@ snit::type ::quill::quilldoc {
         $macro smartalias /deflist {?args...?} 0 - \
             [myproc /deflist]
 
+        # NEXT, topic list tags.
+        $macro smartalias topiclist {} 0 0 \
+            [myproc topiclist]
+
+        $macro smartalias topic {topic} 1 1 \
+            [myproc topic]
+
+        $macro smartalias /topic {} 0 0 \
+            [myproc /topic]
+
+        $macro smartalias /topiclist {} 0 0 \
+            [myproc /topiclist]
 
         # NEXT, other macros
         $macro proc hrule {} { return "<hr>\n" }
@@ -640,6 +661,58 @@ snit::type ::quill::quilldoc {
 
     proc /deflist {args} {
         return "</dl>\n"
+    }
+
+
+    #---------------------------------------------------------------------
+    # Topic Lists
+
+    # topiclist
+    #
+    # Begins a topic list, a two-column list of topics and descriptions.
+    # Use this instead of a deflist when the topics are all short.
+
+    proc topiclist {} {
+        return "<table classs=\"topiclist\">"
+    }
+
+    # topic topic
+    #
+    # topic   - The topic to display in the left column.
+    #
+    # Begins documentation for the topic, which will be expanded.
+
+    proc topic {topic} {
+        # pass 1: do nothing for now.
+        if {[$macro pass] == 1} {
+            return
+        }
+        
+        # pass 2: Format the item.
+        set topic [$macro expandonce $topic]
+        append result \
+            "<tr class=\"topicrow\">\n" \
+            "<td class=\"topicname\">$topic</td>\n" \
+            "<td class=\"topictext\">"
+
+        return $result
+    }
+
+    # /topic
+    #
+    # Terminates a topic.
+
+    proc /topic {} {
+        return "</td></tr>"
+    }
+
+
+    # /topiclist
+    #
+    # Ends a topic list.
+
+    proc /topiclist {args} {
+        return "</table>"
     }
 
 

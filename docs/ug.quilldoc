@@ -131,7 +131,7 @@ namespace import ::tcltest::test <mark B>
 #-------------------------------------------------------------------------
 # Load the package to be tested
 
-source ../../lib/mymodule/pkgModules.tcl <mark C>
+source <mark C> ../../lib/mymodule/pkgModules.tcl <mark D>
 namespace import ::mymodule::*
 
 #-------------------------------------------------------------------------
@@ -142,33 +142,39 @@ test dummy-1.1 {dummy test} -body {
 } -result {true}
 </listing>
 
-There are several things to note in the above listing:
+There are several things to note in the above listing:<p>
 
-<deflist>
-<def {At marker A:}>
+<topiclist>
+<topic {<bigmark A>}>
 The <tclref tcltest> package is loaded, and any options
 passed to <tt quill test> are passed along to <tt tcltest>.<p>
+</topic>
 
-<def {At marker B:}>
+<topic {<bigmark B>}>
 Only the <tt test> command is imported from the <tt tcltest::> namespace.
 Used fully-qualified names for other <tclref tcltest> commands, or edit
 this line to import additional commands.<p>
+</topic>
 
-<def {At marker C:}>
-Quill generally creates library packages and test directories together,
-and assumes that the tests in the directory are for the package in the
-<root lib> subdirectory of the same name.<p>
-
+<topic {<bigmark C>}>
 The test script uses <tt source> to load the package, rather than
 <tt package require>; if the library package is installed into the
 local environment (not unusual), it can be difficult to ensure that 
 <tt package require> always loads the code in the project tree.<p>
+</topic>
+
+<topic {<bigmark D>}>
+Quill generally creates library packages and test directories together,
+and assumes that the tests in the directory are for the package in the
+<root lib> subdirectory of the same name.<p>
+
 
 Also, notice that the test script sources the library package's 
 <tt pkgModules.tcl> file.  By convention, all library packages in a 
 Quill project have such a file; see <xref lib.stdfiles> for details.<p>
+</topic>
+</topiclist>
 
-</deflist>
 
 <section testing.new "Adding New Test Targets">
 

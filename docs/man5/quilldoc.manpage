@@ -228,7 +228,8 @@ file.<p>
 
 Definition lists are the primary means of documenting a list of items.
 The items to be defined are displayed in boldface, and the definitions
-or descriptions of the items appear below them, indented.<p>
+or descriptions of the items appear below them, indented.  Definition lists
+are useful when the terms to be defined are wide.<p>
 
 The following macros are used to define definition lists.
 
@@ -267,6 +268,61 @@ are ignored.<p>
 
 </deflist definition lists>
 
+<subsection "Topic List Macros">
+
+Topic lists are the secondary means of documenting a list of items.
+The topics to be defined and their descriptions are displayed in 
+parallel columns, with the topics in boldface.  Topic lists are useful
+when the topic text is narrow (as when <xtag bigmark>s are used as
+topics), and when documenting record structures.<p>
+
+The following macros are used to define topic lists.
+
+<deflist topic lists>
+
+<defitem topiclist {<tag topiclist>...<tag /topiclist>}>
+
+Contains a topic list.  Items are defined within a topic list using 
+<xtag topic>...<tag /topic>.<p>
+
+<defitem topic {<tag topic {<i>topic</i>}>...<tag /topic>}>
+
+Specifies a complete topic entry in a <xtag topiclist>.  The 
+<i topic> is used on the left, and the text between the start
+and end tags appears on the right.  The <i topic> may contain
+macros to be expanded.<p>
+
+</deflist topic lists>
+
+<subsection "Listing Macros">
+
+Quilldoc(5) has support for documenting and annotating code listings.
+Include the listing between <xtag listing> and <tag /listing>, and use
+<xtag mark> to add annotation marks.  Follow the listing by a 
+<xtag topiclist> with matching <xtag bigmark>'s as the topic names.<p>
+
+<deflist listings>
+
+<defitem listing {<tag listing>...<tag /listing>}>
+
+Put preformatted source code (or other text data) between the 
+tags.  It will displayed in a box, with line numbers.  Insert 
+<xtag mark> annotation markers as desired to denote points of interest.<p>
+
+<defitem mark {<tag mark "<i symbol>">}>
+
+Adds an annotation mark to a listing (or anywhere, really).  An annotation
+mark displays the symbol (usually a capital letter) in white text on a 
+rounded black rectangle.  The mark is small enough note to increase the
+line height.<p>
+
+<defitem bigmark {<tag bigmark "<i symbol>">}>
+
+Adds a big annotation mark.  <tag bigmark>'s look just like normal
+<xtag mark>'s, but are somewhat bigger.  They are primarily useful as
+<xtag topic>'s in a <xtag topiclist>.<p>
+
+</deflist listings>
 
 <subsection "Cross-Reference Macros">
 

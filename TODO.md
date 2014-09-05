@@ -5,10 +5,7 @@ This is the official list of work to be done.
 # For Quill 0.2.x
 
 * quilldoc(5) Changes:
-  * Add colored line numbers to listing.
-  * Add better <topiclist>: two columns, topic on left, discussion on the
-    right.  Make it easy to use mark and bigmark.
-  * Add listing, mark, and bigmark to manpage.
+  * Revise manpage to use the "tag" macro for all defitems.
 
 * Fix bugs as found and reported.
 * docstool's clean feature needs to clean up all *.html
