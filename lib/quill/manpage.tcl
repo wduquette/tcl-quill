@@ -25,6 +25,8 @@ namespace eval ::quill:: {
 # manpage singleton
 
 snit::type ::quill::manpage {
+    pragma -hasinstances no -hastypedestroy no
+
     #---------------------------------------------------------------------
     # Type Constructor
 
@@ -190,16 +192,13 @@ snit::type ::quill::manpage {
     }
 
     #---------------------------------------------------------------------
-    # Components
+    # Type Variables
 
-    component macro  ;# The macro(n) object
+    typevariable macro ""  ;# The macro(n) object
 
-
-    #---------------------------------------------------------------------
-    # Instance Variables
 
     # manSections: Array of man page section titles by section directory.
-    variable manSections -array {
+    typevariable manSections -array {
         man1 "Section 1: Applications"
         man5 "Section 5: File Formats"
         mann "Section n: Tcl Packages"
@@ -231,34 +230,16 @@ snit::type ::quill::manpage {
     #                     page.  Each entry is a list, {depth name text}.
     #   deflistLevel    - How deeply nested deflists are
 
-    variable trans -array {
-    }
-
-    #---------------------------------------------------------------------
-    # Options
-
-    # TBD
-
-    #---------------------------------------------------------------------
-    # Constructor
-
-    constructor {} {
-        # FIRST, create the components
-        install macro using macro ${selfns}::macro \
-            -brackets {< >}
-        $macro macroset ::quill::macroset_html
-
-        # NEXT, define the macros initially.
-        $self ResetMacros
+    typevariable trans -array {
     }
 
     #---------------------------------------------------------------------
     # Delegated Methods
 
-    delegate method expand to macro
-    delegate method eval   to macro
-    delegate method lb     to macro
-    delegate method rb     to macro
+    delegate typemethod expand to macro
+    delegate typemethod eval   to macro
+    delegate typemethod lb     to macro
+    delegate typemethod rb     to macro
 
     #---------------------------------------------------------------------
     # Other Public Methods
@@ -275,7 +256,7 @@ snit::type ::quill::manpage {
     # Processes all *.manpage files in the current directory,
     # which is assumed to be called "man$suffix", e.g., "mann".
 
-    method format {indir args} {
+    typemethod format {indir args} {
         # FIRST, get the options
         set trans(header) "Software Man Page"
         set trans(version) 0.0.0
@@ -288,14 +269,14 @@ snit::type ::quill::manpage {
         }
 
         # NEXT, set up transient data that spans multiple manpages
-        set pagesec [$self GetManSection $indir]
+        set pagesec [GetManSection $indir]
         set trans(docroot)  [file dirname $outdir]
         set trans(manpages) [list]
         
         # NEXT, process the files
         foreach filename [glob -nocomplain [file join $indir *.manpage]] {
             # FIRST, reset the macro processor for each file.
-            $self ResetMacros
+            $type ResetMacros
 
             # NEXT, set up the transient data for this page
             set trans(manpage)      ""
@@ -315,7 +296,7 @@ snit::type ::quill::manpage {
         }
 
         # NEXT, Write the index
-        $self CreateIndex $outdir
+        CreateIndex $outdir
     }
 
     # GetManSection indir
@@ -324,7 +305,7 @@ snit::type ::quill::manpage {
     #
     # Gets the input manpage section code from the input directory name.
 
-    method GetManSection {indir} {
+    proc GetManSection {indir} {
         set dir [file tail $indir]
 
         if {[string match man* $dir]} {
@@ -338,7 +319,7 @@ snit::type ::quill::manpage {
     #
     # Creates an index of the man pages in this directory.
 
-    method CreateIndex {outdir} {
+    proc CreateIndex {outdir} {
         set manDir [file tail $outdir]
 
         if {[info exists manSections($manDir)]} {
@@ -363,7 +344,7 @@ snit::type ::quill::manpage {
             "<h1 class=\"header\">$trans(header)</h1>\n" \
             "<h1>$title</h1>\n"                          \
             "\n"                                         \
-            [$self LinksToChildren ""]                   \
+            [LinksToChildren ""]                   \
             "<p><hr class=\"outdent\">\n"                \
             "<span class=\"outdent\">\n"                 \
             "<i>Generated on $ts</i>\n"                  \
@@ -383,7 +364,7 @@ snit::type ::quill::manpage {
     # Creates a bulleted list of links to child man pages, recursing if
     # a child also has children.
 
-    method LinksToChildren {parent} {
+    proc LinksToChildren {parent} {
         set result "<ul>\n"
 
         if {$parent eq ""} {
@@ -400,7 +381,7 @@ snit::type ::quill::manpage {
                "<li><a href=\"$base.html\">$name</a></b> -- $title\n"
 
             if {[info exists trans(children-$name)]} {
-                append result [$self LinksToChildren $name]
+                append result [LinksToChildren $name]
             }
         }
 
@@ -417,7 +398,7 @@ snit::type ::quill::manpage {
     # This command adds another manpage section and title to the 
     # system.
 
-    method mansec {num title} {
+    typemethod mansec {num title} {
         set manSections(man$num) "Section $num: $title"
     }
 
@@ -428,44 +409,50 @@ snit::type ::quill::manpage {
     #
     # Resets the macro processor's interpreter.
 
-    method ResetMacros {} {
+    typemethod ResetMacros {} {
+        if {$macro eq ""} {
+            set macro [::quill::macro ${type}::macro -brackets {< >}]
+            $macro macroset ::quill::macroset_html
+        }
+        
         # FIRST, reset it.
         $macro reset
 
         # NEXT, define our own macros.
-        $self DefineLocalMacros
+        DefineLocalMacros
     }
 
     # DefineLocalMacros
     #
     # Defines the default manpage set, which is quite small.
 
-    method DefineLocalMacros {} {
+    proc DefineLocalMacros {} {
         # FIRST, manpage-specific macros
         # FIXME: All aliases should be smartaliases.
         $macro smartalias manpage {name title ?parent?} 2 3 \
-            [mymethod Manpage]
+            [myproc manpage]
 
         $macro smartalias section {title} 1 1 \
-            [mymethod Section]
+            [myproc section]
 
         $macro smartalias subsection {title} 1 1 \
-            [mymethod Subsection]
+            [myproc subsection]
 
         $macro smartalias defitem {name text} 2 2 \
-            [mymethod Defitem]
+            [myproc defitem]
 
         $macro smartalias defopt {text} 1 1 \
-            [mymethod Defopt]
+            [myproc defopt]
 
-        $macro alias itemlist $self Itemlist
+        $macro smartalias itemlist {} 0 0 \
+            [myproc itemlist]
 
 
         $macro smartalias xref {pageref ?text?} 1 2 \
-            [mymethod Xref]
+            [myproc xref]
 
         $macro smartalias /manpage {} 0 0 \
-            [mymethod /Manpage]
+            [myproc /manpage]
 
         $macro proc tag {name {text ""}} {
             if {$text ne ""} {
@@ -487,14 +474,15 @@ snit::type ::quill::manpage {
             return "[tt][lb][xref $page#$tag $tag][rb][/tt]"
         }
 
-        $macro alias version $self Version
+        $macro smartalias version {} 0 0 \
+            [myproc version]
 
     }
 
     #---------------------------------------------------------------------
     # Manpage Macros
 
-    # macro: manpage name title ?parent?
+    # manpage name title ?parent?
     #
     # name   - The man page name, e.g., quill(n)
     # title  - The man page title
@@ -503,7 +491,7 @@ snit::type ::quill::manpage {
     # Begins a man page, and sets up the metadata for the subsequent
     # macros.
 
-    method Manpage {name title {parent ""}} {
+    proc manpage {name title {parent ""}} {
         # Pass 1: Catalog the page and return.
         if {[$macro pass] == 1} {
             # FIRST, have we already set the page's name?
@@ -558,7 +546,7 @@ snit::type ::quill::manpage {
 
         if {$parent ne ""} {
             append result \
-                "<h1>$name: $title -- [$self Xref $parent]</h1>\n"
+                "<h1>$name: $title -- [xref $parent]</h1>\n"
         } else {
             append result \
                 "<h1>$name: $title</h1>\n"
@@ -566,17 +554,17 @@ snit::type ::quill::manpage {
 
         append result  \
             "\n"       \
-            [$self Contents] \
+            [contents] \
             "\n"
 
         return $result
     }
 
-    # Macro: /manpage
+    # /manpage
     #
     # Terminates a man page, and provides the footer.
 
-    method /Manpage {} {
+    proc /manpage {} {
         # Pass 1: Make sure we've got a <<manpage>>.
         if {[$macro pass] == 1} {
             # FIRST, have we set the page's name?
@@ -605,16 +593,16 @@ snit::type ::quill::manpage {
     #---------------------------------------------------------------------
     # Man Page Sections and Subsections
 
-    # Macro: section title
+    # section title
     #
     # title   - The section title
     #
     # Produces the section header, and provides for cross-references
 
-    method Section {title} {
+    proc section {title} {
         # Pass 1: Catalog this section.
         if {[$macro pass] == 1} {
-            $self AnchorSave $title
+            AnchorSave $title
 
             set trans(section) $title
             lappend trans(sections) [list 0 $title]
@@ -626,16 +614,16 @@ snit::type ::quill::manpage {
         return "<h2><a name=\"$title\">$title</a></h2>\n"
     }
 
-    # Macro: subsection title
+    # subsection title
     #
     # title - The subsection title
     #
     # Produces the subsection header, and provides for cross-references
 
-    method Subsection {title} {
+    proc subsection {title} {
         # Pass 1: Catalog this section.
         if {[$macro pass] == 1} {
-            $self AnchorSave $title
+            AnchorSave $title
 
             if {$trans(section) eq ""} {
                 error "subsection found before any section, \"$title\""
@@ -650,12 +638,12 @@ snit::type ::quill::manpage {
         return "<h3><a name=\"$title\">$title</a></h3>\n"
     }
 
-    # Contents
+    # contents
     #
     # Formats the section/subsection table of contents.  This is
     # used automatically by Manpage.
 
-    method Contents {} {
+    proc contents {} {
         # Pass 1: do nothing
         if {[$macro pass] == 1} {
             return
@@ -668,10 +656,10 @@ snit::type ::quill::manpage {
             lassign $item depth title
 
             if {$depth == 0} {
-                append result "[$self Xref #$title]<br>\n"
+                append result "[xref #$title]<br>\n"
             } else {
                 append result \
-                "<span class=\"indent1\">[$self Xref #$title]</span><br>\n" 
+                "<span class=\"indent1\">[xref #$title]</span><br>\n" 
             }
         }
 
@@ -683,7 +671,7 @@ snit::type ::quill::manpage {
     #---------------------------------------------------------------------
     # Definition Lists
 
-    # Macro: defitem name text
+    # defitem name text
     #
     # name  - The item's name, e.g., "section"
     # text  - The text used to document the item.
@@ -694,12 +682,12 @@ snit::type ::quill::manpage {
     # the "text" is the full text of the item, e.g.,
     # the command's full signature.
 
-    method Defitem {name text} {
+    proc defitem {name text} {
         set text [$macro expandonce $text]
 
         # pass 1: Catalog the item
         if {[$macro pass] == 1} {
-            $self AnchorSave $name
+            AnchorSave $name
 
             lappend trans(items) \
                 [list $trans(deflistLevel) $name $text]
@@ -711,13 +699,13 @@ snit::type ::quill::manpage {
         return "<dt><b><a name=\"$name\">$text</a></b><dd>\n"
     }
 
-    # Macro: defopt text
+    # defopt text
     #
     # text   - The text used to document the option.
     #
     # Begins documentation for the option.
 
-    method Defopt {text} {
+    proc defopt {text} {
         # pass 1: do nothing for now.
         if {[$macro pass] == 1} {
             return
@@ -729,11 +717,11 @@ snit::type ::quill::manpage {
     }
 
 
-    # Macro: itemlist
+    # itemlist
     #
     # Returns a formatted list of links for the SYNOPSIS section.
 
-    method Itemlist {} {
+    proc itemlist {} {
         if {[$macro pass] == 1} {
             return
         }
@@ -745,7 +733,7 @@ snit::type ::quill::manpage {
 
             set class "indent$depth"
             append result \
-                "<span class=\"$class\">[$self Xref #$item $text]</span><br>\n"
+                "<span class=\"$class\">[xref #$item $text]</span><br>\n"
         }
 
         return $result
@@ -755,7 +743,7 @@ snit::type ::quill::manpage {
     #---------------------------------------------------------------------
     # Cross-References
 
-    # Xref pageref ?text?
+    # xref pageref ?text?
     #
     # pageref   - A string that names an external page in some way
     # text      - The link text.
@@ -778,7 +766,7 @@ snit::type ::quill::manpage {
     # If the link is to this page, and the anchor is unknown, a warning
     # is produced.
 
-    method Xref {pageref {text ""}} {
+    proc xref {pageref {text ""}} {
         # Pass 1: Do nothing
         if {[$macro pass] == 1} {
             return
@@ -814,7 +802,7 @@ snit::type ::quill::manpage {
 
         # Next, make sure we know the anchor
         if {$pageId eq ""} {
-            if {![$self AnchorExists $anchor]} {
+            if {![AnchorExists $anchor]} {
                 puts "Warning: unknown anchor, \"$anchor\""
             }
         }
@@ -829,12 +817,12 @@ snit::type ::quill::manpage {
     #---------------------------------------------------------------------
     # Other Macros
 
-    # Macro: version
+    # version
     #
     # Returns the project version number, as given by the -version
     # option.
 
-    method Version {} {
+    proc version {} {
         return $trans(version)
     }
 
@@ -848,8 +836,8 @@ snit::type ::quill::manpage {
     # Saves the anchor for this page, so we know that it exists.  The new
     # anchor must not already exist on this page.
 
-    method AnchorSave {anchor} {
-        if {[$self AnchorExists $anchor]} {
+    proc AnchorSave {anchor} {
+        if {[AnchorExists $anchor]} {
             error "Duplicate anchor, \"$anchor\""
         }
 
@@ -863,39 +851,8 @@ snit::type ::quill::manpage {
     # While processing a page, returns 1 if the anchor is known, and 0 
     # otherwise.
 
-    method AnchorExists {anchor} {
+    proc AnchorExists {anchor} {
         expr {$anchor in $trans(anchors)}
-    }
-
-
-    # Identity tag
-    #
-    # Defines a macro that expands to the same named HTML tag.
-
-    method Identity {tag} {
-        $macro proc $tag {} [format {
-            return "<%s>"
-        } $tag]
-    }
-
-    # StyleTag tag
-    #
-    # tag   - A style tag name
-    #
-    # Defines a tag macros.
-
-    method StyleTag {tag} {
-        $macro proc $tag {args} [format {
-            if {[llength $args] == 0} {
-                return "<%s>"
-            } else {
-                return "<%s>$args</%s>"
-            }
-        } $tag $tag $tag]
-
-        $macro proc /$tag {} [format {
-            return "</%s>"
-        } $tag]
     }
 }
 

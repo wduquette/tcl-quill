@@ -2,10 +2,10 @@
 
 <section SYNOPSIS>
 
-<pre>
+<example>
 package require quill <version>
 namespace import ::quill::*
-</pre>
+</example>
 
 <itemlist>
 
@@ -44,29 +44,16 @@ manpage(n) defines the following commands:<p>
 
 <deflist commands>
 
-<defitem manpage {manpage <i name>}>
-
-This command creates a new instance of manpage(n) called 
-<i name>, returning the fully-qualified name.<p>
-
-</deflist commands>
-
-<section "INSTANCE COMMANDS">
-
-An instance of manpage(n) provides the following subcommands:
-
-<deflist instance>
-
-<defitem eval   {<i obj> eval <i args...>}>
-<defitem expand {<i obj> expand <i text>}>
-<defitem lb     {<i obj> lb}>
-<defitem rb     {<i obj> rb}>
+<defitem eval   {manpage eval <i args...>}>
+<defitem expand {manpage expand <i text>}>
+<defitem lb     {manpage lb}>
+<defitem rb     {manpage rb}>
 
 These commands are all delegated to the object's internal instance of
 <xref macro(n)>.  <xref #eval> and <xref #expand> are primarily useful
 for debugging.<p>
 
-<defitem format {<i obj> format <i indir> ?<i options>?}>
+<defitem format {manpage format <i indir> ?<i options>?}>
 
 Formats all "*.manpage" files found in directory <i indir>, which is
 assumed to be named according to the usual naming convention; see
@@ -93,14 +80,14 @@ specified directory.<p>
 </deflist options>
 
 
-<defitem mansec {<i obj> mansec <i num title>}>
+<defitem mansec {manpage mansec <i num title>}>
 
 Defines an additional man page section with number <i num> and the
 given <i title>.  For example,
 
-<pre><i>obj</i> mansec 3 "C Libraries"</pre>
+<example>manpage mansec 3 "C Libraries"</example>
 
-defines a man page section for C library man pages.<p>
+Defines a man page section for C library man pages.<p>
 
 </deflist instance>
 
