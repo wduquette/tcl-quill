@@ -4,30 +4,18 @@ Nothing in this file should be presumed to be reflective of anything
 in the project.  Everything in this file is either incomplete, obsolete, 
 or wrong.
 
-## Q: quilldoc transient data
+## Q: How to make the macro(n) instance available to macro sets?
 
-What do I need to save for each section?
-
-* On pass 1
-  * The ID, so I know it's valid
-    * I need to validate this as it comes along.
-    * No duplicates.
-    * Structure matches previous section correctly, for sections
-      and appendices.
-      * Can be one longer; equivalent segments must match.
-      * Can be the same length; all but the last segment must match.
-      * If shorter, all but last segment must match the previous.
-      * In short, all segments but the last must match the previous
-        ID.
-  * The type: preface, section, appendix
-  * The title (needed for the table of contents)
-* Before pass 2, I need to assign section numbers, and save for each
-  ID:
-  * The section number, or "" for preface sections.
-  * The default link text.
-* Then, the "contents" and "xref" macros have what they need.
-* QUESTION: How do I make something happen between passes?
-
+* Obvious solution:
+  * The macro set is an instance of a type, and saves the macro set as
+    a component or instance variable.
+    * I don't want to do that, since I like macro sets being types.
+  * Make the currently active instance available to clients of ::macro.
+    * Ewww.  And what if there are several?  Wouldn't normally happen
+      that multiple would be executing at the same time.
+  * Make the current active instance available within the macro interpreter.
+    * That's fine for macros defined as procs within the interpreter, but
+      doesn't work for other things.
 
 ## Q: How to pull basekits from teapot?
 

@@ -119,10 +119,11 @@ A single man page will often document a series of "items".  A section
 n man page will document the Tcl commands in a library, for example,
 and this man page documents a collection of <xref #MACROS> used to
 write man pages.  Items are documented in definition lists using
-the <xtag deflist> macro; each item in a definition list is defined
-using the <xtag defitem> macro.  Each <xtag defitem> macro is
-followed by prose documenting the item.  Each definition list is
-concluded by a <tag /deflist> macro.<p>
+the <xtag macroset_html(n)#deflist> macro; each item in a definition 
+list is defined using the <xtag defitem> macro.  Each <xtag defitem> 
+macro is followed by prose documenting the item.  Finally,
+each definition list is concluded by a 
+<tag /deflist> macro.<p>
 
 <subsection "Cross-References">
 
@@ -164,8 +165,8 @@ to each of the items defined in the body of the web page.<p>
 
 Other sections may contain definition lists, which
 define one or more items (i.e, commands, macros, etc.).  Each
-definition list begins with a <xtag deflist> macro and ends with a
-<tag /deflist> macro; individual items begin with
+definition list begins with a <xtag macroset_html(n)#deflist> macro and 
+ends with a <tag /deflist> macro; individual items begin with
 the <xtag defitem> macro, followed by prose which documents the
 item.<p>
 
@@ -176,7 +177,19 @@ Each man page file ends with the <tag /manpage> macro.<p>
 
 <section MACROS>
 
-The following macros may be used in man pages.<p>
+manpage(5) includes the following macro sets:<p>
+
+<topiclist>
+<topic "<xref macro(n)>">
+The basic set of macros.
+</topic>
+
+<topic "<xref macroset_html(n)>">
+Macros for use in HTML-like documents.<p>
+</topic>
+</topiclist><p>
+
+In addition, it defines the following format-specific macros.<p>
 
 <subsection "Structural Macros">
 
@@ -233,53 +246,21 @@ Mixed Case.  For example,<p>
 
 </deflist structural>
 
-<subsection "Definition List Macros">
+<subsection "Definition List Extensions">
 
 Definition lists are the primary means of documenting items of code:
 Tcl commands and subcommands, macros, and anything else.  
-They display an item in bold, 
-left-justified, followed by one or more indented paragraphs describing
-the item.  The come in three forms, depending on the macro used to
-define the individual items.<p>
+They display an item in bold, left-justified, followed by one or more 
+indented paragraphs describing the item.<p>
 
-To add a list of items that should appear in the "SYNOPSIS" section
-(e.g., Tcl commands), define items with the <xtag defitem> tag.<p>
-
-To add a list of options for a command or object type, define items with the 
-<xtag defopt> tag.<p>
-
-To add a generic definition list with no special behavior, define items
-with the <xtag def> tag.<p>
-
-The following macros are used to define definition lists.
+The basic definition list macros, 
+<xtag macroset_html(n)#deflist> and <tag /deflist> are defined in 
+<xref macroset_html(n)>.
+manpage(5) extends the basic set with two new macros, one for defining
+entities (i.e., commands) that should appear in the man page's 
+"SYNOPSIS" section, and one for defining lists of options.<p>
 
 <deflist definition lists>
-
-<defitem deflist {<tag deflist "<i args...>">...<tag /deflist "<i args...>">}>
-
-Begins a definition list.  The <i>args</i> are ignored.  By
-convention, each <xtag deflist> macro includes arguments which
-indicate the kind of thing being listed, and the matching
-<tag /deflist> macro echoes them.  This avoids confusion when definition 
-lists are nested. For example,<p>
-
-<pre>
-<tag section COMMANDS>
-
-This module defines the following commands:<tag p>
-
-<tag deflist commands>
-    ...
-<tag /deflist commands>
-</pre>
-
-Items are defined within a definition list using <xtag defitem>.<p>
-
-<defitem def {<tag def "<i text>">}>
-
-Defines a generic item in a definition list.  The <i text> will be 
-displayed in boldface and may contain macros to be expanded.  Follow
-the macro with the description of the item.<p>
 
 <defitem defitem {<tag defitem "<i name text>">}>
 
@@ -290,7 +271,11 @@ of commands, for example, <i>name</i> is the command name.  The
 command, <i>text</i> would be the signature of the command.  For example,<p>
 
 <pre>
+<tag deflist>
+...
 <tag defitem "mycommand {mycommand <tag i arg1>}">
+...
+<tag /deflist>
 </pre>
 
 Tcl conventions are followed for command signatures.  Literal text is
@@ -304,7 +289,12 @@ Begins the documentation of an option in a definition list of options.
 For example,<p>
 
 <pre>
+<tag deflist>
+...
+
 <lb>defopt -myoption {-myoption <tag i value>}<rb>
+...
+<tag /deflist>
 </pre>
 
 At present options are not listed in the <xtag itemlist>, but that may
@@ -366,75 +356,11 @@ Creates a cross-reference to an item defining a macro, in man pages
 
 </deflist cross-references>
 
-<subsection "HTML Equivalent Macros">
-
-manpage(5) format was designed to translate easily to HTML, but also to
-support other back-end translations.  Thus, it defines a number of macros that have direct HTML equivalents.<p>
-
-<deflist html macros>
-
-<defitem li {<tag li>...<tag /li>}>
-<defitem ol {<tag ol>...<tag /ol>}>
-<defitem p  {<tag p>...<tag /p>}>
-<defitem ul {<tag ul>...<tag /ul>}>
-
-These macros map directly to their HTML namesakes.<p>
-
-<defitem b {<tag b>...<tag /b> or <tag b "<i text>...">}>
-<defitem code {<tag code>...<tag /code> or <tag code "<i text>...">}>
-<defitem em {<tag em>...<tag /em> or <tag em "<i text>...">}>
-<defitem i {<tag i>...<tag /i> or <tag i "<i text>...">}>
-<defitem pre {<tag pre>...<tag /pre> or <tag pre "<i text>...">}>
-<defitem strong {<tag strong>...<tag /strong> or <tag strong "<i text>...">}>
-<defitem tt {<tag tt>...<tag /tt> or <tag tt "<i text>...">}>
-
-These style tags have two forms, an HTML-like form and a convenience
-form.  For example,<p>
-
-<pre><lb>i this is italics<rb></pre>
-
-is identical to<p>
-
-<pre><lb>i<rb>this is italics<lb>/i<rb></pre>
-
-Note that when convenience form is used, the <i text...> may not contain nested macros.  For example, the following will not yield bold italic
-text:<p>
-
-<pre><lb>b "<lb>i this is not bold italics<rb>"<rb></pre>
-
-</deflist html macros>
-
 <subsection "Other Macros">
 
-manpage(5) provides a number of other macros, some inherited from 
-<xref macro(n)>; here they are.<p>
+manpage(5) provides a number of other macros.<p>
 
 <deflist other macros>
-
-<defitem do {<tag do "<i script>">}>
-
-The <i>script</i> is evaluated in the global context, and any return
-value is thrown away.  Use this define
-document-specific macros.<p>
-
-<defitem expand {<tag expand "<i text>">}>
-
-Expands <i text> and returns the result.  This is primarily useful 
-when defining document-specific macros as procs in a <xtag do> block;  
-macros that take a body of text can expand macros recursively.<p>
-
-<defitem lb {<tag lb>}>
-
-Returns the left macro expansion bracket, "<lb>".<p>
-
-<defitem link {<tag link "<i url> ?<i text>?">}>
-
-Returns a link to the given <i url>.  If <i text> is given, 
-it is used as the link text; otherwise, the <i url> is displayed.<p>
-
-<defitem rb {<tag rb>}>
-
-Returns the right macro expansion bracket, "<rb>".<p>
 
 <defitem tag {<tag tag "<i name> ?<i text>?">}>
 
@@ -442,14 +368,6 @@ The <xtag tag> macro is provided for use in man pages that define
 macros.  It expands to the macro as it would appear in 
 <xref manpage(5)> input.  The text, if included, represents macro
 arguments and may contain macros for expansion.<p>
-
-<defitem template {<tag template "<i args...>">}>
-<defitem tsubst {<tag tsubst "<i args...>">}>
-
-These templating commands can be used directly in documents, or more
-likely when defining macros as procs in a <xtag do> block.  See
-<xref template(n)> for what these commands do and how they are used.<p>
-
 
 <defitem version {<tag version>}>
 

@@ -1,0 +1,46 @@
+<manpage macroset(i) "macro(n) Macro Set">
+
+<section SYNOPSIS>
+
+<itemlist>
+
+<section DESCRIPTION>
+
+A macro set is an object that can be registered with an instance of 
+<xref macro(n)> and that defines new macros in the instance on demand.
+The macros in the set can then be used in a variety of contexts.  For
+example, the <xref manpage(5)> and <xref quilldoc(5)> formats have many
+macros in common; these are grouped in macro sets and shared between
+the two modules.<p>
+
+This man page defines the interface a macro set must export so that 
+<xref macro(n)> can make use of it.<p>
+
+A macro set can be registered with an instance of <xref macro(n)> using 
+its <xref macro(n)#macroset> subcommand.<p>
+
+<section SUBCOMMANDS>
+
+Formally, a command or command prefix adheres to the macroset(i) interface
+if it accepts the following subcommands.<p> 
+
+<deflist subcommands>
+
+<defitem install {<i macroset> install <i macro>}>
+
+Given <i macro>, an instance of <i macro(n)>, this command installs
+the macros into the instance using its <xref macro(n)#smartalias>, 
+<xref macro(n)#proc>, or <xref macro(n)#clone> subcommands.<p>
+
+
+</deflist subcommands>
+
+<section AUTHOR>
+
+Will Duquette<p>
+
+<section "SEE ALSO">
+
+<xref quill(n)>, <xref smartinterp(n)>, <xref manpage(n)>.
+
+</manpage>

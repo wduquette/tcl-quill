@@ -5,11 +5,10 @@ This is the official list of work to be done.
 # For Quill 0.2.x
 
 * quilldoc(5) Changes:
-  * Revise manpage to use the "tag" macro for all defitems.
+  * Document pass and macro macros in macro(n).
   * Add <example>...</example> macros, and use them instead of <pre>
     to manpage(5) and quilldoc(5).
-  * Replace <topiclist> in manpage(5) with the quilldoc(5) code.
-  * Figure out how to share code between manpage(5) and quilldoc(5).
+  * Make manpage(n) a singleton, like quilldoc(n).
   * Should manpage(5) be quillman(5)?  Probably.
   * Put blocks in that show what the examples look like.
 

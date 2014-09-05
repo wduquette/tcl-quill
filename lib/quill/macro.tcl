@@ -40,6 +40,10 @@ snit::type ::quill::macro {
         pass   1
     }
 
+    # Registered macroset(i) commands.
+
+    variable macrosets {}
+
     #---------------------------------------------------------------------
     # Options
 
@@ -49,7 +53,7 @@ snit::type ::quill::macro {
     # macro interpreter.  Changes take effect on reset.
 
     option -commands   \
-        -default   all \
+        -default   safe \
         -type     {snit::enum -values {all safe none}}
 
     # -passcommand command
@@ -61,8 +65,8 @@ snit::type ::quill::macro {
     # -brackets pair
     #
     # Sets a pair of macro-expansion brackets.
-    option -brackets             \
-        -default         {<< >>} \
+    option -brackets           \
+        -default         {< >} \
         -configuremethod ConfigureBrackets
 
     method ConfigureBrackets {opt val} {
@@ -169,6 +173,17 @@ snit::type ::quill::macro {
         return [$self expand [readfile $filename]]
     }
 
+    # macroset prefix
+    #
+    # prefix  - A command prefix implementing macroset(i).
+    #
+    # Registers the command prefix. It will take effect on the next
+    # and subsequent resets.
+
+    method macroset {prefix} {
+        lappend macrosets $prefix
+    }
+
     # reset 
     #
     # Resets the expander's macro interpreter.
@@ -182,6 +197,11 @@ snit::type ::quill::macro {
 
         # NEXT, redefine the macros
         $self DefineLocalMacros
+
+        # NEXT, define any registered macro sets.
+        foreach macroset $macrosets {
+            {*}$macroset install $self
+        }
     }
 
     # DefineLocalMacros
@@ -189,10 +209,8 @@ snit::type ::quill::macro {
     # Defines the default macro set, which is quite small.
 
     method DefineLocalMacros {} {
-        # do script
-        #
-        # Executes the script in the expansion interpreter, leaving
-        # no output.
+        # Make the processor itself available.
+        $interp alias macro $self
 
         $interp proc do {script} {
             uplevel #0 $script
@@ -201,6 +219,10 @@ snit::type ::quill::macro {
 
         $interp smartalias expand {text} 1 1 \
             [mymethod expandonce]
+
+        $interp smartalias pass {} 0 0 \
+            [mymethod pass]
+
 
         $interp clone template ::quill::template
         $interp clone tsubst   ::quill::tsubst

@@ -37,8 +37,8 @@ options are available:<p>
 <defopt {-brackets <i pair>}>
 
 This option specifies the left and right macro expansion brackets
-as a two-item list.  The default brackets are "<lb><lb>" and 
-"<rb><rb>".<p>
+as a two-item list.  The default brackets are "<lb>" and 
+"<rb>".<p>
 
 <defopt {-commands all|safe|none}>
 
@@ -118,6 +118,11 @@ by any of the macros embedded in the <i filename>'s text; use
 It is sometimes useful for a macro to expand one or more of its
 arguments.  This command should be used for that purpose.<p>
 
+<defitem macroset {<i obj> macroset <i macroset>}>
+
+Registers a <xref macroset(i)> command or command prefix with the object.
+The macro set's macros will be defined automatically on <xref #reset>.<p>
+
 <defitem pass {<i obj> pass}>
 
 During macro expansion, returns the current pass number, 1 or 2.<p>
@@ -143,9 +148,9 @@ using this mechanism:<p>
 
 <pre>
 ...
-<lb><lb>do {
+<lb>do {
     proc hello {name} { return "Hello, $name!" }
-}<rb><rb>
+}<rb>
 ...
 </pre>
 

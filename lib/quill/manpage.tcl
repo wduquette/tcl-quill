@@ -149,6 +149,45 @@ snit::type ::quill::manpage {
             position: relative;
             left: -0.4in;
         }
+
+        /* Styles for macroset_html(n) */
+
+        tr.topicrow  { vertical-align: baseline; }
+        td.topicname { font-weight: bold;        }
+
+        pre.listing {
+            border: 1px solid blue;
+            background-color: #FAF1AA;
+            padding: 2px;
+        }
+
+        span.linenum {
+            background-color: #DEDC87;
+        }
+
+        div.mark {
+            font-family: Verdana;
+            font-size: 75%;
+            border: 1px solid black;
+            background-color: black;
+            color: white;
+            border-radius: 10px;
+            padding-left: 2px;
+            padding-right: 2px;
+            display: inline;
+        }
+
+        div.bigmark {
+            font-family: Verdana;
+            font-size: 100%;
+            border: 1px solid black;
+            background-color: black;
+            color: white;
+            border-radius: 10px;
+            padding-left: 2px;
+            padding-right: 2px;
+            display: inline;
+        }
     }
 
     #---------------------------------------------------------------------
@@ -208,6 +247,7 @@ snit::type ::quill::manpage {
         # FIRST, create the components
         install macro using macro ${selfns}::macro \
             -brackets {< >}
+        $macro macroset ::quill::macroset_html
 
         # NEXT, define the macros initially.
         $self ResetMacros
@@ -324,8 +364,8 @@ snit::type ::quill::manpage {
             "<h1 class=\"header\">$trans(header)</h1>\n" \
             "<h1>$title</h1>\n"                          \
             "\n"                                         \
-            [$self LinksToChildren ""]                         \
-            "<hr class=\"outdent\">\n"                   \
+            [$self LinksToChildren ""]                   \
+            "<p><hr class=\"outdent\">\n"                \
             "<span class=\"outdent\">\n"                 \
             "<i>Generated on $ts</i>\n"                  \
             "</span>\n"                                  \
@@ -365,7 +405,7 @@ snit::type ::quill::manpage {
             }
         }
 
-        append result "</ul><p>\n"
+        append result "</ul>\n"
 
         return $result
     }
@@ -402,25 +442,7 @@ snit::type ::quill::manpage {
     # Defines the default manpage set, which is quite small.
 
     method DefineLocalMacros {} {
-        # FIRST, define some standard HTML tags
-        foreach tag {
-            b i code tt pre em strong 
-        } {
-            $self StyleTag $tag
-        }
-
-        foreach tag {
-            p ul ol li
-        } {
-            $self Identity $tag
-            $self Identity /$tag
-        }
-
-        # NEXT, define brackets
-        $macro proc lb {} { return "&lt;"}
-        $macro proc rb {} { return "&gt;"}
-
-        # NEXT, manpage-specific macros
+        # FIRST, manpage-specific macros
         # FIXME: All aliases should be smartaliases.
         $macro smartalias manpage {name title ?parent?} 2 3 \
             [mymethod Manpage]
@@ -431,27 +453,13 @@ snit::type ::quill::manpage {
         $macro smartalias subsection {title} 1 1 \
             [mymethod Subsection]
 
-        $macro alias deflist $self Deflist
-
-        $macro smartalias def {text} 1 1 \
-            [mymethod Def]
-
         $macro smartalias defitem {name text} 2 2 \
             [mymethod Defitem]
 
         $macro smartalias defopt {text} 1 1 \
             [mymethod Defopt]
 
-        $macro alias /deflist $self /Deflist
-
         $macro alias itemlist $self Itemlist
-
-        $macro alias topiclist $self Topiclist
-
-        $macro smartalias topic {text} 1 1 \
-            [mymethod Topic]
-
-        $macro alias /topiclist $self /Topiclist
 
 
         $macro smartalias xref {pageref ?text?} 1 2 \
@@ -459,14 +467,6 @@ snit::type ::quill::manpage {
 
         $macro smartalias /manpage {} 0 0 \
             [mymethod /Manpage]
-
-        $macro proc link {url {text ""}} {
-            if {$text eq ""} {
-                set text $url
-            }
-
-            return "<a href=\"$url\">$text</a>"
-        }
 
         $macro proc tag {name {text ""}} {
             if {$text ne ""} {
@@ -477,7 +477,15 @@ snit::type ::quill::manpage {
         }
 
         $macro proc xtag {name} {
-            return "[tt][lb][xref #$name][rb][/tt]"
+            set parts [split $name "#"]
+            if {[llength $parts] == 2} {
+                lassign $parts page tag
+            } else {
+                set page ""
+                set tag $name
+            }
+
+            return "[tt][lb][xref $page#$tag $tag][rb][/tt]"
         }
 
         $macro alias version $self Version
@@ -676,38 +684,6 @@ snit::type ::quill::manpage {
     #---------------------------------------------------------------------
     # Definition Lists
 
-    # Macro: deflist args...
-    #
-    # args   - Arbitrary text identifying the deflist.
-    #
-    # Begins a definition list.  The args are ignored,
-    # but are convenient for matching up the deflist with
-    # its /deflist.
-
-    method Deflist {args} {
-        incr trans(deflistLevel)
-
-        return "<dl>\n"
-    }
-
-    # Macro: def text
-    #
-    # text   - The text to define.
-    #
-    # Begins documentation for the definition item.
-
-    method Def {text} {
-        # pass 1: do nothing for now.
-        if {[$macro pass] == 1} {
-            return
-        }
-        
-        # pass 2: Format the item.
-        set text [$macro expandonce $text]
-        return "<dt><b>$text</b><dd>\n"
-    }
-
-
     # Macro: defitem name text
     #
     # name  - The item's name, e.g., "section"
@@ -753,19 +729,6 @@ snit::type ::quill::manpage {
         return "<dt><b>$text</b><dd>\n"
     }
 
-    # Macro: /deflist args...
-    #
-    # args  - Arbitrary text identifying the deflist.
-    #
-    # Ends a definition list.  The args are ignored,
-    # but are convenient for matching up the deflist with
-    # its /deflist, especially when deflists are nested.
-
-    method /Deflist {args} {
-        incr trans(deflistLevel) -1
-
-        return "</dl>\n"
-    }
 
     # Macro: itemlist
     #
@@ -789,51 +752,6 @@ snit::type ::quill::manpage {
         return $result
     }
 
-    #---------------------------------------------------------------------
-    # Topic Lists
-
-    # Macro: topiclist args...
-    #
-    # args   - Arbitrary text identifying the topiclist.
-    #
-    # Begins a topic list.  The args are ignored,
-    # but are convenient for matching up the topiclist with
-    # its /topiclist.
-
-    method Topiclist {args} {
-        return "<dl class=\"topiclist\">\n"
-    }
-
-    # Macro: topic text
-    #
-    # text  - The topic text
-    #
-    # States the topic and begins the description of it.
-    # The "text" is expanded, so can contain macros.
-
-    method Topic {text} {
-        # pass 1: do nothing
-        if {[$macro pass] == 1} {
-            return
-        }
-        
-        # pass 2: Format the item.
-        set text [$macro expandonce $text]
-
-        return "<dt class=\"topic\"><b>$text</b><dd class=\"description\">\n"
-    }
-
-    # Macro: /topiclist args...
-    #
-    # args  - Arbitrary text identifying the topiclist.
-    #
-    # Ends a topic list.  The args are ignored,
-    # but are convenient for matching up the topiclist with
-    # its /topiclist, especially when topiclists are nested.
-
-    method /Topiclist {args} {
-        return "</dl>\n"
-    }
 
     #---------------------------------------------------------------------
     # Cross-References

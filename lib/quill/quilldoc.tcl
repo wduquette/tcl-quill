@@ -60,11 +60,6 @@ snit::type ::quill::quilldoc {
             padding: 2px;
         }
 
-        span.prelabel {
-            background-color: #DEDC87;
-        }
-
-
         /* Use for indenting */
         .indent0 { 
             position: relative;
@@ -107,6 +102,21 @@ snit::type ::quill::quilldoc {
             left: 2.5in
         }
 
+        /* Styles for macroset_html(n) */
+
+        tr.topicrow  { vertical-align: baseline; }
+        td.topicname { font-weight: bold;        }
+
+        pre.listing {
+            border: 1px solid blue;
+            background-color: #FAF1AA;
+            padding: 2px;
+        }
+
+        span.linenum {
+            background-color: #DEDC87;
+        }
+
         div.mark {
             font-family: Verdana;
             font-size: 75%;
@@ -131,14 +141,6 @@ snit::type ::quill::quilldoc {
             display: inline;
         }
 
-        /* Topic List Styles */
-        tr.topicrow {
-            vertical-align: baseline;
-        }
-
-        tr.topicname {
-            font-weight: bold;
-        }
     }
 
 
@@ -191,6 +193,7 @@ snit::type ::quill::quilldoc {
             set macro [macro ${type}::macro \
                         -passcommand [mytypemethod PassCmd] \
                         -brackets    {< >}]
+            $macro macroset ::quill::macroset_html
         }
 
         # NEXT, set up the macros.
@@ -228,14 +231,8 @@ snit::type ::quill::quilldoc {
             -manroot { set trans(manroot) [lshift args] }
         }
         
-        # NEXT, create the macro processor, if it doesn't exist.
-        if {$macro eq ""} {
-            set macro [macro ${type}::macro \
-                        -passcommand [mytypemethod PassCmd] \
-                        -brackets    {< >}]
-        }
-
-        # NEXT, process the file, resetting the macros.
+        # NEXT, Reset the macro processor; this will create it, if
+        # needed, and define all macros.
         $type reset
 
         writefile $outfile [$macro expandfile $infile]
@@ -345,82 +342,11 @@ snit::type ::quill::quilldoc {
         $macro smartalias xref {pageref ?text?} 1 2 \
             [myproc xref]
 
-        $macro proc link {url {text ""}} {
-            if {$text eq ""} {
-                set text $url
-            }
-
-            return "<a href=\"$url\">$text</a>"
-        }
-
-
-        # NEXT, standard HTML tags
-
-        foreach tag {
-            b i code tt pre em strong 
-        } {
-            StyleTag $tag
-        }
-
-        foreach tag {
-            p ul ol li
-        } {
-            Identity $tag
-            Identity /$tag
-        }
-
-        foreach tag {
-            br
-        } {
-            Identity $tag
-        }
-
-
-        # NEXT, definition list tags.
-        $macro smartalias deflist {?args...?} 0 - \
-            [myproc deflist]
-
-        $macro smartalias def {text} 1 1 \
-            [myproc def]
-
-        $macro smartalias /deflist {?args...?} 0 - \
-            [myproc /deflist]
-
-        # NEXT, topic list tags.
-        $macro smartalias topiclist {} 0 0 \
-            [myproc topiclist]
-
-        $macro smartalias topic {topic} 1 1 \
-            [myproc topic]
-
-        $macro smartalias /topic {} 0 0 \
-            [myproc /topic]
-
-        $macro smartalias /topiclist {} 0 0 \
-            [myproc /topiclist]
-
         # NEXT, other macros
-        $macro proc hrule {} { return "<hr>\n" }
-        $macro proc lb {}    { return "&lt;"   }
-        $macro proc rb {}    { return "&gt;"   }
 
         $macro smartalias version {} 0 0 \
             [myproc version]
 
-        $macro smartalias listing {} 0 0 \
-            [myproc listing]
-
-        $macro smartalias /listing {} 0 0 \
-            [myproc /listing]
-
-
-        $macro proc mark {symbol} {
-            return "<div class=\"mark\">$symbol</div>"
-        }
-
-        $macro proc bigmark {symbol} {
-            return "<div class=\"bigmark\">$symbol</div>"
-        }
     }
 
     #---------------------------------------------------------------------
@@ -618,103 +544,6 @@ snit::type ::quill::quilldoc {
         return $result
     }
 
-    #---------------------------------------------------------------------
-    # Definition Lists
-
-    # deflist args...
-    #
-    # args   - Arbitrary text identifying the deflist.
-    #
-    # Begins a definition list.  The args are ignored,
-    # but are convenient for matching up the deflist with
-    # its /deflist.
-
-    proc deflist {args} {
-        return "<dl>\n"
-    }
-
-    # def text
-    #
-    # text   - The text to define.
-    #
-    # Begins documentation for the definition item.
-
-    proc def {text} {
-        # pass 1: do nothing for now.
-        if {[$macro pass] == 1} {
-            return
-        }
-        
-        # pass 2: Format the item.
-        set text [$macro expandonce $text]
-        return "<dt><b>$text</b><dd>\n"
-    }
-
-
-    # /deflist args...
-    #
-    # args  - Arbitrary text identifying the deflist.
-    #
-    # Ends a definition list.  The args are ignored,
-    # but are convenient for matching up the deflist with
-    # its /deflist, especially when deflists are nested.
-
-    proc /deflist {args} {
-        return "</dl>\n"
-    }
-
-
-    #---------------------------------------------------------------------
-    # Topic Lists
-
-    # topiclist
-    #
-    # Begins a topic list, a two-column list of topics and descriptions.
-    # Use this instead of a deflist when the topics are all short.
-
-    proc topiclist {} {
-        return "<table classs=\"topiclist\">"
-    }
-
-    # topic topic
-    #
-    # topic   - The topic to display in the left column.
-    #
-    # Begins documentation for the topic, which will be expanded.
-
-    proc topic {topic} {
-        # pass 1: do nothing for now.
-        if {[$macro pass] == 1} {
-            return
-        }
-        
-        # pass 2: Format the item.
-        set topic [$macro expandonce $topic]
-        append result \
-            "<tr class=\"topicrow\">\n" \
-            "<td class=\"topicname\">$topic</td>\n" \
-            "<td class=\"topictext\">"
-
-        return $result
-    }
-
-    # /topic
-    #
-    # Terminates a topic.
-
-    proc /topic {} {
-        return "</td></tr>"
-    }
-
-
-    # /topiclist
-    #
-    # Ends a topic list.
-
-    proc /topiclist {args} {
-        return "</table>"
-    }
-
 
     #---------------------------------------------------------------------
     # Cross-References
@@ -810,23 +639,6 @@ snit::type ::quill::quilldoc {
 
     proc version {} {
         return $trans(version)
-    }
-
-    proc listing {} {
-        $macro cpush listing
-    }
-
-    proc /listing {} {
-        set text [$macro cpop listing]
-
-        set lines [list]
-        set i 0
-        foreach line [split [string trim $text] \n] {
-            lappend lines \
-                [format "<span class=\"prelabel\">%04d</span> %s" [incr i] $line] 
-        }
-
-        return "<pre>\n[join $lines \n]\n</pre>\n"
     }
 
     #---------------------------------------------------------------------
