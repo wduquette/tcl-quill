@@ -177,15 +177,13 @@ snit::type ::quillapp::docstool {
     # Formats the named quilldoc(5) documents in place.
 
     proc FormatQuillDocs {doclist} {
-        set qd [quilldoc %AUTO]
-
         foreach doc $doclist {
             puts "Writing [file rootname $doc].html"
             set header \
                 "[project name] [project version] -- [project description]"
 
             try {
-                $qd format $doc \
+                quilldoc format $doc \
                     -header  $header \
                     -version [project version] \
                     -manroot [GetManRoot $doc]

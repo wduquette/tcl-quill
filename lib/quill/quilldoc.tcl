@@ -25,6 +25,9 @@ namespace eval ::quill:: {
 # quilldoc singleton
 
 snit::type ::quill::quilldoc {
+    # Make it a singleton
+    pragma -hasinstances no -hastypedestroy no
+
     #---------------------------------------------------------------------
     # Lookup Tables
 
@@ -131,13 +134,13 @@ snit::type ::quill::quilldoc {
 
 
     #---------------------------------------------------------------------
-    # Components
+    # Type Components
 
-    component macro  ;# The macro(n) object
+    typevariable macro ""  ;# The macro(n) object
 
 
     #---------------------------------------------------------------------
-    # Instance Variables
+    # Type Variables
 
     # trans array: Transient data
     #
@@ -156,37 +159,34 @@ snit::type ::quill::quilldoc {
     # number-$id    - Assigned after pass 1; "" for preface sections
     # linktext-$id  - Assigned after pass 1; default link text.
 
-    variable trans -array {
+    typevariable trans -array {}
+
+    #---------------------------------------------------------------------
+    # Delegated Type Methods
+
+    delegate typemethod expand to macro
+    delegate typemethod eval   to macro
+    delegate typemethod lb     to macro
+    delegate typemethod rb     to macro
+
+    #---------------------------------------------------------------------
+    # Other Public Type Methods
+
+    # reset
+    #
+    # Creates and initializes the macro(n) object.
+
+    typemethod reset {} {
+        # FIRST, create the macro processor.
+        if {$macro eq ""} {
+            set macro [macro ${type}::macro \
+                        -passcommand [mytypemethod PassCmd] \
+                        -brackets    {< >}]
+        }
+
+        # NEXT, set up the macros.
+        $type ResetMacros
     }
-
-    #---------------------------------------------------------------------
-    # Options
-
-    # TBD
-
-    #---------------------------------------------------------------------
-    # Constructor
-
-    constructor {} {
-        # FIRST, create the components
-        install macro using macro ${selfns}::macro \
-            -passcommand [mymethod PassCmd]        \
-            -brackets    {< >}
-
-        # NEXT, define the macros initially.
-        $self ResetMacros
-    }
-
-    #---------------------------------------------------------------------
-    # Delegated Methods
-
-    delegate method expand to macro
-    delegate method eval   to macro
-    delegate method lb     to macro
-    delegate method rb     to macro
-
-    #---------------------------------------------------------------------
-    # Other Public Methods
 
     # format infile ?options...?
     #
@@ -201,7 +201,7 @@ snit::type ::quill::quilldoc {
     # Processes the infile, producing the outfile, which defaults to
     # the same name with an extension of ".html".
 
-    method format {infile args} {
+    typemethod format {infile args} {
         # FIRST, get the options
         array unset trans
         set trans(infile) $infile
@@ -219,8 +219,15 @@ snit::type ::quill::quilldoc {
             -manroot { set trans(manroot) [lshift args] }
         }
         
-        # NEXT, process the file
-        $self ResetMacros
+        # NEXT, create the macro processor, if it doesn't exist.
+        if {$macro eq ""} {
+            set macro [macro ${type}::macro \
+                        -passcommand [mytypemethod PassCmd] \
+                        -brackets    {< >}]
+        }
+
+        # NEXT, process the file, resetting the macros.
+        $type reset
 
         writefile $outfile [$macro expandfile $infile]
     }
@@ -229,7 +236,7 @@ snit::type ::quill::quilldoc {
     #
     # This command assigns all section numbers and computes all link text.
 
-    method PassCmd {} {
+    typemethod PassCmd {} {
         set nums [list 0]
 
         set pid ""
@@ -291,12 +298,12 @@ snit::type ::quill::quilldoc {
     #
     # Resets the macro processor's interpreter.
 
-    method ResetMacros {} {
+    typemethod ResetMacros {} {
         # FIRST, reset it.
         $macro reset
 
         # NEXT, define our own macros.
-        $self DefineLocalMacros
+        $type DefineLocalMacros
     }
 
     # DefineLocalMacros
@@ -305,29 +312,29 @@ snit::type ::quill::quilldoc {
     #
     # TODO: Factor out common manpage(5)/quilldoc(5) macros.
 
-    method DefineLocalMacros {} {
+    typemethod DefineLocalMacros {} {
         # FIRST, document structure macros.
         $macro smartalias document {title} 1 1 \
-            [mymethod macro document]
+            [myproc document]
 
         $macro smartalias contents {} 0 0 \
-            [mymethod macro contents]
+            [myproc contents]
 
         $macro smartalias preface {id title} 2 2 \
-            [mymethod macro preface]
+            [myproc preface]
 
         $macro smartalias section {id title} 2 2 \
-            [mymethod macro section]
+            [myproc section]
 
         $macro smartalias appendix {id title} 2 2 \
-            [mymethod macro appendix]
+            [myproc appendix]
 
         $macro smartalias /document {} 0 0 \
-            [mymethod macro /document]
+            [myproc /document]
 
         # NEXT, cross-references.
         $macro smartalias xref {pageref ?text?} 1 2 \
-            [mymethod macro xref]
+            [myproc xref]
 
         $macro proc link {url {text ""}} {
             if {$text eq ""} {
@@ -343,32 +350,32 @@ snit::type ::quill::quilldoc {
         foreach tag {
             b i code tt pre em strong 
         } {
-            $self StyleTag $tag
+            StyleTag $tag
         }
 
         foreach tag {
             p ul ol li
         } {
-            $self Identity $tag
-            $self Identity /$tag
+            Identity $tag
+            Identity /$tag
         }
 
         foreach tag {
             br
         } {
-            $self Identity $tag
+            Identity $tag
         }
 
 
         # NEXT, definition list tags.
         $macro smartalias deflist {?args...?} 0 - \
-            [mymethod macro deflist]
+            [myproc deflist]
 
         $macro smartalias def {text} 1 1 \
-            [mymethod macro def]
+            [myproc def]
 
         $macro smartalias /deflist {?args...?} 0 - \
-            [mymethod macro /deflist]
+            [myproc /deflist]
 
 
         # NEXT, other macros
@@ -377,13 +384,13 @@ snit::type ::quill::quilldoc {
         $macro proc rb {}    { return "&gt;"   }
 
         $macro smartalias version {} 0 0 \
-            [mymethod macro version]
+            [myproc version]
 
         $macro smartalias listing {} 0 0 \
-            [mymethod macro listing]
+            [myproc listing]
 
         $macro smartalias /listing {} 0 0 \
-            [mymethod macro /listing]
+            [myproc /listing]
 
 
         $macro proc mark {symbol} {
@@ -404,7 +411,7 @@ snit::type ::quill::quilldoc {
     #
     # Begins a document.
 
-    method {macro document} {title} {
+    proc document {title} {
         # Pass 1: Catalog the page and return.
         if {[$macro pass] == 1} {
             return
@@ -436,7 +443,7 @@ snit::type ::quill::quilldoc {
     #
     # Terminates a document, and provides the footer.
 
-    method {macro /document} {} {
+    proc /document {} {
         if {[$macro pass] == 1} {
             return
         }
@@ -466,15 +473,15 @@ snit::type ::quill::quilldoc {
     #
     # Produces the section header, and provides for cross-references
 
-    method {macro preface} {id title} {
+    proc preface {id title} {
         # Pass 1: Catalog this section.
         if {[$macro pass] == 1} {
             # FIRST, validate the id
 
-            $self CheckSyntax $id
-            $self CheckUniqueness $id
-            $self CheckPrevious $id preface {preface}
-            $self CheckLevel $id preface
+            CheckSyntax $id
+            CheckUniqueness $id
+            CheckPrevious $id preface {preface}
+            CheckLevel $id preface
 
             # NEXT, save the data.
             lappend trans(ids) $id
@@ -485,7 +492,7 @@ snit::type ::quill::quilldoc {
 
         # Pass 2: Produce the section header and anchor
         set title [$macro expandonce $title]
-        return [$self Header $id $title]
+        return [Header $id $title]
     }
 
     # section id title
@@ -495,14 +502,14 @@ snit::type ::quill::quilldoc {
     #
     # Produces the section header, and provides for cross-references
 
-    method {macro section} {id title} {
+    proc section {id title} {
         # Pass 1: Catalog this section.
         if {[$macro pass] == 1} {
             # FIRST, validate the id
-            $self CheckSyntax $id
-            $self CheckUniqueness $id
-            $self CheckPrevious $id section {preface section}
-            $self CheckLevel $id section
+            CheckSyntax $id
+            CheckUniqueness $id
+            CheckPrevious $id section {preface section}
+            CheckLevel $id section
 
             # NEXT, save the data.
             lappend trans(ids) $id
@@ -513,7 +520,7 @@ snit::type ::quill::quilldoc {
 
         # Pass 2: Produce the section header and anchor
         set title [$macro expandonce $title]
-        return [$self Header $id "$trans(number-$id) $title"]
+        return [Header $id "$trans(number-$id) $title"]
     }
 
     # appendix id title
@@ -523,14 +530,14 @@ snit::type ::quill::quilldoc {
     #
     # Produces the section header, and provides for cross-references
 
-    method {macro appendix} {id title} {
+    proc appendix {id title} {
         # Pass 1: Catalog this section.
         if {[$macro pass] == 1} {
             # FIRST, validate the id
-            $self CheckSyntax $id
-            $self CheckUniqueness $id
-            $self CheckPrevious $id appendix {preface section appendix}
-            $self CheckLevel $id appendix
+            CheckSyntax $id
+            CheckUniqueness $id
+            CheckPrevious $id appendix {preface section appendix}
+            CheckLevel $id appendix
 
             # NEXT, save the data.
             lappend trans(ids) $id
@@ -541,7 +548,7 @@ snit::type ::quill::quilldoc {
 
         # Pass 2: Produce the section header and anchor
         set title [$macro expandonce $title]
-        return [$self Header $id "$trans(number-$id) $title"]
+        return [Header $id "$trans(number-$id) $title"]
     }
 
     # contents ?depth?
@@ -550,7 +557,7 @@ snit::type ::quill::quilldoc {
     #
     # Formats the table of contents.
 
-    method {macro contents} {{depth 4}} {
+    proc contents {{depth 4}} {
         # Pass 1: do nothing
         if {[$macro pass] == 1} {
             set trans(toc) 1
@@ -601,7 +608,7 @@ snit::type ::quill::quilldoc {
     # but are convenient for matching up the deflist with
     # its /deflist.
 
-    method {macro deflist} {args} {
+    proc deflist {args} {
         return "<dl>\n"
     }
 
@@ -611,7 +618,7 @@ snit::type ::quill::quilldoc {
     #
     # Begins documentation for the definition item.
 
-    method {macro def} {text} {
+    proc def {text} {
         # pass 1: do nothing for now.
         if {[$macro pass] == 1} {
             return
@@ -631,7 +638,7 @@ snit::type ::quill::quilldoc {
     # but are convenient for matching up the deflist with
     # its /deflist, especially when deflists are nested.
 
-    method {macro /deflist} {args} {
+    proc /deflist {args} {
         return "</dl>\n"
     }
 
@@ -665,7 +672,7 @@ snit::type ::quill::quilldoc {
     #                    URL.  The ref may includ an "#anchor".
     #
 
-    method {macro xref} {ref {text ""}} {
+    proc xref {ref {text ""}} {
         # Pass 1: Do nothing
         if {[$macro pass] == 1} {
             return
@@ -728,15 +735,15 @@ snit::type ::quill::quilldoc {
     # Returns the project version number, as given by the -version
     # option.
 
-    method {macro version} {} {
+    proc version {} {
         return $trans(version)
     }
 
-    method {macro listing} {} {
+    proc listing {} {
         $macro cpush listing
     }
 
-    method {macro /listing} {} {
+    proc /listing {} {
         set text [$macro cpop listing]
 
         set lines [list]
@@ -756,7 +763,7 @@ snit::type ::quill::quilldoc {
     #
     # Defines a macro that expands to the same named HTML tag.
 
-    method Identity {tag} {
+    proc Identity {tag} {
         $macro proc $tag {} [format {
             return "<%s>"
         } $tag]
@@ -768,7 +775,7 @@ snit::type ::quill::quilldoc {
     #
     # Defines style tag macros.
 
-    method StyleTag {tag} {
+    proc StyleTag {tag} {
         $macro proc $tag {args} [format {
             if {[llength $args] == 0} {
                 return "<%s>"
@@ -788,7 +795,7 @@ snit::type ::quill::quilldoc {
     #
     # Throws INVALID if a section ID is syntactically incorrect.
 
-    method CheckSyntax {id} {
+    proc CheckSyntax {id} {
         # FIRST, validate the segments
         foreach segment [split $id .] {
             if {![regexp {^[a-z]\w*$} $segment]} {
@@ -801,7 +808,7 @@ snit::type ::quill::quilldoc {
     #
     # Checks whether the ID is already in use.
 
-    method CheckUniqueness {id} {
+    proc CheckUniqueness {id} {
         if {$id in $trans(ids)} {
             throw INVALID "Duplicate section ID: \"$id\""
         }
@@ -816,7 +823,7 @@ snit::type ::quill::quilldoc {
     # Throws INVALID if the previous section type is non-empty and
     # not one of the listed types.
 
-    method CheckPrevious {id stype stypes} {
+    proc CheckPrevious {id stype stypes} {
         # FIRST, any section type can come first.
         if {![got $trans(ids)]} {
             return
@@ -843,7 +850,7 @@ snit::type ::quill::quilldoc {
     # Verifies that this ID doesn't break the logical structure
     # of the document.
 
-    method CheckLevel {id stype} {
+    proc CheckLevel {id stype} {
         # FIRST, analyze the ID
         set segments  [split $id .]
         set level     [IdLevel $id]
@@ -917,7 +924,7 @@ snit::type ::quill::quilldoc {
     #
     # Outputs returns an HTML header appropriate for the section level.
 
-    method Header {id title} {
+    proc Header {id title} {
         set level [IdLevel $id]
 
         if {$trans(toc)} {

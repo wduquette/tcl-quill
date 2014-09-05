@@ -33,29 +33,12 @@ quilldoc(n) defines the following commands:<p>
 
 <deflist commands>
 
-<defitem manpage {manpage <i name>}>
+<defitem reset {quilldoc reset}>
 
-This command creates a new instance of quilldoc(n) called 
-<i name>, returning the fully-qualified name.<p>
+Initializes the module, and creates its internal <xref macro(n)> 
+processor.<p>
 
-</deflist commands>
-
-<section "INSTANCE COMMANDS">
-
-An instance of quilldoc(n) provides the following subcommands:
-
-<deflist instance>
-
-<defitem eval   {<i obj> eval <i args...>}>
-<defitem expand {<i obj> expand <i text>}>
-<defitem lb     {<i obj> lb}>
-<defitem rb     {<i obj> rb}>
-
-These commands are all delegated to the object's internal instance of
-<xref macro(n)>.  <xref #eval> and <xref #expand> are primarily useful
-for debugging.<p>
-
-<defitem format {<i obj> format <i infile> ?<i options>?}>
+<defitem format {quilldoc format <i infile> ?<i options>?}>
 
 Formats the given <i infile>, producing (by default) a matching
 ".html" file in the same directory.<p>
@@ -83,12 +66,22 @@ output file.  Defaults to ".".<p>
 
 </deflist options>
 
+<defitem eval   {quilldoc eval <i args...>}>
+<defitem expand {quilldoc expand <i text>}>
+<defitem lb     {quilldoc lb}>
+<defitem rb     {quilldoc rb}>
 
-</deflist instance>
+These commands are all delegated to the object's internal instance of
+<xref macro(n)>.  <xref #eval> and <xref #expand> are primarily useful
+for debugging.  Be sure to call <xref #reset> prior to any of these
+commands.<p>
+
+
+</deflist commands>
 
 <section MACROS>
 
-The macros used to write man pages are defined in the
+The macros used to write Quill documents are defined in the
 <xref quilldoc(5)> man page.<p>
 
 </deflist macros>
