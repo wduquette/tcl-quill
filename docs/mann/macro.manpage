@@ -26,7 +26,7 @@ macro(n) defines the following commands:<p>
 
 <deflist commands>
 
-<defitem macro {macro <i name> ?<i option value...>?}>
+<defitem macro2 {macro <i name> ?<i option value...>?}>
 
 This command creates a new instance of macro(n) called 
 <i name>, returning the fully-qualified name.  The following
@@ -95,7 +95,7 @@ These commands are all delegated to the object's internal instance of
 <xref #smartalias> are especially useful for defining macros.
 See the <xref smartinterp(n)> man page for details.<p>
 
-<defitem expand {<i obj> expand <i text>}>
+<defitem expand2 {<i obj> expand <i text>}>
 
 Performs a two-pass expansion of the <i text>, and returns the 
 result.<p>
@@ -123,7 +123,7 @@ arguments.  This command should be used for that purpose.<p>
 Registers a <xref macroset(i)> command or command prefix with the object.
 The macro set's macros will be defined automatically on <xref #reset>.<p>
 
-<defitem pass {<i obj> pass}>
+<defitem pass2 {<i obj> pass}>
 
 During macro expansion, returns the current pass number, 1 or 2.<p>
 
@@ -140,7 +140,7 @@ macro(n) defines the following macros by default:<p>
 
 <deflist macros>
 
-<defitem do {do <i script>}>
+<defitem do {<tag do "<i script>">}>
 
 Evaluates the script in the context of the macro expansion interpreter,
 and returns nothing.  Text to be expanded can define its own macros
@@ -154,13 +154,24 @@ using this mechanism:<p>
 ...
 </pre>
 
-<def {expand <i text>}>
+<defitem expand {<tag expand "<i text>">}>
 
 Expands <i text> and returns the result.  This is useful for 
 macros that take a body of text: they can expand macros recursively.<p>
 
-<defitem template {template <i args...>}>
-<defitem tsubst {tsubst <i args...>}>
+<defitem macro {<tag macro "<i subcommand> ?<i args...>?">}>
+
+This "macro" gives access to the macro processor itself, and allows 
+macros defined as procs within the instance's interpreter to access
+commands like <xref #cpush> and <xref #cpop>.<p>
+
+<defitem pass {<tag pass>}>
+
+Returns the pass number, 1 or 2.  Clients often use pass 1 to scan the
+input, building indices, and then do the formatting proper in pass 2.<p>
+
+<defitem template {<tag template "<i args...>">}>
+<defitem tsubst {<tag tsubst "<i args...>">}>
 
 Template support; see <xref template(n)> for details.<p>
 
