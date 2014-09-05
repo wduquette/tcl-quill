@@ -61,12 +61,6 @@ snit::type ::quill::quilldoc {
             background-color: #DEDC87;
         }
 
-        div.marker {
-            border: 1px solid black;
-            background-color: cyan;
-            border-radius: 5px;
-            width: auto;
-        }
 
         /* Use for indenting */
         .indent0 { 
@@ -110,27 +104,29 @@ snit::type ::quill::quilldoc {
             left: 2.5in
         }
 
-        div.marker {
-            position: absolute;
-            border: 1px solid black;
-            background-color: red;
+        div.mark {
             font-family: Verdana;
+            font-size: 75%;
+            border: 1px solid black;
+            background-color: black;
+            color: white;
             border-radius: 5px;
-            display: inline;
             padding-left: 2px;
             padding-right: 2px;
+            display: inline;
         }
 
-        div.markerref {
-            border: 1px solid black;
-            background-color: red;
+        div.bigmark {
             font-family: Verdana;
+            font-size: 100%;
+            border: 1px solid black;
+            background-color: black;
+            color: white;
             border-radius: 5px;
-            display: inline;
             padding-left: 2px;
             padding-right: 2px;
+            display: inline;
         }
-
     }
 
 
@@ -390,8 +386,12 @@ snit::type ::quill::quilldoc {
             [mymethod macro /listing]
 
 
-        $macro proc marker {symbol} {
-            return "<div class=\"marker\">$symbol</div>"
+        $macro proc mark {symbol} {
+            return "<div class=\"mark\">$symbol</div>"
+        }
+
+        $macro proc bigmark {symbol} {
+            return "<div class=\"bigmark\">$symbol</div>"
         }
     }
 
@@ -743,7 +743,7 @@ snit::type ::quill::quilldoc {
         set i 0
         foreach line [split [string trim $text] \n] {
             lappend lines \
-                [format "<span=\"prelabel\">%04d</span> %s" [incr i] $line] 
+                [format "<span class=\"prelabel\">%04d</span> %s" [incr i] $line] 
         }
 
         return "<pre>\n[join $lines \n]\n</pre>\n"

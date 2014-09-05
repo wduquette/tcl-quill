@@ -121,17 +121,17 @@ Quill:<p>
 #-------------------------------------------------------------------------
 # Load the tcltest package
 
-if {[lsearch [namespace children] ::tcltest] == -1} { <marker A>
+if {[lsearch [namespace children] ::tcltest] == -1} { <mark A>
     package require tcltest 2.3
     eval ::tcltest::configure $argv
 }
 
-namespace import ::tcltest::test <marker B>
+namespace import ::tcltest::test <mark B>
 
 #-------------------------------------------------------------------------
 # Load the package to be tested
 
-source ../../lib/mymodule/pkgModules.tcl <marker C>
+source ../../lib/mymodule/pkgModules.tcl <mark C>
 namespace import ::mymodule::*
 
 #-------------------------------------------------------------------------
