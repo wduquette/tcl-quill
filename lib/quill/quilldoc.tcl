@@ -53,13 +53,6 @@ snit::type ::quill::quilldoc {
             color: black;
         }
 
-        /* Preformatted text has a special background */
-        pre {
-            border: 1px solid blue;
-            background-color: #FAF1AA;
-            padding: 2px;
-        }
-
         /* Use for indenting */
         .indent0 { 
             position: relative;

@@ -2,10 +2,10 @@
 
 <section SYNOPSIS>
 
-<pre>
+<example>
 package require quill <version>
 namespace import ::quill::*
-</pre>
+</example>
 
 <itemlist>
 

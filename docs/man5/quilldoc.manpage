@@ -38,10 +38,10 @@ go at the beginning of the document.<p>
 Preface sections are begun with a <xtag preface> tag which states the
 section's ID and title:<p>
 
-<pre>
+<example>
 <tag preface {intro "Introduction"}>
 ...
-</pre><p>
+</example><p>
 
 The ID is used in cross-references to the preface.<p>
 
@@ -55,14 +55,14 @@ separated by periods; these indicate the relation of the sections.<p>
 
 For example, these sections might be numbered "1.", "1.1", and "1.1.1":<p>
 
-<pre>
+<example>
 <tag section {overview "Overview"}>
 ...
 <tag section {overview.part "Overview of Some Part"}>
 ...
 <tag section {overview.part.detail "Detail of Some Part"}>
 ...
-</pre><p>
+</example><p>
 
 <def "Appendix Sections">
 Appendix sections have titles and automatically generated section numbers,
@@ -74,20 +74,20 @@ ID and title.  IDs are defined as for numbered sections; for example,
 these appendices might be numbered "Appendix A", "Appendix A.1", and
 "Appendix A.1.1":<p>
 
-<pre>
+<example>
 <tag appendix {background "Background"}>
 ...
 <tag appendix {background.part "Background of Some Part"}>
 ...
 <tag appendix {background.part.detail "Detail of Som Part"}>
 ...
-</pre><p>
+</example><p>
 
 </deflist>
 
 A complete document skeleton might look like this:<p>
 
-<pre>
+<example>
 <tag document {"My Document Title"}>
 
 <tag contents>
@@ -101,7 +101,7 @@ A complete document skeleton might look like this:<p>
 <tag appendix {options "Standard Options"}>
 
 <tag /document>
-</pre> 
+</example> 
 
 <subsection "Prose Formatting">
 
@@ -109,9 +109,9 @@ Prose is styled and formatted using the macros in the
 <xref macroset_html(n)> macro set. For example, to <b boldface> text
 use the <tag b> tag:<p>
 
-<pre>
+<example>
 <tag b><i text><tag /b> or <tag b {<i text>}>
-</pre> 
+</example> 
 
 In addition, the HTML macro set includes macros for more complex 
 structures.<p>
@@ -169,11 +169,11 @@ These tags should be the first and last to appear in every document file.
 The tag <tag document> tag begins the document, and provides all of the HTML header boilerplate.  Similarly, the <tag /document> tag provides the 
 HTML footer and boilerplate.<p>
 
-<pre>
+<example>
 <tag document {"Quill User's Guide"}>
 ...
 <tag /document>
-</pre>
+</example>
 
 <defitem contents {<tag contents>}>
 
@@ -187,10 +187,10 @@ at the beginning of the document  The <i id> must be a valid identifier
 containing no period characters; it used to refer to the section in
 cross-references.<p>
 
-<pre>
+<example>
 <tag preface {intro "Introduction"}>
 ...
-</pre><p>
+</example><p>
 
 <defitem section {<tag section "<i id title>">}>
 
@@ -207,14 +207,14 @@ The IDs are generally intended to be mnemonic.<p>
 <xref quilldoc(n)> requires that the sections be presented in the 
 correct reading order.<p>
 
-<pre>
+<example>
 <tag section {aaa "Top Level Section"}>
 <tag section {aaa.aaa "First Subsection"}>
 <tag section {aaa.aaa.aaa "First Subsubsection"}>
 <tag section {aaa.bbb "Second Subsection"}>
 <tag section {aaa.ccc "Third Subsection"}>
 <tag section {bbb "Another Top Level Section"}>
-</pre><p>
+</example><p>
 
 <defitem appendix {<tag appendix "<i id title>">}>
 

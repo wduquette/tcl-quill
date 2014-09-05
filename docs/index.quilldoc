@@ -14,9 +14,9 @@ Tcl projects.<p>
 <def {Quill Help}>
 For help with a particular Quill subcommand, enter
 
-<pre>
+<example>
 $ quill help <i command>
-</pre>
+</example>
 
 at the command line.<p>
 

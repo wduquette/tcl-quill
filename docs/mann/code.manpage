@@ -2,10 +2,10 @@
 
 <section SYNOPSIS>
 
-<pre>
+<example>
 package require quill <version>
 namespace import ::quill::*
-</pre>
+</example>
 
 <itemlist>
 
@@ -35,15 +35,15 @@ contains any namespaces, they are stripped; thus, any proc can be
 redefined in any namespace or interpreter by writing code 
 like this:<p>
 
-<pre>
+<example>
 namespace eval ::mynamespace:: [getproc ::other::myproc]
-</pre>
+</example>
 
 or<p>
 
-<pre>
+<example>
 $interp eval [getproc ::other::myproc]
-</pre>
+</example>
 
 </deflist subcommands>
 

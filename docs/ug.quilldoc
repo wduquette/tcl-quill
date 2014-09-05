@@ -59,18 +59,18 @@ TBD: Discuss pkgIndex.tcl, pkgModules.tcl.
 Quill provides easy management of your project test suite using the 
 <tclref tcltest> test harness.  To execute all project tests,<p>
 
-<pre>
+<example>
 $ quill test
 ...
-</pre>
+</example>
 
 Quill will run all test targets, and output the results. Alternatively,
 Quill will run a single test target given its name:<p>
 
-<pre>
+<example>
 $ quill test mylib
 ...
-</pre>
+</example>
 
 Test targets are defined by adding subdirectories to <root test/>; 
 the name of the subdirectory is the name of the target.<p>
@@ -79,15 +79,15 @@ Each test directory contains an <tt all_tests.test> file, and one or
 more normal <tclref tcltest> files, e.g., <tt mymodule.test>.  To run
 a specific test file, add its name to the command line:<p>
 
-<pre>
+<example>
 $quill test mylib mymodule
-</pre>
+</example>
 
 Finally, any options are passed along to <tt tcltest>:<p>
 
-<pre>
+<example>
 $quill test mylib mymodule -match "mytest-1.*"
-</pre>
+</example>
 
 
 <section testing.stdfiles "Standard Test Files">

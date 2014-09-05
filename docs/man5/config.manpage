@@ -22,9 +22,9 @@ It is possible to edit the Quill configuration file by hand, in a text
 file; see <xref "#Syntax">, below.  It is more typical to use 
 the <tt quill config> tool; see<p>
 
-<pre>
+<example>
 $ quill help config
-</pre>
+</example>
 
 for details.<p>
 
@@ -33,9 +33,9 @@ for details.<p>
 The configuration file is a <xref parmset(n)> file, and so its syntax is
 very simple.  It consists of a sequence of zero or more <b parm> commands:
 
-<pre>
+<example>
 parm <i name> <i value>
-</pre>
+</example>
 
 where <i name> is the name of a configuration parameter, and <i value>
 is the value.<p>

@@ -2,10 +2,10 @@
 
 <section SYNOPSIS>
 
-<pre>
+<example>
 package require quill <version>
 namespace import ::quill::*
-</pre>
+</example>
 
 <itemlist>
 
@@ -28,9 +28,9 @@ The <i>expression</i> is evaluated in the caller's context.  If true,
 <xref #assert> does nothing.  If false, <xref #assert> throws an
 error with error code <b>ASSERT</b> and the error message:<p>
 
-<pre>
+<example>
 Assertion failed: <i>expression</i>
-</pre>
+</example>
 
 An assertion is a statement that verifies an
 invariant within a module of code.  An invariant is a condition
@@ -38,10 +38,10 @@ that must always be true within the module.  Invariants should be
 checked in complex, state-ful code to make explicit the author's
 assumptions about what should be true at each point in time:<p>
 
-<pre>
+<example>
 # At this point we should have at least one page.
 assert {$pageCount &gt; 0}
-</pre><p>
+</example><p>
 
 An assertion failure always means that the implementor of the module made
 a programming error.  Thus, assertions should not be used to check
@@ -85,7 +85,7 @@ The command throws <b INVALID> when it finds an unknown option.<p>
 
 For example,
 
-<pre>
+<example>
 array set opts {
     -flag 0
     -num  0
@@ -95,7 +95,7 @@ foroption opt argv -all {
     -flag { set opts($opt) 1             }
     -num  { set opts($opt) [lshift argv] }
 }
-</pre>
+</example>
 
 <defitem precond {precond <i>expression message</i>}>
 
@@ -119,9 +119,9 @@ As an example of a useful precondition, consider a database object
 that can only be queried if it has created or opened a data file.  The
 object's <b>get</b> method might use a precondition like this:
 
-<pre>
+<example>
 precond {$self isopen} "No database file is open."
-</pre>
+</example>
 
 
 <defitem require {require <i>expression message</i> ?<i>errorCode</i>?}>

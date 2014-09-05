@@ -205,16 +205,16 @@ The <i>name</i> is the man page's name, e.g., "listutils(n)".
 The <i>title</i> is a short description of the documented module.
 For example,<p>
 
-<pre>
+<example>
 <tag manpage {quilldoc(5) "Quill Document Syntax"}>
-</pre><p>
+</example><p>
 
 If the documented module is part of a larger package, then
 <i parent> should be the name of that package's overall man page.<p>
 
-<pre>
+<example>
 <tag manpage {listutils(n) "List Manipulation Commands" quill(n)}>
-</pre><p>
+</example><p>
 
 <defitem section {<tag section "<i title>">}>
 
@@ -223,12 +223,12 @@ added to the table of contents, and can be used as an
 <xtag xref> reference.  By convention, section titles are in
 ALL CAPS.  For example,<p>
 
-<pre>
+<example>
 <tag section DESCRIPTION>
     ...
 <tag section {"SEE ALSO"}>
     ...
-</pre><p>
+</example><p>
 
 <defitem subsection {<tag subsection "<i title>">}>
 
@@ -237,12 +237,12 @@ added to the table of contents, and can be used as an
 <xtag xref> reference.  By convention, subsection titles are in
 Mixed Case.  For example,<p>
 
-<pre>
+<example>
 <tag section DESCRIPTION>
     ...
 <tag subsection {"The Specifics"}>
     ...
-</pre>
+</example>
 
 </deflist structural>
 
@@ -270,13 +270,13 @@ of commands, for example, <i>name</i> is the command name.  The
 <i>text</i> is the complete representation of the item.  For a
 command, <i>text</i> would be the signature of the command.  For example,<p>
 
-<pre>
+<example>
 <tag deflist>
 ...
 <tag defitem "mycommand {mycommand <tag i arg1>}">
 ...
 <tag /deflist>
-</pre>
+</example>
 
 Tcl conventions are followed for command signatures.  Literal text is
 in normal type, dummy arguments are in <i>italics</i>, optional
@@ -288,14 +288,14 @@ repeated include "...".<p>
 Begins the documentation of an option in a definition list of options.
 For example,<p>
 
-<pre>
+<example>
 <tag deflist>
 ...
 
 <lb>defopt -myoption {-myoption <tag i value>}<rb>
 ...
 <tag /deflist>
-</pre>
+</example>
 
 At present options are not listed in the <xtag itemlist>, but that may
 change in the future.<p>
@@ -324,30 +324,30 @@ item name, the anchor is used; otherwise, the page name is used.<p>
 This reference links to the named man page, and uses the man page name
 as the link text:<p>
 
-<pre>
+<example>
 <tag xref manpage(1)>
-</pre>
+</example>
 
 This reference links to the "COMMANDS" section and uses the section
 title as the link text:<p>
 
-<pre>
+<example>
 <tag xref #COMMANDS>
-</pre>
+</example>
 
 This reference links to the "xref" item in "manpage(5)", and uses the
 item name as the link text:<p>
 
-<pre>
+<example>
 <tag xref manpage(5)#xref>
-</pre>
+</example>
 
 This reference links to the "xref" item, but uses "cross-reference"
 as the link text:<p>
 
-<pre>
+<example>
 <tag xtag {xref "cross-reference"}>
-</pre><p>
+</example><p>
 
 <defitem xtag {<tag xtag "<i name>">}>
 

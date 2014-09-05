@@ -245,11 +245,9 @@ snit::type ::quillapp::docstool {
     # Formats all man pages in the directories.
 
     proc FormatManDirs {dirlist} {
-        set mp [manpage %AUTO%]
-
         foreach dir $dirlist {
             try {
-                $mp format $dir \
+                manpage format $dir \
                     -header  [project header]  \
                     -version [project version]
             } trap SYNTAX {result} {
@@ -259,50 +257,6 @@ snit::type ::quillapp::docstool {
                 return {*}$eopts $result
             }
         }
-    }
-
-    proc dummy {} {
-
-        # FIRST, get the directories to process.
-        if {[llength $argv] > 0} {
-            set mandir [lindex $argv 0]
-
-            set fulldir [project root docs $mandir]
-            if {![file isdirectory $fulldir]} {
-
-                throw FATAL [outdent "
-                    There is no manpage directory called \"$fulldir\".
-                "]
-            }
-
-            set dirnames [list $fulldir]
-        } else {
-            set dirnames [project globdirs docs man*]
-        }
-
-        if {[llength $dirnames] == 0} {
-            throw FATAL [outdent {
-                There are no manpage directories to process.  See
-                "quill help docs" for information.
-            }]
-        }
-
-        # NEXT, set up the manpage processor
-        set mp [manpage %AUTO%]
-
-        foreach dir $dirnames {
-            try {
-                $mp format $dir \
-                    -header  [project header]  \
-                    -version [project version]
-            } trap SYNTAX {result} {
-                throw FATAL $result
-            } on error {result eopts} {
-                # Rethrow other errors
-                return {*}$eopts $result
-            }
-        }
-
     }
 }
 

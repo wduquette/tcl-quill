@@ -2,10 +2,10 @@
 
 <section SYNOPSIS>
 
-<pre>
+<example>
 package require quill 1.0
 namespace import ::quill::*
-</pre>
+</example>
 
 <itemlist>
 
@@ -25,21 +25,21 @@ values can be substituted.  Replacement arguments are specified
 by the arguments to the template, and are placed in the body string
 with a "%" prefix.  For example<p>
 
-<pre>
+<example>
 % maptemplate greeting {name} {Hello, %name!}
 ::greeting
 % greeting World
 Hello, World!
 %
-</pre>
+</example>
 
 The template shown is equivalent to this Tcl proc:<p>
 
-<pre>
+<example>
 proc greeting {name} {
     return [mapsubst {Hello, %name}]
 }
-</pre>
+</example>
 
 <subsection "Initialization Bodies">
 
@@ -54,17 +54,17 @@ substituted into the template.<p>
 Suppose, for example, a template argument should be converted to 
 upper case.  Compare<p>
 
-<pre>
+<example>
 maptemplate greeting {name} {Hello, [string toupper %name]}
-</pre>
+</example>
 
 with<p>
 
-<pre>
+<example>
 maptemplate greeting {name} {
   set name [string toupper $name]
 } {Hello, %name!}
-</pre>
+</example>
 
 The second separates the data processing from the template string, and so
 is clearer.<p>
@@ -77,25 +77,25 @@ processing when the template is defined, meaning that the continued
 lines will appear in the output all on one single line.  For example,
 the template string<p>
 
-<pre>
+<example>
 list \
    one \
    two \
    thre
-</pre>
+</example>
 
 will product the output
 
-<pre>list     one    two    three</pre>
+<example>list     one    two    three</example>
 
 This can be avoided by doubling the backslashes in the input:<p>
 
-<pre>
+<example>
 list \\
     one \\
     two \\
     three
-</pre>
+</example>
 
 <subsection "Two Caveats">
 

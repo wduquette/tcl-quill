@@ -146,13 +146,13 @@ list of glob-patterns relative to the project's root directory.  For
 example, the following distribution includes the application, the 
 README file, and the .html files in the <tt docs/> folder:<p>
 
-<pre>
+<example>
 dist install {
     bin/myapp.kit
     README.md
     docs/*.html
 }
-</pre>
+</example>
 
 The list of patterns can also include the special pattern
 <b %libs>, which adds in the teapot .zip files for each of the library

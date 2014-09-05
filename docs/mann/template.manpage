@@ -2,10 +2,10 @@
 
 <section SYNOPSIS>
 
-<pre>
+<example>
 package require quill 1.0
 namespace import ::quill::*
-</pre>
+</example>
 
 <itemlist>
 
@@ -18,30 +18,30 @@ variables and commands are substituted, instead of one or more Tcl
 commands to execute.  For example, the following template returns a
 familiar greeting.<p>
 
-<pre>
+<example>
 % template greeting {name} {Hello, $name!}
 ::greeting
 % greeting World
 Hello, World!
 %
-</pre>
+</example>
 
 The template shown is equivalent to this Tcl proc:<p>
 
-<pre>
+<example>
 proc greeting {name} {
     return [tsubst {Hello, $name}]
 }
-</pre>
+</example>
 
 Or, since a proc automatically returns the value of the last command
 executed in its body, we could simplify it as so:<p>
 
-<pre>
+<example>
 proc greeting {name} {
     tsubst {Hello, $name}
 }
-</pre>
+</example>
 
 Either way, the <xref #template> version is simpler and more
 expressive, especially as the template string gets larger.<p>
@@ -57,17 +57,17 @@ substituted into the template.<p>
 Suppose, for example, a template argument should be converted to 
 upper case.  Compare<p>
 
-<pre>
+<example>
 template greeting {name} {Hello, [string toupper $name]}
-</pre>
+</example>
 
 with<p>
 
-<pre>
+<example>
 template greeting {name} {
   set name [string toupper $name]
 } {Hello, $name!}
-</pre>
+</example>
 
 The second separates the data processing from the template string, and so
 is clearer.<p>
@@ -78,7 +78,7 @@ whitespace at the beginning of each line.  If this is troublesome, the
 the whitespace can be removed by the caller, or the 
 <b>|<lb>--</b> marker can be used to mark the left margin:
 
-<pre>
+<example>
 % template greeting {name} {
     |<lb>--
     Hello, $name!
@@ -89,7 +89,7 @@ the whitespace can be removed by the caller, or the
 Hello, World!
 How are you?
 %
-</pre>
+</example>
     
 The <b>|<lb>--</b> must be the first token in the template string; the
 vertical bar indicates the left margin of the template.  All

@@ -2,10 +2,10 @@
 
 <section SYNOPSIS>
 
-<pre>
+<example>
 package require quill <version>
 namespace import ::quill::*
-</pre>
+</example>
 
 <itemlist>
 
@@ -25,19 +25,19 @@ listutils(n) defines the following commands:<p>
 Returns 1 if the list contains any elements, and 0 if the list is empty.
 This allows the programmer to write
 
-<pre>
+<example>
 if {[got $someListThatMightBeEmpty]} {
 	...
 }
-</pre>
+</example>
 
 instead of<p>
 
-<pre>
+<example>
 if {[llength $someListThatMightBeEmpty] > 0} {
 	...
 }
-</pre>
+</example>
 
 Which seems somewhat trivial, but it reads better, and I'm less likely
 to mistype it than the "llength" version, which I seem to mistype about

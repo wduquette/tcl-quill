@@ -5,9 +5,8 @@ This is the official list of work to be done.
 # For Quill 0.2.x
 
 * quilldoc(5) Changes:
-  * Make manpage(n) a singleton, like quilldoc(n).
-  * Should manpage(5) be quillman(5)?  Probably.
   * Put blocks in that show what the examples look like.
+  * Should manpage(5) be quillman(5)?  Probably.
 
 * Fix bugs as found and reported.
 * docstool's clean feature needs to clean up all *.html

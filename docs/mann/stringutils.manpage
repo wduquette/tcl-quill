@@ -2,10 +2,10 @@
 
 <section SYNOPSIS>
 
-<pre>
+<example>
 package require quill <version>
 namespace import ::quill::*
-</pre>
+</example>
 
 <itemlist>
 
@@ -28,7 +28,7 @@ indented inline with a Tcl routine.  The amount of indent to be
 removed is based on the first non-blank line.  Leading and trailing
 blank lines are deleted.  For example,<p>
 
-<pre>
+<example>
 % outdent {
     An Indented Block
       of text that needs
@@ -38,7 +38,7 @@ An Indented Block
   of text that needs
 To be Outdented.
 %
-</pre><p>
+</example><p>
 
 
 <defitem "tighten" {tighten <i>text</i>}>
