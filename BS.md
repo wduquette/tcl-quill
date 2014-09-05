@@ -4,18 +4,28 @@ Nothing in this file should be presumed to be reflective of anything
 in the project.  Everything in this file is either incomplete, obsolete, 
 or wrong.
 
-## Q: How to make the macro(n) instance available to macro sets?
+## Q: How to compare two paths when one might be a symlink.
 
-* Obvious solution:
-  * The macro set is an instance of a type, and saves the macro set as
-    a component or instance variable.
-    * I don't want to do that, since I like macro sets being types.
-  * Make the currently active instance available to clients of ::macro.
-    * Ewww.  And what if there are several?  Wouldn't normally happen
-      that multiple would be executing at the same time.
-  * Make the current active instance available within the macro interpreter.
-    * That's fine for macros defined as procs within the interpreter, but
-      doesn't work for other things.
+Follow the symlinks.  If two paths are identical, they are identical.  
+Otherwise, follow the symlinks.
+
+* Is a path a symlink?  `[file type] eq "link"`.
+* To convert a symlink to the full path it points to:
+
+```
+set dir [file dirname $link]
+set rel [file link $link]
+set path [file normalize [file join $dir $rel]]
+```
+
+It might be necessary to repeat this; and of course there are pathological
+cases: 
+
+* There's nothing at the link.
+* There are links pointing in a circle.
+
+Taking links to links as unusual, just lookup each path at most once, and
+compare.
 
 ## Q: How to pull basekits from teapot?
 
