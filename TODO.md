@@ -5,9 +5,6 @@ This is the official list of work to be done.
 # For Quill 0.2.x
 
 * quilldoc(5) Changes:
-  * Document pass and macro macros in macro(n).
-  * Add <example>...</example> macros, and use them instead of <pre>
-    to manpage(5) and quilldoc(5).
   * Make manpage(n) a singleton, like quilldoc(n).
   * Should manpage(5) be quillman(5)?  Probably.
   * Put blocks in that show what the examples look like.

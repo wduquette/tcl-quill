@@ -107,9 +107,15 @@ snit::type ::quill::quilldoc {
         tr.topicrow  { vertical-align: baseline; }
         td.topicname { font-weight: bold;        }
 
+        pre.example {
+            border: 1px solid blue;
+            background-color: #FAF5D2;
+            padding: 2px;
+        }
+
         pre.listing {
             border: 1px solid blue;
-            background-color: #FAF1AA;
+            background-color: #FAF5D2;
             padding: 2px;
         }
 

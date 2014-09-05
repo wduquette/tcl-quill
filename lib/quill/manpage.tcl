@@ -98,13 +98,6 @@ snit::type ::quill::manpage {
             left: -0.2in;
         }
 
-        /* Preformatted text has a special background */
-        pre {
-            border: 1px solid blue;
-            background-color: #FFFF66;
-            padding: 2px;
-        }
-
         /* Use for indenting */
         .indent0 { }
         .indent1 {
@@ -155,9 +148,15 @@ snit::type ::quill::manpage {
         tr.topicrow  { vertical-align: baseline; }
         td.topicname { font-weight: bold;        }
 
+        pre.example {
+            border: 1px solid blue;
+            background-color: #FAF5D2;
+            padding: 2px;
+        }
+
         pre.listing {
             border: 1px solid blue;
-            background-color: #FAF1AA;
+            background-color: #FAF5D2;
             padding: 2px;
         }
 

@@ -101,6 +101,14 @@ snit::type ::quill::macroset_html {
         }
 
         # NEXT, examples and listings.
+        $macro proc example {} {
+            return "<pre class=\"example\">"
+        }
+
+        $macro proc /example {} {
+            return "</pre>"
+        }
+
         $macro proc listing {} {
             macro cpush listing
         }

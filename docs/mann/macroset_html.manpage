@@ -2,10 +2,10 @@
 
 <section SYNOPSIS>
 
-<pre>
+<example>
 package require quill <version>
 <i macro> macroset ::quill::macroset_html
-</pre>
+</example>
 
 <itemlist>
 
@@ -43,16 +43,16 @@ These macros map directly to their HTML namesakes.<p>
 These style tags have two forms, an HTML-like form and a convenience
 form.  For example,<p>
 
-<pre><lb>i this is italics<rb></pre>
+<example><lb>i this is italics<rb></example>
 
 is identical to<p>
 
-<pre><lb>i<rb>this is italics<lb>/i<rb></pre>
+<example><lb>i<rb>this is italics<lb>/i<rb></example>
 
 Note that when convenience form is used, the <i text...> may not contain nested macros.  For example, the following will not yield bold italic
 text:<p>
 
-<pre><lb>b "<lb>i this is not bold italics<rb>"<rb></pre>
+<example><lb>b "<lb>i this is not bold italics<rb>"<rb></example>
 
 </deflist html>
 
@@ -75,13 +75,13 @@ indicate the kind of thing being listed; the <tag /deflist> tag
 echoes them.  This avoids confusion when definition lists are nested.
 For example,<p>
 
-<pre>
+<example>
 This application has the following features:<lb>p<rb>
 
 <tag deflist features>
 ...
 <tag /deflist features>
-</pre><p>
+</example><p>
 
 Items are defined within a definition list using <xtag def>.<p>
 
@@ -91,7 +91,7 @@ Begins the documentation of an item in a definition list.  The
 <i text> may contain macros for expansion.<p>
 
 
-<pre>
+<example>
 The following features are of interest:<lb>p<rb>
 
 <tag deflist features>
@@ -99,7 +99,7 @@ The following features are of interest:<lb>p<rb>
 <tag def "{This feature contains <tag i italics>.}">
 ...
 <tag /deflist features>
-</pre><p>
+</example><p>
 
 
 </deflist definition lists>
@@ -133,7 +133,7 @@ macros to be expanded.<p>
 
 For example, here's a topic list with text topics:<p>
 
-<pre>
+<example>
 <tag topiclist>
 <tag topic {"Topic 1:"}>
 ...Text elaborating on the topic...
@@ -143,12 +143,12 @@ For example, here's a topic list with text topics:<p>
 ...Text elaborating on the topic...
 <tag /topic>
 <tag /topiclist>
-</pre>
+</example>
 
 And here's a topic list using <xtag bigmark>'s, presumably annotating
 a <xtag listing>:<p>
 
-<pre>
+<example>
 <tag topiclist>
 <tag topic {"<tag bigmark A>"}>
 ...Text annotating mark A...
@@ -158,7 +158,7 @@ a <xtag listing>:<p>
 ...Text annotating mark B...
 <tag /topic>
 <tag /topiclist>
-</pre>
+</example>
 
 The topic list macros make use of the following CSS classes:<p>
 
@@ -172,25 +172,41 @@ The topic list macros make use of the following CSS classes:<p>
 It is up to the client to define appropriate CSS settings; these make
 reasonable defaults:<p>
 
-<pre>
+<example>
 /* Topic List Styles */
 tr.topicrow  { vertical-align: baseline; }
 td.topicname { font-weight:    bold;     }
-</pre>
+</example>
 
-<subsection "Annotated Code Listings">
+<subsection "Annotated Listings and Examples">
 
-The following macros create annotated source code listings.
-Include the listing between <xtag listing> and <tag /listing>, and use
-<xtag mark> to add annotation marks.  Follow the listing by a 
-<xtag topiclist> with matching <xtag bigmark>'s as the topic names.<p>
+The following macros create annotated examples and source code listings.<p>
+
+An example is a set of preformatted text, contained within 
+<xtag example> and <tag /example> macros, to be displayed in a box with
+a distinctive background.<p>
+
+A source code listing is similar in appearance to an example, but adds 
+line numbers on the left margin.  It is contained within <xtag listing> 
+and <tag /listing> macros.<p>
+
+Authors can add annotation marks to either kind of listing using
+<xtag mark>.  The annotations are typically documented by following the 
+listing by a <xtag topiclist> with matching <xtag bigmark>'s as the 
+topic names.<p>
 
 <deflist listings>
+
+<defitem example {<tag example>...<tag /example>}>
+
+Put preformatted text data between the 
+tags.  It will displayed in a box with a distinctive background.  Insert 
+<xtag mark> annotation markers as desired to denote points of interest.<p>
 
 <defitem listing {<tag listing>...<tag /listing>}>
 
 Put preformatted source code (or other text data) between the 
-tags.  It will displayed in a box, with line numbers.  Insert 
+tags.  It will displayed as an example, but with line numbers.  Insert 
 <xtag mark> annotation markers as desired to denote points of interest.<p>
 
 <defitem mark {<tag mark "<i symbol>">}>
@@ -210,7 +226,7 @@ Adds a big annotation mark.  <tag bigmark>'s look just like normal
 
 For example, a listing with marks might look like this:<p>
 
-<pre>
+<example>
 <tag listing>
 proc ::quill::ladd {listvar args} { <tag mark A>
     upvar 1 $listvar theList <tag mark B>
@@ -224,17 +240,46 @@ proc ::quill::ladd {listvar args} { <tag mark A>
     return $theList
 }
 <tag /listing>
-</pre>
+</example>
 
 These macros depend on the following CSS classes:<p>
+
+<topiclist>
+<topic pre.example>
+Defines the border and background for 
+<xtag example>.
+</topic>
+
+<topic pre.listing>
+Defines the border and background for <xtag listing>.
+</topic>
+
+<topic pre.linenum>
+Defines the background for line numbers in a <xtag listing>.
+</topic>
+
+<topic div.mark>
+Defines the appearance of a <xtag mark>.
+</topic>
+
+<topic div.bigmark>
+Defines the appearance of a <xtag bigmark>.
+</topic>
+</topiclist><p>
 
 It is up to the client to define reasonable CSS settings; these are
 reasonable defaults:<p>
 
-<pre>
+<example>
+pre.example {
+    border: 1px solid blue;
+    background-color: #FAF5D2;
+    padding: 2px;
+}
+
 pre.listing {
     border: 1px solid blue;
-    background-color: #FAF1AA;
+    background-color: #FAF5D2;
     padding: 2px;
 }
 
@@ -265,7 +310,7 @@ div.bigmark {
     padding-right: 2px;
     display: inline;
 }
-</pre>
+</example>
 </p>
 
 
