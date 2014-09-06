@@ -31,8 +31,9 @@ TODO: Why Quill came to be written.
 Many thanks to the following people who have helped with Quill development:<p>
 
 <ul>
-<li> Stephan Effelsberg
-<li> Andreas Kupries
+<li> Ted Brunzie, for help with virtual machines
+<li> Stephan Effelsberg, for Windows testing and diagnosis
+<li> Andreas Kupries, for teapot troubleshooting
 </ul>
 
 <section over "Quill Overview">

@@ -5,13 +5,10 @@ This is the official list of work to be done.
 # For Quill 0.2.x
 
 * quilldoc(5) Changes:
-  * Put blocks in that show what the examples look like.
   * Should manpage(5) be quillman(5)?  Probably.
-
 * Fix bugs as found and reported.
-* docstool's clean feature needs to clean up all *.html
-* 'quill docs' individual file feature should be relative to <root>
-* Move more quilldoc(5)/manpage(5) formatting into CSS.
+* 'quill docs' individual file feature should be relative to working
+  directory.
 * Improved output using table(n)
   * quill info, quill env
 * Quill user's guide
@@ -21,17 +18,22 @@ This is the official list of work to be done.
   * Requires quilldoc(n) package.
 * quillapp(n) doesn't really need a namespace.
   * Make it go away
-* Idea: macro sets
-  * To be installed in macro(n).
-  * Macro set plugins.
 * How does Quill manage with multiple test targets?
-  * Add quillapp tests, and make sure it makes sense.
+  * Add quillapp tests, and make sure it makes sense.  I.e., error 
+    reporting is OK for test script errors (not test failures).
+* Linux Testing
+* Distinguish between linux flavors when building; could be 32 or 64.
+  Support both.
 
 # For Quill 0.3.0
 
+* Fix 'quill teapot' to emit script rather than make teapot changes itself.
+* Use zipfile::encode to build teapot packages.
 * 'quill new lib'
 * 'quill add'
   * Requires ability to save project.quill.
+* 'quill clean'
+  * docstool's clean feature needs to clean up all *.html
 * Improved tool architecture
 * 'app foo -apptype exe':
   * Allow "exe" apptype for building in just the local flavor, whatever it 

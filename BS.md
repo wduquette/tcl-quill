@@ -4,6 +4,34 @@ Nothing in this file should be presumed to be reflective of anything
 in the project.  Everything in this file is either incomplete, obsolete, 
 or wrong.
 
+## Q: How best to make the teapot writable?
+
+The 'quill teapot link' approach isn't working on 64-bit Ubuntu:
+
+1. 'teacup default' is only working with "sudo"; I've reported this as a bug.
+2. 'sudo -E' isn't working; Quill can't find the tools when run with "sudo".
+
+This approach is too dependent on the environment settings to work.  Here's
+another approach:
+
+1. 'quill teapot' diagnoses the situation.
+2. 'quill teapot create' creates the Quill teapot. 
+3. It also writes a script to ~/.quill/fixteapot to set up and link to
+   the new teapot.
+3. The script contains the full paths.
+4. It's up to the user to run it with sudo.
+5. On Windows, write a batch file; but tell the user it needs to be run
+   with Admin privs.
+
+The script looks like this:
+
+```bash
+# Get rid of root-owned cache
+chown -R <user> <home>/.teapot
+teacup default <quillTeapotDir>
+teacup link make <quillTeapotDir> <tclshPath>
+```
+
 ## Q: How to compare two paths when one might be a symlink.
 
 Follow the symlinks.  If two paths are identical, they are identical.  

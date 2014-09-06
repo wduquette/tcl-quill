@@ -21,6 +21,11 @@ As such, it is intended to reduce the ancillary costs of defining and
 deploying a Tcl package or executable to as close to zero as possible, by
 automating everything but the actual writing of the code and documentation. 
 
+You can follow Quill development at
+[GitHub](https://github.com/wduquette/tcl-quill); also, I'm posting 
+development notes and questions for the Quill users on 
+[my blog](http://http://www.foothills.wjduquette.com/blog/).
+
 ## Building and Installation
 
 To install Quill, see [docs/INSTALL.md](./docs/INSTALL.md).
@@ -164,6 +169,7 @@ with that is also welcome.
 Thanks to the following people who have contributed bug reports, patches,
 or ideas to Quill, or helped in other ways:
 
+* Ted Brunzie
 * Stephan Effelsberg
 * Andreas Kupries
 
