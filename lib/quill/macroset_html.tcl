@@ -101,6 +101,14 @@ snit::type ::quill::macroset_html {
         }
 
         # NEXT, examples and listings.
+        $macro proc box {} {
+            return "<div class=\"box\">"
+        }
+
+        $macro proc /box {} {
+            return "</div>"
+        }
+        
         $macro proc example {} {
             return "<pre class=\"example\">"
         }
