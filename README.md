@@ -115,8 +115,8 @@ the required packages into your local teapot when you execute
 Finally, if you define a distribution in `project.quill`, Quill will build
 distribution .zip file for you.
 
-See the [quill(5)](./docs/man5/quill.manpage) man page for information about
-the contents of the `project.quill` file, and enter `quill help` at the
+See the [project(5)](./docs/man5/project.manpage) man page for information 
+about the contents of the `project.quill` file, and enter `quill help` at the
 command line for help on Quill and its subcommands.
 
 ## Dependencies
@@ -138,7 +138,7 @@ With [ActiveTcl](http://www.activestate.com/activetcl), Quill can:
 * Manage external dependencies, pulling packages from ActiveState's
   teapot repository and keeping them up to date in your environment.
 
-With [TclDevKit 5.0](http://www.activestate.com/tcl-dev-kit), Quill can:
+With [TclDevKit 5.3](http://www.activestate.com/tcl-dev-kit), Quill can:
 
 * Build standalone executables for Linux, OS X, and Windows
 * Build libraries as teapot packages, for installation into a local
