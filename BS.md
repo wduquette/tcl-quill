@@ -4,28 +4,29 @@ Nothing in this file should be presumed to be reflective of anything
 in the project.  Everything in this file is either incomplete, obsolete, 
 or wrong.
 
-## Q: How to compare two paths when one might be a symlink.
+## Teapot Issues on Linux
 
-Follow the symlinks.  If two paths are identical, they are identical.  
-Otherwise, follow the symlinks.
+* sudo -E doesn't do the job; you need the full path to the teacup,
+  and with `sudo -e quill teapot link`, Quill doesn't get the PATH.
+* On 64-bit Ubuntu, `teacup default` is only working with "sudo"
+  (though it fails silently).
+* There are two tclsh executables, .../tclsh and .../tclsh8.6; we 
+  find the one but the original teapot is linked to the other.
 
-* Is a path a symlink?  `[file type] eq "link"`.
-* To convert a symlink to the full path it points to:
+How about this:
 
-```
-set dir [file dirname $link]
-set rel [file link $link]
-set path [file normalize [file join $dir $rel]]
-```
+* Quill diagnoses the situation, and writes a shell script to resolve it.
+  The script includes full path names to everything.
+  * teacup default ...
+  * teacup link ...
+* Quill directs the user to execute the commands in the script, using 
+  sudo if necessary.
+* sudo -E shouldn't matter, as it has full paths to everything.
+* The issue between tclsh and tclsh8.6 doesn't matter, as we need to
+  build a new link anyway.
+* We probably want to make sure that both teapots are linked to tclsh.
+* Quill can still create the new teapot.
 
-It might be necessary to repeat this; and of course there are pathological
-cases: 
-
-* There's nothing at the link.
-* There are links pointing in a circle.
-
-Taking links to links as unusual, just lookup each path at most once, and
-compare.
 
 ## Q: How to pull basekits from teapot?
 

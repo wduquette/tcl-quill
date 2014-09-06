@@ -96,10 +96,23 @@ The following features are of interest:<lb>p<rb>
 
 <tag deflist features>
 ...
-<tag def "{This feature contains <tag i italics>.}">
+<tag def "{My <tag i first> Feature.}">
 ...
+<tag def "{My <tag i second> Feature.}">
 <tag /deflist features>
 </example><p>
+
+This yields output like this:<p>
+
+<box>
+<deflist features>
+<def "My <i first> Feature.">
+All about my first feature.<p>
+
+<def "My <i second> Feature.">
+All about my second feature.<p>
+</deflist features>
+</box>
 
 
 </deflist definition lists>
@@ -135,15 +148,28 @@ For example, here's a topic list with text topics:<p>
 
 <example>
 <tag topiclist>
-<tag topic {"Topic 1:"}>
+<tag topic {"Topic&amp;nbsp;1:"}>
 ...Text elaborating on the topic...
 <tag /topic>
 
-<tag topic {"Topic 2:"}>
+<tag topic {"Topic&amp;nbsp;2:"}>
 ...Text elaborating on the topic...
 <tag /topic>
 <tag /topiclist>
 </example>
+
+Note the use of non-breaking spaces to present word-wrapping.  
+The output looks like this:<p>
+
+<box>
+<topiclist>
+<topic "Topic&nbsp;1:">
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque consectetur sollicitudin dolor, et blandit nisl iaculis quis. Donec eu urna nec augue vulputate tempor ut eu diam. Proin quam sapien, vehicula id pellentesque sed, iaculis vitae nunc. Aliquam venenatis suscipit sapien id faucibus.</topic>
+
+<topic "Topic&nbsp;2:">
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque consectetur sollicitudin dolor, et blandit nisl iaculis quis. Donec eu urna nec augue vulputate tempor ut eu diam. Proin quam sapien, vehicula id pellentesque sed, iaculis vitae nunc. Aliquam venenatis suscipit sapien id faucibus.</topic>
+</topiclist>
+</box><p>
 
 And here's a topic list using <xtag bigmark>'s, presumably annotating
 a <xtag listing>:<p>
@@ -158,7 +184,18 @@ a <xtag listing>:<p>
 ...Text annotating mark B...
 <tag /topic>
 <tag /topiclist>
-</example>
+</example><p>
+
+<box>
+<topiclist>
+<topic "<bigmark A>">
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque consectetur sollicitudin dolor, et blandit nisl iaculis quis. Donec eu urna nec augue vulputate tempor ut eu diam. Proin quam sapien, vehicula id pellentesque sed, iaculis vitae nunc. Aliquam venenatis suscipit sapien id faucibus.</topic>
+
+<topic "<bigmark B>">
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque consectetur sollicitudin dolor, et blandit nisl iaculis quis. Donec eu urna nec augue vulputate tempor ut eu diam. Proin quam sapien, vehicula id pellentesque sed, iaculis vitae nunc. Aliquam venenatis suscipit sapien id faucibus.</topic>
+</topiclist>
+</box><p>
+
 
 The topic list macros make use of the following CSS classes:<p>
 
@@ -197,6 +234,10 @@ topic names.<p>
 
 <deflist listings>
 
+<defitem box {<tag box>...<tag /box>}>
+Wraps arbitrary text in a box with a light-blue background.  This man
+page uses these macros for the output examples.<p>
+
 <defitem example {<tag example>...<tag /example>}>
 
 Put preformatted text data between the 
@@ -224,7 +265,7 @@ Adds a big annotation mark.  <tag bigmark>'s look just like normal
 
 </deflist listings>
 
-For example, a listing with marks might look like this:<p>
+For example, a listing with marks is entered like this:<p>
 
 <example>
 <tag listing>
@@ -240,11 +281,31 @@ proc ::quill::ladd {listvar args} { <tag mark A>
     return $theList
 }
 <tag /listing>
-</example>
+</example><p>
+
+And displays like this:<p>
+
+<listing>
+proc ::quill::ladd {listvar args} { <mark A>
+    upvar 1 $listvar theList <mark B>
+
+    foreach value $args {
+        if {$value ni $theList} {
+            lappend theList $value <mark C>
+        }
+    }
+
+    return $theList
+}
+</listing><p>
 
 These macros depend on the following CSS classes:<p>
 
 <topiclist>
+<topic div.box>
+Defines the border and background for <xtag box>.
+</topic>
+
 <topic pre.example>
 Defines the border and background for 
 <xtag example>.
@@ -271,6 +332,12 @@ It is up to the client to define reasonable CSS settings; these are
 reasonable defaults:<p>
 
 <example>
+div.box {
+    border: 1px solid blue;
+    background-color: #DEF4FA;
+    padding: 2px;
+}
+
 pre.example {
     border: 1px solid blue;
     background-color: #FAF5D2;

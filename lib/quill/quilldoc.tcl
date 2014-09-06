@@ -100,6 +100,12 @@ snit::type ::quill::quilldoc {
         tr.topicrow  { vertical-align: baseline; }
         td.topicname { font-weight: bold;        }
 
+        div.box {
+            border: 1px solid blue;
+            background-color: #DEF4FA;
+            padding: 2px;
+        }
+
         pre.example {
             border: 1px solid blue;
             background-color: #FAF5D2;
