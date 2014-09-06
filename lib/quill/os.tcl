@@ -145,6 +145,52 @@ snit::type ::quill::os {
         return ""
     }
 
+    #---------------------------------------------------------------------
+    # Path Comparisons
+
+    # pathequal p1 p2
+    #
+    # p1   - A path, possibly a symlink
+    # p2   - A path, possibly a symlink
+    #
+    # Compares the two paths for equality, returning 1 if equal and
+    # 0 otherwise.  If they are not immediately
+    # equal, the command follows up to one step of symlinks for each,
+    # and tries again.
+
+    typemethod pathequal {p1 p2} {
+        if {$p1 eq $p2} {
+            return 1
+        }
+
+        set p1 [FollowLink $p1]
+        set p2 [FollowLink $p2]
+
+        if {$p1 eq $p2} {
+            return 1
+        } else {
+            return 0
+        }
+    }
+
+    # FollowLink path
+    #
+    # path   - A path that might be a symlink.
+    #
+    # If the path is a symlink, follows it back one step and returns
+    # the absolute path in normal form.
+
+    proc FollowLink {path} {
+        if {![file exists $path]} {
+            return [file normalize $path]
+        } elseif {[file type $path] ne "link"} {
+            return [file normalize $path]
+        } else {
+            set dir [file dirname $path]
+            set link [file link $path]
+            return [file normalize [file join $dir $link]]
+        }
+    }
 
     #---------------------------------------------------------------------
     # Miscellaneous Operations

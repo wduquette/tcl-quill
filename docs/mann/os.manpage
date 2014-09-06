@@ -48,6 +48,13 @@ Given a base executable name, e.g., "myapp", this routine appends ".exe"
 on Windows and leaves the name alone on other platforms, returning the
 result.<p>
 
+<defitem "os pathequal" {os pathequal <i p1 p2>}>
+
+Compares two paths for equality, taking into account that either or both
+might be symlinks.  Returns 1 immediately if the two paths are identical.
+Otherwise, it follows up to one symlink for each path, and retries, return
+1 on equality and 0 otherwise.<p>
+
 <defitem "os pathfind" {os pathfind <i progname>}>
 
 Given the name of a program, e.g., "<tt tclsh>" or "<tt tclsh.exe>" as
