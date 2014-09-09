@@ -34,18 +34,12 @@ set ::quillapp::help(teapot) {
         are problems with the configuration, it will give directions
         on how to fix them.
 
-    quill teapot create
+    quill teapot fix
         Creates a local teapot in the user's home directory, as 
-        ~/.quill/teapot, and makes it the default teapot.  This is
-        necessary only if the default teapot isn't user-writable.
-
-    quill teapot link
-        Links the local teapot to the development Tcl shell if it isn't 
-        properly linked already.  This operation usually requires "admin" 
+        ~/.quill/teapot, and gives you a script to run to make it the
+        default teapot.  This script usually requires "admin" 
         or "root" privilieges; on Linux or OS X, it is generally run 
-        using "sudo", as follows:
-
-            $ sudo -E quill teapot link
+        using "sudo".
 
     quill teapot list
         As a convenience, this lists the contents of the local teapot.
@@ -81,11 +75,8 @@ snit::type ::quillapp::teapottool {
         set sub [lshift argv]
 
         switch -exact -- $sub {
-            create {
-                CreateQuillTeapot
-            }
-            link {
-                LinkQuillTeapot
+            fix {
+                FixQuillTeapot
             }
             list {
                 ListQuillTeapot
@@ -148,39 +139,34 @@ snit::type ::quillapp::teapottool {
         # Not writable
         if {!$wflag} {
             puts [outdent {
-                The local teapot is not writable.  This will need to be fixed.
+                The local teapot is not writable.
             }]
 
             if {$qflag} {
                 puts [outdent {
                     You are using a teapot in your home directory;
-                    please making it writable.
+                    you will need to make it writable.
                 }]
             } else {
                 puts [outdent {
-                    Please create and link a teapot in your home directory:
-
-                    $ quill teapot create
-                    $ sudo -E quill teapot link
-
-                    See 'quill help teapot' for more information.
+                    You need to create and link a teapot in your home
+                    directory.
                 }]
             }
-
-            return
         }
 
         # Writable but not linked.
-        if {!$lflag} {
+        if {$wflag && !$lflag} {
             puts [outdent {
                 The local teapot is not linked to the default Tcl shell.
-                This will need to be fixed:
-
-                $ sudo -E quill teapot link
-
-                See 'quill help teapot' for more information.
             }]
         }
+
+        puts [outdent {
+            These problems need to be fixed.  Please execute 
+            'quill teapot fix'; it will tell you precisely what you
+            need to do.
+        }]
     }
 
 
@@ -219,52 +205,104 @@ snit::type ::quillapp::teapottool {
     }
 
     #---------------------------------------------------------------------
-    # Creating and Linking the Quill Teapot
+    # Fixing the Quill Teapot
 
-    # CreateQuillTeapot
+    # FixQuillTeapot
     #
-    # Creates the writable local teapot.
+    # Quill fixes what it can, and emits a script the user can execute
+    # to fix the rest.
 
-    proc CreateQuillTeapot {} {
+    proc FixQuillTeapot {} {
+        # FIRST, create the local teapot, if it doesn't exist.
         set qpath [teapot quillpath]
 
-        puts "Creating $qpath..."
-        puts [teacup create $qpath]
-        puts [teacup default $qpath]
-        puts "OK."
+        if {![file isdirectory $qpath]} {
+            puts "Creating $qpath..."
+            puts [teacup create $qpath]
+            puts "OK."
+        }
+
+        # NEXT, output the script.
+        if {[os flavor] eq "windows"} {
+            EmitBatchFile
+        } else {
+            EmitBashScript
+        }
     }
 
-
-    # LinkQuillTeapot
+    # EmitBatchFile
     #
-    # Creates the writable local teapot.
+    # Outputs the script for Windows users.
 
-    proc LinkQuillTeapot {} {
-        set qpath  [teapot quillpath]
-        set tclsh  [env pathto tclsh]
+    proc EmitBatchFile {} {
+        set filename [file join [env appdata] fixteapot.bat]
 
-        puts "Linking $qpath with $tclsh"
+        puts [outdent "
+            Quill has created a teapot repository in your home directory.
+            It needs to be linked to the tclsh you are using; and it 
+            appears that this will require admin privileges.  Quill is
+            about to write a batch file that you (or someone who has
+            admin privileges) can use to take care of this.
 
-        try {
-            puts [teacup link make $qpath $tclsh]
-        } on error {result} {
-            puts "Error making link: $result"
-            puts "Did you run the command using 'sudo'?"
-            puts "See 'quill help teapot' for more information."
-            return
-        }
+            The script is here:
+                $filename
 
-        # Check it
-        set t2s [teapot islinked teapot2shell]
-        set s2t [teapot islinked shell2teapot]
-        set lflag [expr {$t2s && $s2t}]
+            Run it, and then run 'quill teapot' to check the results.
+        "]
 
-        if {!$lflag} {
-            puts ""
-            puts "The teapot is still not linked."
-            puts "See 'quill teapot' for specifics."
-        }
-
+        writefile $filename [::quillapp::FixTeapotBat]
     }
+
+    # EmitBashScript
+    #
+    # Outputs the script for Windows users.
+
+    proc EmitBashScript {} {
+        set filename [file join [env appdata] fixteapot]
+        puts [outdent "
+            Quill has created a teapot repository in your home directory.
+            It needs to be linked to the tclsh you are using; and it 
+            appears that this will require superuser privileges.  Quill is
+            about to write a bash script that you (or someone who has
+            superuser privileges) can use to take care of this.
+
+            The script is here:
+                $filename
+
+            Run it, and then run 'quill teapot' to check the results.
+        "]
+
+        writefile $filename [::quillapp::FixTeapotBash]
+    }
+
+}
+
+#---------------------------------------------------------------------
+# Templates
+
+maptemplate ::quillapp::FixTeapotBat {} {
+    set teacup    [env pathto teacup]
+    set quillpath [teapot quillpath]
+    set tclsh     [env pathto tclsh]
+} {
+    %teacup default %quillpath
+    %teacup link make %quillpath %tclsh
+}
+
+
+# TODO: add code to env to get the user name and home directory in 
+# a safe way.
+# TODO: the IndexCache isn't in %home/.teapot on OS X.
+maptemplate ::quillapp::FixTeapotBash {} {
+    set teacup    [env pathto teacup]
+    set quillpath [teapot quillpath]
+    set tclsh     [env pathto tclsh]
+    set user      $::env(LOGNAME)
+    set home      $::env(HOME)
+} {
+    %teacup default %quillpath
+    %teacup link make %quillpath %tclsh
+    chown -R %user %home/.teapot
+    chown -R %user %quillpath
 }
 
