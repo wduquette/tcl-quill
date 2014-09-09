@@ -4,6 +4,9 @@ This is the official list of work to be done.
 
 # For Quill 0.2.x
 
+* Began fixing 'quill teapot'.  'quill teapot fix' needs to fix the IndexCache
+  on OS X (wherever it is) and it needs to be tested on Windows and Linux.
+  ~/Library/Application Support/ActiveState/Teapot/indexcache/teapot.activestate.com
 * quilldoc(5) Changes:
   * Should manpage(5) be quillman(5)?  Probably.
 * Fix bugs as found and reported.
