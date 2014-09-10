@@ -60,7 +60,7 @@ snit::type ::quillapp::project {
     #
 	# apps          - List of application names
 	# apptypes-$app - Types of application to build for app $app:
-	#                 a list of kit, linux, osx, windows.
+	#                 a list of kit, exe, linux, osx, windows.
 	# gui-$app      - Flag, 0 or 1: does package require Tk?
 	#
 	# requires      - List of required package names
@@ -288,7 +288,7 @@ snit::type ::quillapp::project {
 	#
 	# app  - The app name
 	#
-	# Returns the application types, kit, linux, osx, windows.
+	# Returns the application types, kit, exe, linux, osx, windows.
 
 	typemethod {app apptypes} {app} {
 		return $meta(apptypes-$app)
@@ -315,6 +315,7 @@ snit::type ::quillapp::project {
 
 		switch $apptype {
 			kit       { return $base.kit                       }
+			exe       { return [$type app target [os flavor]]  }
 			linux     { return $base-linux                     }
 			osx       { return $base-osx                       }
 			windows   { return $base-windows.exe               }
@@ -546,7 +547,7 @@ snit::type ::quillapp::project {
 
 			-apptypes {
 				set apptypes [lshift args]
-				prepare apptypes -listof {kit linux osx windows}
+				prepare apptypes -listof {kit exe linux osx windows}
 			}
 		}
 

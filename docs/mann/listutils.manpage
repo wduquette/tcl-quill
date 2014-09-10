@@ -57,6 +57,11 @@ items than <i alist>, then the result is a valid dictionary.<p>
 Appends the <i items> to the named list variable only if they are
 not already present in the list.  Returns the new list.<p>
 
+<defitem ldelete {ldelete <i listvar items...>}>
+
+Removes the <i items> from the list in the named list variable, and updates
+the variable.  Returns the new list.<p>
+
 <defitem lmaxlen {lmaxlen <i>list</i>}>
 
 Returns the string length of the longest element in <i>list</i>.<p>

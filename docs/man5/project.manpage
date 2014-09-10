@@ -85,12 +85,25 @@ If the <b -gui> option is specified, the application is a GUI application
 and the Tk package will be required automatically.  When built as a 
 starpack, a Tk basekit will be used.<p>
 
-<defopt {-apptypes kit | linux | osx | windows }>
+<defopt {-apptypes kit | exe | linux | osx | windows }>
 
 An application can be built for multiple platforms; the value of 
-<b -apptypes> can be a list of any of the above values.  The application
-will be built as a starpack for the given platforms.  The built 
-application will contain all external dependencies.<p>
+<b -apptypes> can be a list of any of the above values.<p>
+
+App type <b kit> results in a "starkit", which can be run against a 
+<tt tclsh> on any platform.<p>
+
+App type <b exe> results in a "starpack", a genuine stand-alone 
+executable, for the current platform, whatever it is.<p>
+
+Quill is capable of building cross-platform, i.e., it can build Linux
+executables on Windows and Windows executables on OS X.  If you wish to 
+do that, specify any or all of <b linux>, <b osx> or <b windows> in the
+<b -apptypes> list.  On <tt quill build>, Quill will build the application
+for all listed platforms.<p>
+
+The default application type is <b kit>.<p>
+
 
 </deflist options>
 

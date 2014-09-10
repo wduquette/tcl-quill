@@ -81,7 +81,16 @@ snit::type ::quillapp::buildtool {
                 set names [project app names]
             }
             foreach app $names {
-                foreach apptype [project app apptypes $app] {
+                # Get the app types.  If "exe" is in the list,
+                # make sure that this platform's flavor isn't.
+                set apptypes [project app apptypes $app]
+                if {"exe" in $apptypes} {
+                    ldelete apptypes [os flavor]
+                }
+                foreach apptype $apptypes {
+                    if {$apptype eq "exe"} {
+                        set apptype [os flavor]
+                    }
                     BuildTclApp $app $apptype
                 }
             }
