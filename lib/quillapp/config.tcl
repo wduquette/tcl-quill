@@ -18,52 +18,52 @@
 # Namespace Export
 
 namespace eval ::quillapp:: {
-	namespace export \
-		config
+    namespace export \
+        config
 } 
 
 #-------------------------------------------------------------------------
 # config
 
 snit::type ::quillapp::config {
-	# Make it a singleton
-	pragma -hasinstances no -hastypedestroy no
+    # Make it a singleton
+    pragma -hasinstances no -hastypedestroy no
 
-	#---------------------------------------------------------------------
-	# Type Variables
+    #---------------------------------------------------------------------
+    # Type Variables
 
-	# name of the configuration file
-	typevariable configFile ""
+    # name of the configuration file
+    typevariable configFile ""
 
-	#---------------------------------------------------------------------
-	# Type Components
+    #---------------------------------------------------------------------
+    # Type Components
 
-	typecomponent ps ;# The parmset
+    typecomponent ps ;# The parmset
 
-	#---------------------------------------------------------------------
-	# Public Methods
+    #---------------------------------------------------------------------
+    # Public Methods
 
-	delegate typemethod * to ps
+    delegate typemethod * to ps
 
-	# init
-	#
-	# Initializes the parm set, and attempts to load the configuration
-	# file.
+    # init
+    #
+    # Initializes the parm set, and attempts to load the configuration
+    # file.
 
-	typemethod init {} {
-		# FIRST, create and populate the parmset.
-		set ps [parmset ${type}::ps]
+    typemethod init {} {
+        # FIRST, create and populate the parmset.
+        set ps [parmset ${type}::ps]
 
-		# Helper Commands
-		# TODO: Consider making ::quillapp::filename a snit::type workalike,
-		# with options for "-executable" and "-pattern", so that I can
-		# define executable-specific types.  Actually, the types could
-		# also know how to find them....
+        # Helper Commands
+        # TODO: Consider making ::quillapp::filename a snit::type workalike,
+        # with options for "-executable" and "-pattern", so that I can
+        # define executable-specific types.  Actually, the types could
+        # also know how to find them....
 
-		$ps define helper.tclsh       snit::stringtype ""
-		$ps define helper.teacup      snit::stringtype ""
-		$ps define helper.tkcon       snit::stringtype ""
-		$ps define helper.tclapp      snit::stringtype ""
+        $ps define helper.tclsh       snit::stringtype ""
+        $ps define helper.teacup      snit::stringtype ""
+        $ps define helper.tkcon       snit::stringtype ""
+        $ps define helper.tclapp      snit::stringtype ""
         $ps define helper.teapot-pkg  snit::stringtype ""
 
         foreach flavor [os flavors] {
@@ -71,20 +71,20 @@ snit::type ::quillapp::config {
             $ps define helper.basekit.tk.$flavor  snit::stringtype ""
         }
 
-		# Load the config file.
-		set configFile [env appdata quill.config]
+        # Load the config file.
+        set configFile [env appdata quill.config]
 
-		if {[file isfile $configFile]} {
-			$ps load $configFile -forgiving
-		}
-	}
+        if {[file isfile $configFile]} {
+            $ps load $configFile -forgiving
+        }
+    }
 
-	# save
-	#
-	# Saves the configuration parameters to disk.
+    # save
+    #
+    # Saves the configuration parameters to disk.
 
-	typemethod save {} {
-		$ps save $configFile
-	}
+    typemethod save {} {
+        $ps save $configFile
+    }
 }
 
