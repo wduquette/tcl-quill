@@ -4,6 +4,7 @@ This is the official list of work to be done.
 
 # For Quill 0.2.x
 
+* Why am I getting tabs in my files?
 * Began fixing 'quill teapot'.  'quill teapot fix' needs to fix the IndexCache
   on OS X (wherever it is) and it needs to be tested on Windows and Linux.
   ~/Library/Application Support/ActiveState/Teapot/indexcache/teapot.activestate.com
@@ -38,9 +39,6 @@ This is the official list of work to be done.
 * 'quill clean'
   * docstool's clean feature needs to clean up all *.html
 * Improved tool architecture
-* 'app foo -apptype exe':
-  * Allow "exe" apptype for building in just the local flavor, whatever it 
-    is.
 * Add check on "teacup" executable for build 298288 or later.
 
 # Desired Features
