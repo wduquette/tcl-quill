@@ -61,7 +61,8 @@ snit::type ::quillapp::env {
 
     # pathof - Array of normalized paths to important directories
     typevariable pathof -array {
-        teapot ""
+        teapot     ""
+        indexcache ""
     }
 
     # versionof - Array of helper tool version numbers.
@@ -303,32 +304,38 @@ snit::type ::quillapp::env {
 
     typemethod pathof {dir} {
         if {$pathof($dir) eq ""} {
-            set pathof($dir) [$type GetPathOf $dir]
+            switch -exact -- $dir {
+                teapot {
+                    set pathof($dir) [teacup default]
+                }
+
+                indexcache {
+                    # Where teacup stores its index caches, by platform.
+                    switch -exact -- [os flavor] {
+                        linux   { 
+                            set pathof($dir) ~/.teapot}
+                        osx     {
+                            set pathof($dir) \
+                {~/Library/Application\ Support/ActiveState/Teapot/}
+                        }
+                        windows { 
+                            # This doesn't matter on Windows
+                            set pathof($dir) "" 
+                        }
+                    }
+
+                }
+                default {
+                    error "Unknown directory: \"$dir\""
+                }
+            }
         }
 
-        return $pathof($dir)
+        return [file normalize $pathof($dir)]
     }
 
 
-    # GetPathOf teapot
-    #
-    # Returns the path of the local teapot repository.
-    #
-    # TODO: Probably we don't want to have to make ~/.quill/teapot
-    # the default teapot; we just want it linked, and we want to
-    # use it explicitly.
-
-    typemethod {GetPathOf teapot} {} {
-        set teacup [$type pathto teacup -require]
-
-        try {
-            return [file normalize [exec $teacup default]]
-
-        } on error {} {
-            return ""
-        }
-    }
-
+ 
     #---------------------------------------------------------------------
     # Version Finding for Tools
 

@@ -290,19 +290,17 @@ maptemplate ::quillapp::FixTeapotBat {} {
 }
 
 
-# TODO: add code to env to get the user name and home directory in 
-# a safe way.
-# TODO: the IndexCache isn't in %home/.teapot on OS X.
+# TODO: add code to env to get the user name in a safe way.
 maptemplate ::quillapp::FixTeapotBash {} {
-    set teacup    [env pathto teacup]
-    set quillpath [teapot quillpath]
-    set tclsh     [env pathto tclsh]
-    set user      $::env(LOGNAME)
-    set home      $::env(HOME)
+    set teacup     [env pathto teacup]
+    set quillpath  [teapot quillpath]
+    set tclsh      [env pathto tclsh]
+    set indexcache [env pathof indexcache]
+    set user       $::env(LOGNAME)
 } {
     %teacup default %quillpath
     %teacup link make %quillpath %tclsh
-    chown -R %user %home/.teapot
+    chown -R %user %indexcache
     chown -R %user %quillpath
 }
 
