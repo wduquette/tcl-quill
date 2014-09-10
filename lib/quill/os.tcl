@@ -87,6 +87,27 @@ snit::type ::quill::os {
     }
 
     #---------------------------------------------------------------------
+    # User Name
+
+    # username
+    #
+    # Returns the current user's username, by looking at the environment.
+
+    typemethod username {} {
+        set name [GetEnv USER]
+
+        if {$name eq ""} {
+            set name [GetEnv USERNAME]
+        }
+
+        if {$name eq ""} {
+            set name [GetEnv LOGNAME]
+        }
+
+        return $name
+    }
+
+    #---------------------------------------------------------------------
     # Path Finding Tools
 
     # pathfind program
@@ -210,5 +231,23 @@ snit::type ::quill::os {
             file attributes $filename \
                 -permissions u+x
         }
+    }
+
+    #---------------------------------------------------------------------
+    # Helpers
+
+    # GetEnv var
+    #
+    # Returns the value of environment variable $var, or "" if it can't
+    # be found.
+
+    proc GetEnv {var} {
+        set value ""
+
+        # Some environment variables, or at least "PATH", are screwy.
+        # This is simplest.
+        catch {set value $::env($var)}
+
+        return $value
     }
 }

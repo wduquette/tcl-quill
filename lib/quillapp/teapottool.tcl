@@ -213,7 +213,13 @@ snit::type ::quillapp::teapottool {
     # to fix the rest.
 
     proc FixQuillTeapot {} {
-        # FIRST, create the local teapot, if it doesn't exist.
+        # FIRST, if everything's OK there's nothing to do.
+        if {[teapot ok]} {
+            puts "Everything appears to be OK already."
+            return
+        }
+
+        # NEXT, create the local teapot, if it doesn't exist.
         set qpath [teapot quillpath]
 
         if {![file isdirectory $qpath]} {
@@ -259,6 +265,15 @@ snit::type ::quillapp::teapottool {
 
     proc EmitBashScript {} {
         set filename [file join [env appdata] fixteapot]
+
+        if {[os username] eq ""} {
+            throw FATAL [outdent "
+                Quill cannot determined your user name; none of the usual
+                environment variables are set.  Please set USER to your
+                user name, and try again.
+            "]
+        }
+
         puts [outdent "
             Quill has created a teapot repository in your home directory.
             It needs to be linked to the tclsh you are using; and it 
@@ -296,7 +311,7 @@ maptemplate ::quillapp::FixTeapotBash {} {
     set quillpath  [teapot quillpath]
     set tclsh      [env pathto tclsh]
     set indexcache [env pathof indexcache]
-    set user       $::env(LOGNAME)
+    set user       [os username]
 } {
     %teacup default %quillpath
     %teacup link make %quillpath %tclsh

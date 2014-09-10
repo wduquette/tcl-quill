@@ -67,6 +67,12 @@ from the MinGW environment).<p>
 
 The routine returns the empty string if it cannot locate the program.
 
+<defitem "os username" {os username}>
+
+Returns the current user's login name, if possible, and "" otherwise.  
+The user name is determined by querying a series of environment variables
+("USER", "USERNAME", "LOGNAME").<p>
+
 <defitem "os setexecutable" {os setexecutable <i filename>}>
 
 Sets the executable flag for the named file using Tcl's 

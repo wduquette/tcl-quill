@@ -5,9 +5,6 @@ This is the official list of work to be done.
 # For Quill 0.2.x
 
 * Test "tabs-to-spaces" on vimes.
-* Began fixing 'quill teapot'.  'quill teapot fix' needs to fix the IndexCache
-  on OS X (wherever it is) and it needs to be tested on Windows and Linux.
-  ~/Library/Application Support/ActiveState/Teapot/indexcache/teapot.activestate.com
 * quilldoc(5) Changes:
   * Should manpage(5) be quillman(5)?  Probably.
 * Fix bugs as found and reported.
@@ -31,7 +28,6 @@ This is the official list of work to be done.
 
 # For Quill 0.3.0
 
-* Fix 'quill teapot' to emit script rather than make teapot changes itself.
 * Use zipfile::encode to build teapot packages.
 * 'quill new lib'
 * 'quill add'
