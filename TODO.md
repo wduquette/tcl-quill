@@ -4,12 +4,11 @@ This is the official list of work to be done.
 
 # For Quill 0.2.x
 
-* Test "tabs-to-spaces" on vimes.
 * quilldoc(5) Changes:
   * Should manpage(5) be quillman(5)?  Probably.
 * Fix bugs as found and reported.
 * 'quill docs' individual file feature should be relative to working
-  directory.
+  directory, not $root/docs.
 * Improved output using table(n)
   * quill info, quill env
 * Quill user's guide
@@ -28,6 +27,13 @@ This is the official list of work to be done.
 
 # For Quill 0.3.0
 
+* Make "platforms" a new project(5) command: lists supported platforms.
+  * app -apptypes becomes -apptype again.
+  * 'quill build all' builds exe for this platform and dist for this
+    platform.
+  * 'quill build all -allplatforms' builds exes for all platforms
+  * Or something like this.  The current scheme isn't quite right, and
+    doesn't handle flavors well.
 * Use zipfile::encode to build teapot packages.
 * 'quill new lib'
 * 'quill add'

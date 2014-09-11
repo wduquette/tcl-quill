@@ -54,32 +54,60 @@ snit::type ::quillapp::infotool {
     typemethod execute {argv} {
         puts "[project name] [project version]: [project description]"
         puts ""
-        puts "Root: [project root]"
+        puts "Project Tree:"
+        puts "    [project root]"
         puts ""
 
-        foreach app [project app names] {
-            if {[project app gui $app]} {
-                puts -nonewline "GUI App: $app "                
-            } else {
-                puts -nonewline "Console App: $app "
+        if {[got [project app names]]} {
+            puts "Applications:"
+
+            set table [list]            
+            foreach app [project app names] {
+                set row [dict create Name $app]
+                if {[project app gui $app]} {
+                    dict set row Mode "GUI"
+                } else {
+                    dict set row Mode "Console"
+                }
+
+                dict set row Platforms \
+                    [join [project app apptypes $app] {, }]
+                lappend table $row
             }
 
-            puts "([join [project app apptypes $app] {, }])"
+            table puts $table \
+                -leader "    " \
+                -sep    "  "   \
+                -showheaders
+            puts ""
         }
 
-        foreach lib [project provide names] {
-            puts "Provides: $lib"
-        }
-
-        foreach pkg [project require names -all] {
-            set ver   [project require version $pkg]
-            set local [project require local $pkg]
-            puts -nonewline "Requires: $pkg $ver"
-            if {$local} {
-                puts " (local)"
-            } else {
-                puts ""
+        if {[got [project provide names]]} {
+            puts "Provided Libraries:"
+            foreach lib [project provide names] {
+                puts "    ${lib}(n)"
             }
+            puts ""
+        }
+
+        if {[got [project require names -all]]} {
+            puts "Required Packages:"
+
+            set table [list]
+            foreach pkg [project require names -all] {
+                set ver   [project require version $pkg]
+                set local [project require local $pkg]
+
+                if {$local} {
+                    set tag " (local)"
+                } else {
+                    set tag ""
+                }
+
+                lappend table [list p $pkg v $ver t $tag]
+            }
+            table puts $table -leader "    " -sep "  "
+            puts ""
         }
     }
 }
