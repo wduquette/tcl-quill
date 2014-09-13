@@ -106,6 +106,13 @@ proc ExecuteScript {path argv} {
     # FIRST, prepare the environment.
     set ::env(TCLLIBPATH) [project libpath]
 
-    # NEXT, run the tests.
-    exec [env pathto tclsh] $path {*}$argv >@ stdout 2>@ stderr
+    # NEXT, run the script
+    try {
+        exec [env pathto tclsh] $path {*}$argv >@ stdout 2>@ stderr
+    } on error {result} {
+        set file [file tail $path]
+        puts ""
+        throw FATAL "Error while running $file: $result"
+    }
+
 }
