@@ -12,9 +12,8 @@ This is the official list of work to be done.
   * Documents Quill conventions, e.g., where to require packages, and the
     markings that appear in pkg* files.
   * Requires quilldoc(n) package.
-* How does Quill manage with multiple test targets?
-  * Add quillapp tests, and make sure it makes sense.  I.e., error 
-    reporting is OK for test script errors (not test failures).
+* Quill needs to handle multiple test targets better; see Issue #19.
+* Improved tool architecture
 * Linux Testing
 * Distinguish between linux flavors when building; could be 32 or 64.
   Support both.
@@ -34,7 +33,6 @@ This is the official list of work to be done.
   * Requires ability to save project.quill.
 * 'quill clean'
   * docstool's clean feature needs to clean up all *.html
-* Improved tool architecture
 * Add check on "teacup" executable for build 298288 or later.
 
 # Desired Features
