@@ -15,27 +15,11 @@
 #-------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------
-# Register the tool
-
-set ::quillapp::tools(version) {
-    command     "version"
-    description "Displays the Quill tool's version to the console."
-    argspec     {0 0 ""}
-    intree      false
-    ensemble    ::quillapp::versiontool
-}
-
-set ::quillapp::help(version) {
-    The "quill version" tool displays the Quill application's version
-    to the console in human-readable form.
-}
-
-#-------------------------------------------------------------------------
 # Namespace Export
 
 namespace eval ::quillapp:: {
     namespace export \
-        versiontool
+        tool
 } 
 
 #-------------------------------------------------------------------------
@@ -57,10 +41,10 @@ snit::type ::quillapp::tool {
     # ensemble-$tool     - The tool's ensemble command.
     # description-$tool  - The tool's one-line description
     # argspec-$tool      - {min max usage}
-    # intree-$tool       - true if the tool must be executed in a project
+    # needstree-$tool    - true if the tool must be executed in a project
     #                      tree, and false otherwise.
 
-    typevariable tools -array {} {
+    typevariable toolbox -array {
         tools {}
     }
 
@@ -76,7 +60,7 @@ snit::type ::quillapp::tool {
     # body         - The tool's body, a snit::type body.
     #
     # Defines the tool.  The tooldict should define the description,
-    # argspec, and intree values.  The body should define at least the
+    # argspec, and needstree values.  The body should define at least the
     # execute typemethod.
 
     typemethod define {tool tooldict helptext body} {
@@ -103,7 +87,7 @@ snit::type ::quillapp::tool {
         # TODO: better validation before we allow plugins!
         set toolbox(description-$tool) [dict get $tooldict description]
         set toolbox(argspec-$tool)     [dict get $tooldict argspec]
-        set toolbox(intree-$tool)      [dict get $tooldict intree]
+        set toolbox(needstree-$tool)   [dict get $tooldict needstree]
     }
 
     #---------------------------------------------------------------------
@@ -111,6 +95,54 @@ snit::type ::quillapp::tool {
 
     # names
     #
-    # Returns the names of the 
+    # Returns the names of the currently defined tools.
+
+    typemethod names {} {
+        return [lsort $toolbox(tools)]
+    }
+
+    # exists tool
+    #
+    # tool   - The name of a tool
+    # 
+    # Returns 1 if the tool exists, and 0 otherwise.
+
+    typemethod exists {tool} {
+        if {$tool in $toolbox(tools)} {
+            return 1
+        }
+
+        return 0
+    }
+
+    # needstree tool
+    #
+    # tool - The name of a tool
+    # 
+    # Returns 1 if the tool needs a project tree, and 0 otherwise.
+
+    typemethod needstree {tool} {
+        return $toolbox(needstree-$tool)
+    }
+
+    # use tool argv
+    #
+    # tool   - A tool to use
+    # argv   - The tool's arguments
+    #
+    # Executes the tool, first checking the number of arguments.
+
+    typemethod use {tool argv} {
+        if {$tool ni $toolbox(tools)} {
+            throw FATAL [outdent "
+                Quill has no tool called \"$tool\".  Please see
+                \"quill help\" for a list of available tools.
+            "]
+        }
+
+        checkargs "quill $tool" {*}$toolbox(argspec-$tool) $argv
+
+        $toolbox(ensemble-$tool) execute $argv
+    }
 }
 

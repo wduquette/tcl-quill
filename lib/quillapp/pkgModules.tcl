@@ -68,7 +68,9 @@ source [file join $::quillapp::library runtool.tcl          ]
 source [file join $::quillapp::library shelltool.tcl        ]
 source [file join $::quillapp::library teapottool.tcl       ]
 source [file join $::quillapp::library testtool.tcl         ]
-source [file join $::quillapp::library versiontool.tcl      ]
 source [file join $::quillapp::library main.tcl             ]
+
+source [file join $::quillapp::library tool.tcl             ]
+source [file join $::quillapp::library tool_version.tcl     ]
 
 

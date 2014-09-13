@@ -51,6 +51,8 @@ proc ::quillapp::main {argv} {
         set userScript [file normalize $tool]
         set tool "UserScript"
         set projectInfoNeeded 1
+    } elseif {[tool exists $tool]} {
+        set projectInfoNeeded [tool needstree $tool]
     } else {
         if {![info exists ::quillapp::tools($tool)]} {
             throw FATAL [outdent "
@@ -87,6 +89,8 @@ proc ::quillapp::main {argv} {
     # NEXT, execute the tool.
     if {$tool eq "UserScript"} {
         ExecuteScript $userScript $argv
+    } elseif {[tool exists $tool]} {
+        tool use $tool $argv
     } else {
         set cmd [dict get $quillapp::tools($tool) ensemble]
         $cmd execute $argv
