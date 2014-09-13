@@ -7,10 +7,6 @@ This is the official list of work to be done.
 * quilldoc(5) Changes:
   * Should manpage(5) be quillman(5)?  Probably.
 * Fix bugs as found and reported.
-* 'quill docs' individual file feature should be relative to working
-  directory, not $root/docs.
-* Improved output using table(n)
-  * quill info, quill env
 * Quill user's guide
   * Documents how to use Quill
   * Documents Quill conventions, e.g., where to require packages, and the

@@ -41,8 +41,7 @@ set ::quillapp::help(docs) {
     * The name of a subdirectory of "docs", e.g., "mysubdir", to format
       all *.quilldoc documents found in <root>/docs/mysubdir.
 
-    * The name of a quilldoc(5) file, relative to <root>/docs, e.g.,
-      "ug.quilldoc"; formats <root>/docs/ug.quilldoc.
+    * The name of a quilldoc(5) file.
 
     Quill supports four man page sections out of the box:
 
@@ -87,10 +86,8 @@ snit::type ::quillapp::docstool {
         }
 
         # If it's a file, format it as a quilldoc(5) document.
-        set filename [project root docs $target] 
-
-        if {[file isfile $filename]} {
-            FormatQuillDocs [list $filename]
+        if {[file isfile $target]} {
+            FormatQuillDocs [list [file normalize $target]]
             return
         }
 
