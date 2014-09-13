@@ -4,16 +4,14 @@ This is the official list of work to be done.
 
 # For Quill 0.2.x
 
+* Fix bugs as found and reported.
 * quilldoc(5) Changes:
   * Should manpage(5) be quillman(5)?  Probably.
-* Fix bugs as found and reported.
 * Quill user's guide
   * Documents how to use Quill
   * Documents Quill conventions, e.g., where to require packages, and the
     markings that appear in pkg* files.
   * Requires quilldoc(n) package.
-* quillapp(n) doesn't really need a namespace.
-  * Make it go away
 * How does Quill manage with multiple test targets?
   * Add quillapp tests, and make sure it makes sense.  I.e., error 
     reporting is OK for test script errors (not test failures).

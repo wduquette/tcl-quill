@@ -1,0 +1,67 @@
+# -*-Tcl-*-
+#-------------------------------------------------------------------------
+# TITLE:
+#    misc.test
+#
+# AUTHOR:
+#    Will Duquette
+#
+# DESCRIPTION:
+#    quillapp(n): Test cases for misc.tcl
+
+#-------------------------------------------------------------------------
+# Load the tcltest package
+
+if {[lsearch [namespace children] ::tcltest] == -1} {
+    package require tcltest 2.3
+    eval ::tcltest::configure $argv
+}
+
+namespace import ::tcltest::test
+
+#-------------------------------------------------------------------------
+# Load the package to be tested
+
+source ../../lib/quillapp/pkgModules.tcl
+namespace import ::quillapp::*
+
+#-------------------------------------------------------------------------
+# checkargs
+
+test checkargs-1.1 {too few} -body {
+    codecatch {
+        checkargs "quill test" 1 1 {arg} {}
+    }
+} -result {FATAL {Usage: quill test arg}}
+
+test checkargs-1.2 {too many} -body {
+    codecatch {
+        checkargs "quill test" 1 1 {arg} {a b}
+    }
+} -result {FATAL {Usage: quill test arg}}
+
+test checkargs-2.1 {just enough} -body {
+    codecatch {
+        checkargs "quill test" 1 3 {a1 ?a2? ?a3?} {a}
+    }
+} -result {ok {}}
+
+test checkargs-2.2 {max number} -body {
+    codecatch {
+        checkargs "quill test" 1 3 {a1 ?a2? ?a3?} {a b c}
+    }
+} -result {ok {}}
+
+test checkargs-2.3 {lots} -body {
+    codecatch {
+        checkargs "quill test" 1 - {a1 ?args...?} {a b c d e f g h i j}
+    }
+} -result {ok {}}
+
+#-------------------------------------------------------------------------
+# Clean up and finish
+
+::tcltest::cleanupTests
+
+
+
