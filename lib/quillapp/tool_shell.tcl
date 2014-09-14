@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------
 # TITLE: 
-#    shelltool.tcl
+#    tool_shell.tcl
 #
 # AUTHOR:
 #    Will Duquette
@@ -14,40 +14,17 @@
 #
 #-------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------
-# Register the tool
-
-set ::quillapp::tools(shell) {
-    command     "shell"
+quillapp::tool define shell {
     description "Opens a shell console on the project code."
     argspec     {0 0 ""}
-    intree      true
-    ensemble    ::quillapp::shelltool
-}
-
-set ::quillapp::help(shell) {
+    needstree   true
+} {
     The "quill shell" tool opens a Tkcon console window on the code in
     the project tree, allowing interactive testing.
 
     If the project defines an application, the application's loader
     script is loaded.
-}
-
-#-------------------------------------------------------------------------
-# Namespace Export
-
-namespace eval ::quillapp:: {
-    namespace export \
-        shelltool
-} 
-
-#-------------------------------------------------------------------------
-# Tool Singleton: shelltool
-
-snit::type ::quillapp::shelltool {
-    # Make it a singleton
-    pragma -hasinstances no -hastypedestroy no
-
+} {
     # execute argv
     #
     # argv - command line arguments for this tool

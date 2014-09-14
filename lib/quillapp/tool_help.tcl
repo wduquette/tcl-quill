@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------
 # TITLE: 
-#    helptool.tcl
+#    tool_help.tcl
 #
 # AUTHOR:
 #    Will Duquette
@@ -14,34 +14,14 @@
 #
 #-------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------
-# Register the tool
-
-set ::quillapp::tools(help) {
-    command     "help"
+quillapp::tool define help {
     description "Displays this help."
     argspec     {0 1 "<topic>"}
-    intree      false
+    needstree   false
     ensemble    ::quillapp::helptool
-}
-
-# No ::quillapp::help() entry is required; this is a special case.
-
-#-------------------------------------------------------------------------
-# Namespace Export
-
-namespace eval ::quillapp:: {
-    namespace export \
-        helptool
-} 
-
-#-------------------------------------------------------------------------
-# Tool Singleton: helptool
-
-snit::type ::quillapp::helptool {
-    # Make it a singleton
-    pragma -hasinstances no -hastypedestroy no
-
+} {
+    No help entry needed.  This is a special case.
+} {
     # execute argv
     #
     # argv - command line arguments for this tool
@@ -70,8 +50,8 @@ snit::type ::quillapp::helptool {
         puts "quill is a tool for working with Tcl projects.  It has"
         puts "the following subcommands:\n"
 
-        foreach tool [lsort [array names ::quillapp::tools]] {
-            set desc [dict get $::quillapp::tools($tool) description]
+        foreach tool [tool names] {
+            set desc [tool description $tool]
 
             puts [format "%-8s - %s" $tool $desc]
         }
@@ -103,10 +83,8 @@ snit::type ::quillapp::helptool {
 
         puts ""
 
-        if {[info exists ::quillapp::tools($topic)]} {
-            set tdict $quillapp::tools($topic)
-            set usage [lindex [dict get $tdict argspec] 2]
-            puts "quill $topic $usage"
+        if {[tool exists $topic]} {
+            puts [tool usage $topic]
         } else {
             puts "Topic: $topic"
         }

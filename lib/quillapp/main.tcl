@@ -38,7 +38,7 @@ proc ::quillapp::main {argv} {
 
     # NEXT, if there are no arguments then just display the help.
     if {[llength $argv] == 0} {
-        helptool execute {}
+        tool use help {}
         return
     }
 

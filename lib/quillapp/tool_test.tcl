@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------
 # TITLE: 
-#    testtool.tcl
+#    tool_test.tcl
 #
 # AUTHOR:
 #    Will Duquette
@@ -14,18 +14,11 @@
 #
 #-------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------
-# Register the tool
-
-set ::quillapp::tools(test) {
-    command     "test"
+quillapp::tool define test {
     description "Executes the project test suite."
     argspec     {0 - "?<target> ?<module>?? ?<options>...?"}
-    intree      true
-    ensemble    ::quillapp::testtool
-}
-
-set ::quillapp::help(test) {
+    needstree   true
+} {
     The "quill test" tool executes the project Tcltest test suite.  By 
     default, "quill test" runs the test suites for all subdirectories of
     <root>/test.  
@@ -44,23 +37,7 @@ set ::quillapp::help(test) {
     in the subdirectory.  Note that "quill new" and "quill add" create 
     the necessary script whenever a library package is added to the
     project.
-}
-
-#-------------------------------------------------------------------------
-# Namespace Export
-
-namespace eval ::quillapp:: {
-    namespace export \
-        testtool
-} 
-
-#-------------------------------------------------------------------------
-# Tool Singleton: testtool
-
-snit::type ::quillapp::testtool {
-    # Make it a singleton
-    pragma -hasinstances no -hastypedestroy no
-
+} {
     # execute argv
     #
     # argv - command line arguments for this tool
@@ -94,8 +71,6 @@ snit::type ::quillapp::testtool {
             }
             RunTest $target $module $argv
         }
-
-
     }
 
     # RunTest target module options

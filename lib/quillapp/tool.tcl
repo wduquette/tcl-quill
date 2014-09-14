@@ -125,6 +125,27 @@ snit::type ::quillapp::tool {
         return $toolbox(needstree-$tool)
     }
 
+    # description tool
+    #
+    # tool - The name of a tool
+    # 
+    # Returns the tool's description.
+
+    typemethod description {tool} {
+        return $toolbox(description-$tool)
+    }
+
+    # usage tool
+    #
+    # tool - The name of a tool.
+    #
+    # Returns the usage string.
+
+    typemethod usage {tool} {
+        set usage [lindex $toolbox(argspec-$tool) end]
+        return "quill $tool $usage"
+    }
+
     # use tool argv
     #
     # tool   - A tool to use
