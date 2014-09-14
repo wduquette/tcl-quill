@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------
 # TITLE: 
-#    buildtool.tcl
+#    tool_build.tcl
 #
 # AUTHOR:
 #    Will Duquette
@@ -12,22 +12,13 @@
 #    "quill build" tool implementation.  This tool builds project build
 #    targets.
 #
-#    TODO: Allow building particular targets.
-#
 #-------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------
-# Register the tool
-
-set ::quillapp::tools(build) {
-    command     "build"
+quillapp::tool define build {
     description "Build applications and libraries"
     argspec     {0 - "?app|lib? ?<name>..."}
-    intree      true
-    ensemble    ::quillapp::buildtool
-}
-
-set ::quillapp::help(build) {
+    needstree   true
+} {
     The "quill build" tool builds the project's applications and 
     provided libraries, as listed in the project.quill file.  By
     default, all applications and libraries are built.
@@ -38,23 +29,7 @@ set ::quillapp::help(build) {
 
     quill build lib ?<name>...?
         Build all of the libraries.  Optionally, build the named libraries.
-}
-
-#-------------------------------------------------------------------------
-# Namespace Export
-
-namespace eval ::quillapp:: {
-    namespace export \
-        buildtool
-} 
-
-#-------------------------------------------------------------------------
-# Tool Singleton: buildtool
-
-snit::type ::quillapp::buildtool {
-    # Make it a singleton
-    pragma -hasinstances no -hastypedestroy no
-
+} {
     # execute argv
     #
     # argv - command line arguments for this tool

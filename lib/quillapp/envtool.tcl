@@ -21,7 +21,7 @@ set ::quillapp::tools(env) {
     command     "env"
     description "Describes the development environment."
     argspec     {0 0 ""}
-    intree      false
+    needstree   false
     ensemble    ::quillapp::envtool
 }
 

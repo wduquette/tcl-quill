@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------
 # TITLE: 
-#    docstool.tcl
+#    tool_docs.tcl
 #
 # AUTHOR:
 #    Will Duquette
@@ -14,18 +14,11 @@
 #
 #-------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------
-# Register the tool
-
-set ::quillapp::tools(docs) {
-    command     "docs"
+quillapp::tool define docs {
     description "Formats project documentation."
     argspec     {0 1 "?<target>?"}
-    intree      true
-    ensemble    ::quillapp::docstool
-}
-
-set ::quillapp::help(docs) {
+    needstree   true
+} {
     The "quill docs" tool formats the project's quilldoc(5) and 
     manpage(5) documentation.
 
@@ -51,23 +44,7 @@ set ::quillapp::help(docs) {
     mani   - Section (i): Tcl Interfaces
 
     Additional sections can be defined "TBD".
-}
-
-#-------------------------------------------------------------------------
-# Namespace Export
-
-namespace eval ::quillapp:: {
-    namespace export \
-        docstool
-} 
-
-#-------------------------------------------------------------------------
-# Tool Singleton: docstool
-
-snit::type ::quillapp::docstool {
-    # Make it a singleton
-    pragma -hasinstances no -hastypedestroy no
-
+} {
     # execute argv
     #
     # argv - command line arguments for this tool

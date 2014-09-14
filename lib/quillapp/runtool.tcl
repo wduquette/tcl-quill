@@ -21,7 +21,7 @@ set ::quillapp::tools(run) {
     command     "run"
     description "Runs the primary application."
     argspec     {0 - "?<arg>...?"}
-    intree      true
+    needstree   true
     ensemble    ::quillapp::runtool
 }
 

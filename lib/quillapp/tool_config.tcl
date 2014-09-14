@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------
 # TITLE: 
-#    configtool.tcl
+#    tool_config.tcl
 #
 # AUTHOR:
 #    Will Duquette
@@ -14,18 +14,11 @@
 #
 #-------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------
-# Register the tool
-
-set ::quillapp::tools(config) {
-    command     "config"
+quillapp::tool define config {
     description "Quill configuration tool."
     argspec     {1 - "<subcommand> ?<arg>...?"}
-    intree      true
-    ensemble    ::quillapp::configtool
-}
-
-set ::quillapp::help(config) {
+    needstree   true
+} {
     The "quill config" tool sets and queries Quill's configuration
     parameters.  See the config(5) man page for a description of 
     each of the parameters.
@@ -45,23 +38,7 @@ set ::quillapp::help(config) {
 
     quill config reset
         Resets all configuration parameters to their default values.
-}
-
-#-------------------------------------------------------------------------
-# Namespace Export
-
-namespace eval ::quillapp:: {
-    namespace export \
-        configtool
-} 
-
-#-------------------------------------------------------------------------
-# Tool Singleton: configtool
-
-snit::type ::quillapp::configtool {
-    # Make it a singleton
-    pragma -hasinstances no -hastypedestroy no
-
+} {
     # execute argv
     #
     # argv - command line arguments for this tool

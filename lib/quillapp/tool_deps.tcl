@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------
 # TITLE: 
-#    depstool.tcl
+#    tool_deps.tcl
 #
 # AUTHOR:
 #    Will Duquette
@@ -14,18 +14,12 @@
 #
 #-------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------
-# Register the tool
-
-set ::quillapp::tools(deps) {
-    command     "deps"
+quillapp::tool define deps {
     description "Manages external dependencies"
     argspec     {0 - "?<subcommand>? ?<name>...?"}
-    intree      true
+    needstree   true
     ensemble    ::quillapp::depstool
-}
-
-set ::quillapp::help(deps) {
+} {
     Quill installs the project's 'require''d packages into a local
     teapot repository (see 'quill help teapot').  Once installed, they 
     are available for use during development, and are included in 
@@ -42,23 +36,7 @@ set ::quillapp::help(deps) {
     quill deps refresh ?<name>...?
         Attempts to remove and re-install all dependencies.  Optionally,
         one or more package names can be specified explicitly.
-}
-
-#-------------------------------------------------------------------------
-# Namespace Export
-
-namespace eval ::quillapp:: {
-    namespace export \
-        depstool
-} 
-
-#-------------------------------------------------------------------------
-# Tool Singleton: depstool
-
-snit::type ::quillapp::depstool {
-    # Make it a singleton
-    pragma -hasinstances no -hastypedestroy no
-
+} {
     # execute argv
     #
     # argv - command line arguments for this tool

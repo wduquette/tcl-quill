@@ -53,25 +53,25 @@ source [file join $::quillapp::library tree.tcl             ]
 source [file join $::quillapp::library tree_app.tcl         ]
 
 # Tools
-source [file join $::quillapp::library buildtool.tcl        ]
-source [file join $::quillapp::library configtool.tcl       ]
-source [file join $::quillapp::library depstool.tcl         ]
-source [file join $::quillapp::library docstool.tcl         ]
-source [file join $::quillapp::library disttool.tcl         ]
 source [file join $::quillapp::library envtool.tcl          ]
 source [file join $::quillapp::library infotool.tcl         ]
 source [file join $::quillapp::library installtool.tcl      ]
 source [file join $::quillapp::library newtool.tcl          ]
 source [file join $::quillapp::library replacetool.tcl      ]
 source [file join $::quillapp::library runtool.tcl          ]
-source [file join $::quillapp::library shelltool.tcl        ]
 source [file join $::quillapp::library teapottool.tcl       ]
-source [file join $::quillapp::library main.tcl             ]
 
 source [file join $::quillapp::library tool.tcl             ]
+source [file join $::quillapp::library tool_build.tcl       ]
+source [file join $::quillapp::library tool_config.tcl      ]
+source [file join $::quillapp::library tool_deps.tcl        ]
+source [file join $::quillapp::library tool_dist.tcl        ]
+source [file join $::quillapp::library tool_docs.tcl        ]
 source [file join $::quillapp::library tool_help.tcl        ]
 source [file join $::quillapp::library tool_shell.tcl       ]
 source [file join $::quillapp::library tool_test.tcl        ]
 source [file join $::quillapp::library tool_version.tcl     ]
 
+# Main
+source [file join $::quillapp::library main.tcl             ]
 

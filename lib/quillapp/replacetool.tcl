@@ -21,7 +21,7 @@ set ::quillapp::tools(replace) {
     command     "replace"
     description "Global text replacement across files."
     argspec     {3 - "<target> <subtext> <file> ?<file>...?"}
-    intree      false
+    needstree   false
     ensemble    ::quillapp::replacetool
 }
 

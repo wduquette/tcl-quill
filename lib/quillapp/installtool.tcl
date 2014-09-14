@@ -21,7 +21,7 @@ set ::quillapp::tools(install) {
     command     "install"
     description "Install applications and libraries"
     argspec     {0 - "?app|lib? ?<name>...?"}
-    intree      true
+    needstree   true
     ensemble    ::quillapp::installtool
 }
 

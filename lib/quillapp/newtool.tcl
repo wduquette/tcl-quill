@@ -21,7 +21,7 @@ set ::quillapp::tools(new) {
     command     "new"
     description "Create new project trees"
     argspec     {0 - "<template> <arg>..."}
-    intree      false
+    needstree   false
     ensemble    ::quillapp::newtool
 }
 

@@ -21,7 +21,7 @@ set ::quillapp::tools(info) {
     command     "info"
     description "Displays the project metadata to the console."
     argspec     {0 0 ""}
-    intree      true
+    needstree   true
     ensemble    ::quillapp::infotool
 }
 

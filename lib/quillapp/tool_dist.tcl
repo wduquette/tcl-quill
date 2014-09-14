@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------
 # TITLE: 
-#    disttool.tcl
+#    tool_dist.tcl
 #
 # AUTHOR:
 #    Will Duquette
@@ -14,18 +14,11 @@
 #
 #-------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------
-# Register the tool
-
-set ::quillapp::tools(dist) {
-    command     "dist"
+quillapp::tool define dist {
     description "Build distribution .zip files"
     argspec     {0 1 "?<name>?"}
-    intree      true
-    ensemble    ::quillapp::disttool
-}
-
-set ::quillapp::help(dist) {
+    needstree   true
+} {
     The "quill dist" tool builds distribution .zip files based on the
     distributions defined in the project's project.quill file.  See
     quill(5) for the details on how to define a distribution.
@@ -33,23 +26,7 @@ set ::quillapp::help(dist) {
     quill dist ?<name>?
         By default, builds all of the distribution files.  Optionally,
         builds the named distribution.
-}
-
-#-------------------------------------------------------------------------
-# Namespace Export
-
-namespace eval ::quillapp:: {
-    namespace export \
-        disttool
-} 
-
-#-------------------------------------------------------------------------
-# Tool Singleton: disttool
-
-snit::type ::quillapp::disttool {
-    # Make it a singleton
-    pragma -hasinstances no -hastypedestroy no
-
+} {
     # execute argv
     #
     # argv - command line arguments for this tool
