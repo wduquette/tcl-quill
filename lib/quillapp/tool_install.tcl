@@ -47,10 +47,15 @@ quillapp::tool define install {
     # Executes the tool given the arguments.
 
     typemethod execute {argv} {
+        # FIRST, get arguments.
         set targetType [lshift argv]
         set names $argv
 
-        # FIRST, install provided libraries
+        if {$targetType ni {app lib}} {
+            throw FATAL "Usage: [tool usage build]"
+        }
+    
+        # NEXT, install provided libraries
         if {$targetType in {lib ""}} {
             if {[llength $names] == 0} {
                 set names [project provide names]

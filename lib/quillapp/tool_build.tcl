@@ -37,10 +37,15 @@ quillapp::tool define build {
     # Executes the tool given the arguments.
 
     typemethod execute {argv} {
+        # FIRST, get arguments
         set targetType [lshift argv]
         set names $argv
 
-        # FIRST, build provided libraries
+        if {$targetType ni {app lib}} {
+            throw FATAL "Usage: [tool usage build]"
+        }
+
+        # NEXT, build provided libraries
         if {$targetType in {lib ""}} {
             if {[llength $names] == 0} {
                 set names [project provide names]
@@ -55,7 +60,12 @@ quillapp::tool define build {
             if {[llength $names] == 0} {
                 set names [project app names]
             }
+
             foreach app $names {
+                if {$app ni [project app names]} {
+                    throw FATAL "No such application in project.quill: \"$app\""
+                }
+
                 # Get the app types.  If "exe" is in the list,
                 # make sure that this platform's flavor isn't.
                 set apptypes [project app apptypes $app]
