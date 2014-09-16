@@ -19,12 +19,10 @@
 namespace eval ::quillapp:: {
 	namespace export \
 		checkargs    \
-        exefile      \
         gentree      \
         prepare      \
         tagsplit     \
-        tagreplace   \
-        tclfile
+        tagreplace
 }
 
 #-------------------------------------------------------------------------

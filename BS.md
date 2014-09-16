@@ -4,6 +4,24 @@ Nothing in this file should be presumed to be reflective of anything
 in the project.  Everything in this file is either incomplete, obsolete, 
 or wrong.
 
+## Q: How to test the Quill application?
+
+* Separate mechanism from policy.
+* Test the mechanism first.
+* Only test policy in a vacuum.
+
+It seems to me that I'm going to need some kind of sandbox.  The config 
+module is necessary to everything, for example, but we don't want our 
+tests dependent on the user's configuration, nor do we want to affect 
+the user's configuration.
+
+Can I use a virtual read-write file system?  Hmmmm.
+
+But even then, I need to shift the app into "test mode"; and certain modules
+will work differently in test mode than in production mode.
+
+Do I want a "testmain"?  Probably.
+
 ## Q: How best to make the teapot writable?
 
 The 'quill teapot link' approach isn't working on 64-bit Ubuntu:
