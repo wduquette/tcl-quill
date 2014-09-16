@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------
 # TITLE: 
-#    envtool.tcl
+#    tool_env.tcl
 #
 # AUTHOR:
 #    Will Duquette
@@ -14,38 +14,15 @@
 #
 #-------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------
-# Register the tool
-
-set ::quillapp::tools(env) {
-    command     "env"
+quillapp::tool define env {
     description "Describes the development environment."
     argspec     {0 0 ""}
     needstree   false
-    ensemble    ::quillapp::envtool
-}
-
-set ::quillapp::help(env) {
+} {
     The "quill env" tool displays information about the development
     environment as seen by Quill: the tclsh and other tools it is using,
     whether or not it can find them, and how it found them.
-}
-
-#-------------------------------------------------------------------------
-# Namespace Export
-
-namespace eval ::quillapp:: {
-    namespace export \
-        envtool
-} 
-
-#-------------------------------------------------------------------------
-# Tool Singleton: envtool
-
-snit::type ::quillapp::envtool {
-    # Make it a singleton
-    pragma -hasinstances no -hastypedestroy no
-
+} {
     # execute argv
     #
     # argv - command line arguments for this tool

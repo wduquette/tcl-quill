@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------
 # TITLE: 
-#    teapottool.tcl
+#    tool_teapot.tcl
 #
 # AUTHOR:
 #    Will Duquette
@@ -14,18 +14,11 @@
 #
 #-------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------
-# Register the tool
-
-set ::quillapp::tools(teapot) {
-    command     "teapot"
+quillapp::tool define teapot {
     description "Manages local teapot repository."
     argspec     {0 1 "?<subcommand>?"}
     needstree   false
-    ensemble    ::quillapp::teapottool
-}
-
-set ::quillapp::help(teapot) {
+} {
     The local teapot repository is where the require'd packages listed
     in project.quill are installed on the user's machine.
 
@@ -43,23 +36,7 @@ set ::quillapp::help(teapot) {
 
     quill teapot list
         As a convenience, this lists the contents of the local teapot.
-}
-
-#-------------------------------------------------------------------------
-# Namespace Export
-
-namespace eval ::quillapp:: {
-    namespace export \
-        teapottool
-} 
-
-#-------------------------------------------------------------------------
-# Tool Singleton: teapottool
-
-snit::type ::quillapp::teapottool {
-    # Make it a singleton
-    pragma -hasinstances no -hastypedestroy no
-
+} {
     # execute argv
     #
     # argv - command line arguments for this tool

@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------
 # TITLE: 
-#    replacetool.tcl
+#    tool_replace.tcl
 #
 # AUTHOR:
 #    Will Duquette
@@ -14,18 +14,11 @@
 #
 #-------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------
-# Register the tool
-
-set ::quillapp::tools(replace) {
-    command     "replace"
+quillapp::tool define replace {
     description "Global text replacement across files."
     argspec     {3 - "<target> <subtext> <file> ?<file>...?"}
     needstree   false
-    ensemble    ::quillapp::replacetool
-}
-
-set ::quillapp::help(replace) {
+} {
     The "quill replace" tool looks for the target text in the named files,
     and replaces it with the substitution text, saving the old content to
     backup files.  E.g.,
@@ -37,23 +30,7 @@ set ::quillapp::help(replace) {
 
     NOTE: "quill replace" is not tied to the project tree; it can be used
     with any text files.
-}
-
-#-------------------------------------------------------------------------
-# Namespace Export
-
-namespace eval ::quillapp:: {
-    namespace export \
-        replacetool
-} 
-
-#-------------------------------------------------------------------------
-# Tool Singleton: replacetool
-
-snit::type ::quillapp::replacetool {
-    # Make it a singleton
-    pragma -hasinstances no -hastypedestroy no
-
+} {
     # execute argv
     #
     # argv - command line arguments for the primary app

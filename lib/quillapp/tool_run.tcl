@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------
 # TITLE: 
-#    runtool.tcl
+#    tool_run.tcl
 #
 # AUTHOR:
 #    Will Duquette
@@ -14,18 +14,11 @@
 #
 #-------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------
-# Register the tool
-
-set ::quillapp::tools(run) {
-    command     "run"
+quillapp::tool define run {
     description "Runs the primary application."
     argspec     {0 - "?<arg>...?"}
     needstree   true
-    ensemble    ::quillapp::runtool
-}
-
-set ::quillapp::help(run) {
+} {
     The "quill run" executes the project's primary application (if any),
     passing it the command-line arguments.  For projects that define
     more than one application, the primary application is the first to
@@ -38,23 +31,7 @@ set ::quillapp::help(run) {
 
     The executed script should be able to "package require" any of the
     project's packages.
-}
-
-#-------------------------------------------------------------------------
-# Namespace Export
-
-namespace eval ::quillapp:: {
-    namespace export \
-        runtool
-} 
-
-#-------------------------------------------------------------------------
-# Tool Singleton: runtool
-
-snit::type ::quillapp::runtool {
-    # Make it a singleton
-    pragma -hasinstances no -hastypedestroy no
-
+} {
     # execute argv
     #
     # argv - command line arguments for the primary app

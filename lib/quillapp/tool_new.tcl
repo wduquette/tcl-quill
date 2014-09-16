@@ -14,39 +14,16 @@
 #
 #-------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------
-# Register the tool
-
-set ::quillapp::tools(new) {
-    command     "new"
+quillapp::tool define new {
     description "Create new project trees"
     argspec     {0 - "<template> <arg>..."}
     needstree   false
-    ensemble    ::quillapp::newtool
-}
-
-set ::quillapp::help(new) {
+} {
     The "quill new" tool creates new project trees customized for
     particular purposes.  Enter "quill new" with no arguments
     for a list of available tree templates, and "quill new <template>"
     for a description of that template and its arguments.
-}
-
-#-------------------------------------------------------------------------
-# Namespace Export
-
-namespace eval ::quillapp:: {
-    namespace export \
-        newtool
-} 
-
-#-------------------------------------------------------------------------
-# Tool Singleton: newtool
-
-snit::type ::quillapp::newtool {
-    # Make it a singleton
-    pragma -hasinstances no -hastypedestroy no
-
+} {
     # execute argv
     #
     # argv - command line arguments for this tool

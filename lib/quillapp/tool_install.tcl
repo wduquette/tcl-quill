@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------
 # TITLE: 
-#    installtool.tcl
+#    tool_install.tcl
 #
 # AUTHOR:
 #    Will Duquette
@@ -14,18 +14,11 @@
 #
 #-------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------
-# Register the tool
-
-set ::quillapp::tools(install) {
-    command     "install"
+quillapp::tool define install {
     description "Install applications and libraries"
     argspec     {0 - "?app|lib? ?<name>...?"}
     needstree   true
-    ensemble    ::quillapp::installtool
-}
-
-set ::quillapp::help(install) {
+} {
     The "quill install" tool installs the project's applications and 
     provided libraries for use on the local system.  Applications are
     installed into the user's ~/bin directory, and libraries are installed
@@ -46,23 +39,7 @@ set ::quillapp::help(install) {
 
     NOTE: "quill install" doesn't build anything.  To ensure you're 
     installing the latest code, do a "quill build" first.
-}
-
-#-------------------------------------------------------------------------
-# Namespace Export
-
-namespace eval ::quillapp:: {
-    namespace export \
-        installtool
-} 
-
-#-------------------------------------------------------------------------
-# Tool Singleton: installtool
-
-snit::type ::quillapp::installtool {
-    # Make it a singleton
-    pragma -hasinstances no -hastypedestroy no
-
+} {
     # execute argv
     #
     # argv - command line arguments for this tool
