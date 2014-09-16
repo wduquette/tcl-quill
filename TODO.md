@@ -5,6 +5,12 @@ This is the official list of work to be done.
 # For Quill 0.2.x
 
 * Fix bugs as found and reported.
+* Add tests for quill tools
+  * Dual test scheme: modules containing mechanism, which are tested
+    directly.
+  * Tool modules, which are tested using mockup mechanisms.
+  * Goal: test coverage similar to Snit's, so that when I run the tests
+    on Windows or Linux, I've really shown that I've not broken anything.
 * quilldoc(5) Changes:
   * Should manpage(5) be quillman(5)?  Probably.
 * Quill user's guide
