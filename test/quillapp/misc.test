@@ -26,6 +26,12 @@ source ../../lib/quillapp/pkgModules.tcl
 namespace import ::quillapp::*
 
 #-------------------------------------------------------------------------
+# Setup
+
+source ted.tcl
+ted init
+
+#-------------------------------------------------------------------------
 # checkargs
 
 test checkargs-1.1 {too few} -body {
@@ -58,6 +64,39 @@ test checkargs-2.3 {lots} -body {
     }
 } -result {ok {}}
 
+#-------------------------------------------------------------------------
+# gentree
+
+test gentree-1.1 {generate file without subdirs} -setup {
+    ted makeproj
+} -body {
+    gentree myfile1.1.txt {Some Text}
+    readfile [ted root myfile1.1.txt]
+} -cleanup {
+    ted cleanup
+} -result {Some Text}
+
+test gentree-1.2 {generate file with subdirs} -setup {
+    ted makeproj
+} -body {
+    gentree mydir/myfile1.2.txt {More Text}
+    readfile [ted root mydir myfile1.2.txt]
+} -cleanup {
+    ted cleanup
+} -result {More Text}
+
+test gentree-1.3 {multiple files} -setup {
+    ted makeproj
+} -body {
+    gentree myfile1.3a.txt       {A Contents} \
+            mydir/myfile1.3b.txt {B Contents}
+
+    set a [readfile [ted root myfile1.3a.txt]]
+    set b [readfile [ted root mydir myfile1.3b.txt]]
+    list $a $b
+} -cleanup {
+    ted cleanup
+} -result {{A Contents} {B Contents}}
 
 #-------------------------------------------------------------------------
 # Clean up and finish

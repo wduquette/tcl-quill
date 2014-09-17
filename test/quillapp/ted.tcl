@@ -18,10 +18,12 @@ snit::type ted {
 
     # info - Info array
     #
-    # pwd - The test directory
+    # testdir  - The test directory
+    # root     - The fake project directory
 
     typevariable info -array {
-        pwd ""
+        testdir ""
+        root    ""
     }
 
     #---------------------------------------------------------------------
@@ -32,28 +34,28 @@ snit::type ted {
     # Prepares to support a set of tests.
 
     typemethod init {} {
-        set info(pwd) [pwd]
+        set info(testdir) [pwd]
+        set info(root)    [file join $info(testdir) myproj]
+
+        # set up quillapp::project::info
+        set ::quillapp::project::info(intree) 1
+        set ::quillapp::project::info(root)   $info(root)
     }
 
     # root args...
     #
-    # Returns the test directory with components added.
+    # Returns the fake project root directory with components added.
 
     typemethod root {args} {
-        return [file join $info(pwd) myproj {*}$args]
+        return [file join $info(root) {*}$args]
     }
 
-    # makeproj ?tbd...?
-    #
-    # Makes a new project within the test directory, for tests to run in.
-
     typemethod makeproj {} {
-        project testinit
-        ::quillapp::appTree myproj myapp
+        tcltest::makeDirectory myproj
     }
 
     typemethod cleanup {} {
-        cd $info(pwd)
+        cd $info(testdir)
         tcltest::removeDirectory myproj
     }
 }
