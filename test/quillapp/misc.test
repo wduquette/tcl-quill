@@ -202,6 +202,60 @@ test tagsplit-1.3 {tags and text} -body {
     }]
 } -result {{A B {# -quill-dummy-begin}} {C D} {{# -quill-dummy-end} E F}}
 
+#---------------------------------------------------------------------
+# tagreplace
+
+test tagreplace-1.1 {no tags found} -body {
+    tagreplace dummy [outdent {
+        A
+        B
+        C
+    }] {new line}
+} -result {A
+B
+C}
+
+test tagreplace-1.2 {no prefix/suffix} -body {
+    tagreplace dummy [outdent {
+        # -quill-dummy-begin
+        A
+        B
+        C
+        # -quill-dummy-end
+    }] {new line}
+} -result {# -quill-dummy-begin
+new line
+# -quill-dummy-end}
+
+test tagreplace-1.3 {prefix/suffix} -body {
+    tagreplace dummy [outdent {
+        X
+        # -quill-dummy-begin
+        A
+        B
+        C
+        # -quill-dummy-end
+        Y
+    }] {new line}
+} -result {X
+# -quill-dummy-begin
+new line
+# -quill-dummy-end
+Y}
+
+test tagreplace-1.4 {no existing content} -body {
+    tagreplace dummy [outdent {
+        X
+        # -quill-dummy-begin
+        # -quill-dummy-end
+        Y
+    }] {new line}
+} -result {X
+# -quill-dummy-begin
+new line
+# -quill-dummy-end
+Y}
+
 #-------------------------------------------------------------------------
 # Clean up and finish
 
