@@ -171,6 +171,36 @@ test prepare-6.2 {-type succeeds} -body {
     prepare parm -type snit::integer
 } -result {123}
 
+#-------------------------------------------------------------------------
+# tagsplit
+
+test tagsplit-1.1 {tag not found} -body {
+    tagsplit dummy [outdent {
+        Line 1
+        Line 2
+        Line 3
+    }]
+} -result ""
+
+test tagsplit-1.2 {just tags} -body {
+    tagsplit dummy [outdent {
+        # -quill-dummy-begin
+        # -quill-dummy-end
+    }]
+} -result {{{# -quill-dummy-begin}} {} {{# -quill-dummy-end}}}
+
+test tagsplit-1.3 {tags and text} -body {
+    tagsplit dummy [outdent {
+        A
+        B
+        # -quill-dummy-begin
+        C
+        D
+        # -quill-dummy-end
+        E
+        F
+    }]
+} -result {{A B {# -quill-dummy-begin}} {C D} {{# -quill-dummy-end} E F}}
 
 #-------------------------------------------------------------------------
 # Clean up and finish
