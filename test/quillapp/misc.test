@@ -99,6 +99,80 @@ test gentree-1.3 {multiple files} -setup {
 } -result {{A Contents} {B Contents}}
 
 #-------------------------------------------------------------------------
+# prepare
+
+test prepare-1.1 {trims string} -body {
+    set parm "   Some Input   "
+    prepare parm
+} -result {Some Input}
+
+test prepare-1.2 {-tighten} -body {
+    set parm "  manny   moe   "
+    prepare parm -tighten
+} -result {manny moe}
+
+test prepare-1.3 {-toupper} -body {
+    set parm "manny"
+    prepare parm -toupper
+} -result {MANNY}
+
+test prepare-1.4 {-tolower} -body {
+    set parm "MANNY"
+    prepare parm -tolower
+} -result {manny}
+
+test prepare-2.1 {-file fails} -body {
+    set parm "file name"
+    codecatch { prepare parm -file }
+} -result {INVALID {Input "parm" contains illegal characters or whitespace: "file name"}}
+
+test prepare-2.2 {-file succeeds} -body {
+    set parm "file_name"
+    prepare parm -file
+} -result {file_name}
+
+test prepare-3.1 {-oneof fails} -body {
+    set parm "john"
+    codecatch { prepare parm -oneof {manny moe jack} }
+} -result {INVALID {Input "parm" is not one of (manny, moe, jack): "john"}}
+
+test prepare-3.2 {-oneof succeeds} -body {
+    set parm "jack"
+    prepare parm -oneof {manny moe jack}
+} -result {jack}
+
+test prepare-4.1 {-listof fails} -body {
+    set parm "manny john"
+    codecatch { prepare parm -listof {manny moe jack} }
+} -result {INVALID {Input "parm" isn't a list of (manny, moe, jack): "manny john"}}
+
+test prepare-4.2 {-listof succeeds} -body {
+    set parm "manny jack"
+    prepare parm -listof {manny moe jack}
+} -result {manny jack}
+
+test prepare-5.1 {-required fails} -body {
+    set parm ""
+    codecatch { prepare parm -required }
+} -result {INVALID {Input "parm" requires a non-empty value.}}
+
+test prepare-5.2 {-required succeeds} -body {
+    set parm "manny"
+    prepare parm -required
+} -result {manny}
+
+test prepare-6.1 {-type fails} -body {
+    set parm "nonesuch"
+    codecatch { prepare parm -type snit::integer }
+} -result {INVALID {invalid value "nonesuch", expected integer}}
+
+test prepare-6.2 {-type succeeds} -body {
+    set parm "123"
+    prepare parm -type snit::integer
+} -result {123}
+
+
+#-------------------------------------------------------------------------
 # Clean up and finish
 
 ::tcltest::cleanupTests

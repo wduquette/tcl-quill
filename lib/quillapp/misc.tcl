@@ -199,6 +199,8 @@ proc ::quillapp::prepare {var args} {
             set theVar [{*}$theType validate $theVar]
         }
     }
+
+    return $theVar
 }
 
 # gentree path content...
