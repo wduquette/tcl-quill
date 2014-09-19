@@ -70,6 +70,13 @@ A Quill project can contain three different kinds of Tcl library:
 A project library called <i name>, of any of these three kinds, resides in
 the project's <root "lib/<i name>"> directory.<p>
 
+At least one library package is included in each new project.  Additional
+packages can be added using the <tt quill add> command (not yet implemented)
+or by hand, by copying an existing library.<p>
+
+Quill has some very specific expectations of project library packages; for
+the details, see the following subsections.<p>
+
 <section lib.pkgIndex "The 'pkgIndex.tcl' File">
 
 Every library package will have its <tt pkgIndex.tcl> file.  These are usually
