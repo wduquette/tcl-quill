@@ -19,6 +19,13 @@
 namespace eval ::quillapp:: {
     namespace export \
         main
+
+    # Define the global application options
+    variable opts
+
+    array set opts {
+        -verbose 0
+    }
 } 
 
 #-------------------------------------------------------------------------
@@ -29,6 +36,8 @@ namespace eval ::quillapp:: {
 # argv - Command line arguments
 
 proc ::quillapp::main {argv} {
+    variable opts
+
     # FIRST, are we in a project tree, and if so what's the project
     # root?
     project findroot
@@ -40,6 +49,11 @@ proc ::quillapp::main {argv} {
     if {[llength $argv] == 0} {
         tool use help {}
         return
+    }
+
+    # NEXT, get any global options, leaving tools in place
+    foroption opt argv {
+        -verbose { set opts(-verbose) 1 }
     }
 
     # NEXT, get the subcommand.  It must be either a .tcl file to execute,
@@ -99,6 +113,28 @@ proc ::quillapp::main {argv} {
     puts ""
 }
 
+# verbose
+#
+# Returns 1 if -verbose was given, and 0 otherwise.
+
+proc ::quillapp::verbose {} {
+    variable opts
+
+    return $opts(-verbose)
+}
+
+# vputs text
+#
+# text   - Text to output to console
+#
+# Outputs the text if the -verbose flag was provided.
+
+proc ::quillapp::vputs {text} {
+    if {[verbose]} {
+        puts $text
+    }
+}
+
 # ExecuteScript path argv
 #
 # path  - The full path to the script file
@@ -106,7 +142,7 @@ proc ::quillapp::main {argv} {
 #
 # Attempts to execute the script in the context of the project.
 
-proc ExecuteScript {path argv} {
+proc ::quillapp::ExecuteScript {path argv} {
     # FIRST, prepare the environment.
     set ::env(TCLLIBPATH) [project libpath]
 
@@ -118,5 +154,4 @@ proc ExecuteScript {path argv} {
         puts ""
         throw FATAL "Error while running $file: $result"
     }
-
 }
