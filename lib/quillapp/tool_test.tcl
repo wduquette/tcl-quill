@@ -23,8 +23,12 @@ quillapp::tool define test {
     default, "quill test" runs the test suites for all subdirectories of
     <root>/test.  
 
+    quill test
+        Runs all test subdirectories, summarizing the results.  To see
+        the full output, use 'quill -verbose test'
+
     quill test <target> ?<options...>?
-        Runs the test suite for the <target> subdirectory.  
+        Runs the test suite for the <target> subdirectory.
 
     quill test <target> <module> ?<options...>?
         Runs the tests for the specific <module> within the <target>
@@ -51,11 +55,23 @@ quillapp::tool define test {
 
         # NEXT, one or all
         if {$target eq ""} {
+            # FIRST, we summarize unless -verbose.
+            if {[quillapp::verbose]} {
+                set mode verbose
+            } else {
+                set mode summary
+                puts [outdent {
+                    Summarizing test results.  Use 'quill -verbose test'
+                    to see the details.
+                }]
+                puts ""
+            }
+
             set count 0
             foreach dir [glob -nocomplain [project root test *]] {
                 if {[file isdirectory $dir]} {
                     incr count
-                    RunTest [file tail $dir] "" $argv
+                    RunTest $mode [file tail $dir] "" $argv
                 }
             }
 
@@ -69,12 +85,13 @@ quillapp::tool define test {
             if {![file isdirectory [project root test $target]]} {
                 throw FATAL "'$target' is not a valid test target."
             }
-            RunTest $target $module $argv
+            RunTest verbose $target $module $argv
         }
     }
 
-    # RunTest target module options
+    # RunTest mode target module options
     #
+    # mode     - Output mode, verbose or summary
     # target   - A subdirectory in $root/test
     # module   - The module name of a module test file in $target.
     #            Defaults to "all_tests".
@@ -82,7 +99,7 @@ quillapp::tool define test {
     #
     # Runs the given test script.
 
-    proc RunTest {target module optlist} {
+    proc RunTest {mode target module optlist} {
         # FIRST, get the module
         if {$module eq ""} {
             set module "all_tests"
@@ -98,12 +115,53 @@ quillapp::tool define test {
         set ::env(TCLLIBPATH) [project libpath]
 
         # NEXT, run the tests.
-        try {
-            cd [project root test $target]
-            exec [env pathto tclsh] $fname {*}$optlist \
-                >@ stdout 2>@ stderr
-        } on error {result} {
-            throw FATAL "Error running tests: $result"
+        cd [project root test $target]
+        set cmd [list [env pathto tclsh] $fname {*}$optlist]
+
+        if {$mode eq "verbose"} {
+            try {
+                exec {*}$cmd >@ stdout 2>@ stderr
+            } on error {result} {
+                throw FATAL "Error running tests: $result"
+            }
+        } else {
+            try {
+                set output [exec {*}$cmd 2>@1]
+                FilterOutput $target $output
+            } on error {result} {
+                puts ""
+                throw FATAL [outdent "
+                    Error running tests for: $target
+                    --> $result
+
+                    Use 'quill -verbose test' or 'quill test $target'
+                    to see the details.
+                "]
+            }
+        }
+    }
+
+    # FilterOutput target output
+    #
+    # target   - The test target
+    # output   - The output from running the tests.
+    #
+    # Filters the output, showing only the results.
+
+    proc FilterOutput {target output} {
+        set lines [split $output \n]
+        foreach line $lines {
+            if {[string match "Test file error:*" $line]} {
+                throw FATAL $line
+            }
+
+            if {![string match "all_tests.test:*" $line]} {
+                continue
+            }
+
+            set leader [format "%-15s" $target:]
+            regsub {^all_tests\.test\:} $line $leader line
+            puts $line
         }
     }
 
