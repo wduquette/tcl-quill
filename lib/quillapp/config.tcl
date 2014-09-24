@@ -86,5 +86,15 @@ snit::type ::quillapp::config {
     typemethod save {} {
         $ps save $configFile
     }
+
+    # cleanup
+    #
+    # Destroys the parmset, so that [config init] can be called again.
+    # This command is used by the quillapp test suite.
+
+    typemethod cleanup {} {
+        catch {$ps destroy}
+        set ps ""
+    } 
 }
 

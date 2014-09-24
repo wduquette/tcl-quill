@@ -1,0 +1,80 @@
+# -*-Tcl-*-
+#-------------------------------------------------------------------------
+# TITLE:
+#    config.test
+#
+# AUTHOR:
+#    Will Duquette
+#
+# DESCRIPTION:
+#    quillapp(n): Test cases for config.tcl
+
+#-------------------------------------------------------------------------
+# Load the tcltest package
+
+if {[lsearch [namespace children] ::tcltest] == -1} {
+    package require tcltest 2.3
+    eval ::tcltest::configure $argv
+}
+
+namespace import ::tcltest::test
+
+#-------------------------------------------------------------------------
+# Load the package to be tested
+
+source ../../lib/quillapp/pkgModules.tcl
+namespace import ::quillapp::*
+
+#-------------------------------------------------------------------------
+# Setup
+
+source ted.tcl
+ted init
+
+#-------------------------------------------------------------------------
+# init
+#
+# None of the existing parameters have any constraints on their values,
+# or any default value other than "".
+
+test init-1.1 {parameters defined} -setup {
+    ted init
+} -body {
+    config init
+    expr {[llength [config names]] > 0}
+} -cleanup {
+    ted cleanup
+} -result {1}
+
+test init-1.2 {value in file} -setup {
+    ted init
+    ted makeappdata
+    ted config {
+        parm helper.tclsh ABC
+    }
+} -body {
+    config init
+    config get helper.tclsh
+} -cleanup {
+    ted cleanup
+} -result {ABC}
+
+test init-1.3 {config saved} -setup {
+    ted init
+    ted makeappdata
+} -body {
+    config init
+    config set helper.tclsh XYZ
+    config save
+    readfile [file join appdata quill.config]
+} -cleanup {
+    ted cleanup
+} -match glob -result {* helper.tclsh * XYZ*}
+
+#-------------------------------------------------------------------------
+# Clean up and finish
+
+::tcltest::cleanupTests
+
+
+

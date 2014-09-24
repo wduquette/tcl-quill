@@ -37,6 +37,9 @@ snit::type ted {
         set info(testdir) [pwd]
         set info(root)    [file join $info(testdir) myproj]
 
+        # set up environment variables for testing.
+        set ::env(QUILL_APP_DATA) [file join $info(testdir) appdata]
+
         # set up quillapp::project::info
         set ::quillapp::project::info(intree) 1
         set ::quillapp::project::info(root)   $info(root)
@@ -50,12 +53,43 @@ snit::type ted {
         return [file join $info(root) {*}$args]
     }
 
+    # makeproj
+    #
+    # Makes an empty project tree
     typemethod makeproj {} {
         tcltest::makeDirectory myproj
     }
 
+    # config script
+    #
+    # Creates a quill.config file in the appdata directory given
+    # the script.
+
+    typemethod config {script} {
+        tcltest::makeFile $script \
+            [file join appdata quill.config]
+    }
+
+    # makeappdata
+    #
+    # Makes an empty appdata directory
+    typemethod makeappdata {} {
+        tcltest::makeDirectory appdata
+    }
+
+    # cleanup
+    #
+    # Cleanup after all test fixtures.
+
     typemethod cleanup {} {
+        # Test Variables
         cd $info(testdir)
+
+        # Modules
+        config cleanup
+
+        # Test Directories
         tcltest::removeDirectory myproj
+        tcltest::removeDirectory appdata
     }
 }

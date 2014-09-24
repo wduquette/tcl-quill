@@ -15,6 +15,12 @@
 #    resources are in the user's development environment, possibly
 #    with help from the configuration.
 #
+# ENVIRONMENT VARIABLES:
+#    This module is influenced by the following environment variables.
+#    They are generally used for testing rather than configuration.
+#
+#    QUILL_APP_DATA - Location of the Quill appdata directory
+#
 #-------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------
@@ -96,7 +102,12 @@ snit::type ::quillapp::env {
     # TODO: Probably there are better locations on OS X and Windows.
 
     typemethod appdata {args} {
-        return [file normalize [file join ~ .quill {*}$args]]
+        # FIRST, get the default location
+        set defdir [file normalize [file join ~ .quill]]
+
+        set dir [GetEnv QUILL_APP_DATA $defdir]
+
+        return [file join $dir {*}$args]
     }
 
     # pathto helper ?-require?
@@ -408,5 +419,29 @@ snit::type ::quillapp::env {
         return $result
     }
 
+    #---------------------------------------------------------------------
+    # Helpers
+
+    # GetEnv varname ?defvalue?
+    #
+    # varname    - Name of an environment variable
+    # defvalue   - The default value, or ""
+    #
+    # If the named variable exists and has a non-empty value, returns
+    # the value.  Otherwise, returns the defvalue.
+
+    proc GetEnv {varname {defvalue ""}} {
+        set value ""
+
+        catch {
+            set value $::env($varname)
+        }
+
+        if {$value eq ""} {
+            set value $defvalue
+        }
+
+        return $value
+    }
 
 }
