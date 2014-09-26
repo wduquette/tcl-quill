@@ -4,9 +4,22 @@ This is the official list of work to be done.
 
 # For Quill 0.3.0
 
-* 'quill build all'
-* 'quill build all -platform'
+* Next:
+  * 'quill build all'
+    * Check dependencies
+    * Format documentation
+    * Build all library .zips
+    * Build all executables
+    * Build distributions
 * 'quill build platforms'
+  * List the platforms for which basekits are available in teapot.activestate.com.
+* 'quill build all -platform'
+  * Disallow if no "exe" apps in project.
+  * Format documentation
+  * Build all library .zips
+  * Build all executables
+  * Build all distributions that include %platform in the name.
+    * Need to do the string map of %platform in a lazy way.
 * Fix bugs as found and reported.
 * quilldoc(5) Changes:
   * Should manpage(5) be quillman(5)?  Probably.
