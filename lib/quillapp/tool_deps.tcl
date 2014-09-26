@@ -155,7 +155,7 @@ quillapp::tool define deps {
             set exetype [project app exetype $app]
 
             if {$exetype ne "kit"} {
-                ladd list basekit.$tcltk.[os flavor]
+                ladd list basekit.$tcltk
             }
         }
 
