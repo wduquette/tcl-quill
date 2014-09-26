@@ -18,7 +18,6 @@ This is the official list of work to be done.
   * Documents Quill conventions, e.g., where to require packages, and the
     markings that appear in pkg* files.
   * Requires quilldoc(n) package.
-* Quill needs to handle multiple test targets better; see Issue #19.
 * Linux Testing
 * Distinguish between linux flavors when building; could be 32 or 64.
   Support both.
