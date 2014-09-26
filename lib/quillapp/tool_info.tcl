@@ -47,8 +47,7 @@ quillapp::tool define info {
                     dict set row Mode "Console"
                 }
 
-                dict set row Platforms \
-                    [join [project app apptypes $app] {, }]
+                dict set row ExeType [project app exetype $app]
                 lappend table $row
             }
 

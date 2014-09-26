@@ -132,6 +132,15 @@ quillapp::tool define deps {
     #
     # Returns the set of basekit "pathto" symbols that we need 
     # for this project.
+    #
+    # FIXME: This was originally set up to retrieve all basekits for
+    # the required "apptypes", which were [os flavors].  This was
+    # an abuse of [os flavors]; the flavors are a matter of conventions
+    # in use, not build architectures.  By default, a project is expected
+    # to build only on the current platform; cross-platform builds will
+    # be handled as a separate case, outside of the normal dependency
+    # handling.  As a result, the whole config parms thing needs to be
+    # revisited for base kits.
 
     proc GetRequiredBasekits {} {
         set list [list]
@@ -143,10 +152,10 @@ quillapp::tool define deps {
                 set tcltk "tcl"
             }
 
-            foreach apptype [project app apptypes $app] {
-                if {$apptype ne "kit"} {
-                    ladd list basekit.$tcltk.$apptype
-                }
+            set exetype [project app exetype $app]
+
+            if {$exetype ne "kit"} {
+                ladd list basekit.$tcltk.[os flavor]
             }
         }
 

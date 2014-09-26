@@ -51,8 +51,8 @@ quillapp::tool define install {
         set targetType [lshift argv]
         set names $argv
 
-        if {$targetType ni {app lib}} {
-            throw FATAL "Usage: [tool usage build]"
+        if {$targetType ni {"" app lib}} {
+            throw FATAL "Usage: [tool usage install]"
         }
     
         # NEXT, install provided libraries
@@ -91,16 +91,15 @@ quillapp::tool define install {
                 "No such application in project.quill: \"$app\""
         }
 
-        set apptypes [project app apptypes $app]
-        if {[os flavor] in $apptypes} {
-            set apptype [os flavor]
-        } elseif {"kit" in $apptypes} {
-            set apptype kit
-        } else {
-            throw FATAL "Application $app is never built for this platform."
+        set source [project root bin [project app exename $app]]
+
+        if {![file isfile $source]} {
+            throw FATAL [outdent "
+                Cannot finish installation:
+                --> Executable '[file tail $source]' has not been built.
+            "]
         }
 
-        set source [project app target $app $apptype]
         set dest [file normalize [file join ~ bin [os exefile $app]]]
         puts "Installing app [file tail $source] as $dest"
         file copy -force $source $dest
@@ -121,10 +120,10 @@ quillapp::tool define install {
         set source [project root .quill teapot package-$lib-$ver-tcl.zip]
 
         if {![file isfile $source]} {
-            puts "WARNING: Cannot install lib $lib: teapot package"
-            puts $source
-            puts "has not been built.\n"
-            return
+            throw FATAL [outdent "
+                Cannot finish installation:
+                --> Library .zip '[file tail $source]' has not been built.
+            "]
         }
 
         puts "Installing lib $lib to local teapot..."

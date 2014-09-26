@@ -5,7 +5,7 @@
 *.kit
 *.exe
 /bin/*.exe
-/bin/*-osx
+/bin/*-macosx*
 /bin/*-linux
 teapot.txt
 /*.zip

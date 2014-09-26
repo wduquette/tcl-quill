@@ -41,7 +41,7 @@ quillapp::tool define build {
         set targetType [lshift argv]
         set names $argv
 
-        if {$targetType ni {app lib}} {
+        if {$targetType ni {"" app lib}} {
             throw FATAL "Usage: [tool usage build]"
         }
 
@@ -66,18 +66,13 @@ quillapp::tool define build {
                     throw FATAL "No such application in project.quill: \"$app\""
                 }
 
-                # Get the app types.  If "exe" is in the list,
-                # make sure that this platform's flavor isn't.
-                set apptypes [project app apptypes $app]
-                if {"exe" in $apptypes} {
-                    ldelete apptypes [os flavor]
+                if {[project app exetype $app] eq "exe"} {
+                    set plat [platform::identify]
+                } else {
+                    set plat tcl
                 }
-                foreach apptype $apptypes {
-                    if {$apptype eq "exe"} {
-                        set apptype [os flavor]
-                    }
-                    BuildTclApp $app $apptype
-                }
+
+                BuildTclApp $app $plat
             }
         }
     }
@@ -85,26 +80,26 @@ quillapp::tool define build {
     #---------------------------------------------------------------------
     # Building Tcl Apps
 
-    # BuildTclApp app apptype
+    # BuildTclApp app plat
     #
     # app     - The name of the application
-    # apptype - The desired apptype.
+    # plat    - The desired platform.
     #
     # Builds the application using tclapp.
 
-    proc BuildTclApp {app apptype} {
+    proc BuildTclApp {app plat} {
         # FIRST, make sure the app is known.
         if {$app ni [project app names]} {
             throw FATAL "App \"$app\" is not defined in project.quill."
         }
 
         # NEXT, get relevant data
-        set guiflag [project app gui    $app]
-        set outfile [project app target $app $apptype]
+        set guiflag [project app gui $app]
+        set outfile [project root bin [project app exename $app $plat]]
 
         # NEXT, tell the user what we are doing.
         if {$guiflag} {
-            puts "Building GUI app $app as '$apptype' $outfile"
+            puts "Building GUI app $app as [file tail $outfile]"
         } else {
             puts "Building Console app $app as [file tail $outfile]"
         }
@@ -134,11 +129,19 @@ quillapp::tool define build {
             -out $outfile
 
         # Prefix
-        if {$apptype ne "kit"} {
+
+        if {$plat ne "tcl"} {
+            # FIXME: At this point, we can only do the current platform.
+            if {$plat ne [platform::identify]} {
+                throw FATAL "Cross-platform builds temporarily disabled"
+            }
+
+            set flavor [os flavor]
+
             if {$guiflag} {
-                set basekit [env pathto basekit.tk.$apptype]
+                set basekit [env pathto basekit.tk.$flavor]
             } else {
-                set basekit [env pathto basekit.tcl.$apptype]
+                set basekit [env pathto basekit.tcl.$flavor]
             }
 
             if {$basekit eq ""} {

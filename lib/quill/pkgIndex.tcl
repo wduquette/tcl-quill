@@ -14,6 +14,6 @@
 #-------------------------------------------------------------------------
 
 # -quill-ifneeded-begin DO NOT EDIT BY HAND
-package ifneeded quill 0.2.1a0 [list source [file join $dir pkgModules.tcl]]
+package ifneeded quill 0.2.2a0 [list source [file join $dir pkgModules.tcl]]
 # -quill-ifneeded-end
 

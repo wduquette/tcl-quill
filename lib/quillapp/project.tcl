@@ -4,7 +4,7 @@
 #
 # AUTHOR:
 #    Will Duquette
-# 
+#
 # PROJECT:
 #    Quill: Project Build System for Tcl
 #
@@ -59,8 +59,8 @@ snit::type ::quillapp::project {
     # homepage      - URL of the project home page.
     #
     # apps          - List of application names
-    # apptypes-$app - Types of application to build for app $app:
-    #                 a list of kit, exe, linux, osx, windows.
+    # exetype-$app  - Kind of executable to build for app $app: kit 
+    #                 (a starkit) or exe (a starpack).
     # gui-$app      - Flag, 0 or 1: does package require Tk?
     #
     # requires      - List of required package names
@@ -284,15 +284,48 @@ snit::type ::quillapp::project {
         return [project root bin $app.tcl]
     }
 
-    # app apptypes app
+    # app exetype app
     #
     # app  - The app name
     #
-    # Returns the application types, kit, exe, linux, osx, windows.
+    # Returns the executable type for the app: kit or exe.
 
-    typemethod {app apptypes} {app} {
-        return $meta(apptypes-$app)
+    typemethod {app exetype} {app} {
+        return $meta(exetype-$app)
     }
+
+    # app exename app ?plat?
+    #
+    # app     - The app name
+    # plat    - The platform, tcl (for .kits) or the actual platform.
+    #
+    # Returns the full name of the built app given the
+    # platform.  If plat is missing, uses current platform.
+
+    typemethod {app exename} {app {plat ""}} {
+        if {$plat eq ""} {
+            if {$meta(exetype-$app) eq "kit"} {
+                set plat "tcl"
+            } else {
+                set plat [platform::identify]
+            }
+        }
+
+        set base $app-$meta(version)
+
+        if {$plat eq "tcl"} {
+            return "$base.kit"
+        } 
+
+        append base "-$plat"
+
+        if {[string match "win32-*" $plat]} {
+            append base ".exe"
+        }
+
+        return $base
+    }
+
 
     # app gui app
     #
@@ -302,25 +335,6 @@ snit::type ::quillapp::project {
 
     typemethod {app gui} {app} {
         return $meta(gui-$app)
-    }
-
-    # app target app
-    #
-    # app  - The app name
-    #
-    # Returns the full path to built app given the apptype.
-
-    typemethod {app target} {app apptype} {
-        set base [project root bin $app]
-
-        switch $apptype {
-            kit       { return $base.kit                       }
-            exe       { return [$type app target [os flavor]]  }
-            linux     { return $base-linux                     }
-            osx       { return $base-osx                       }
-            windows   { return $base-windows.exe               }
-            default   { error "Invalid app type: \"$apptype\"" }
-        }
     }
 
     # require names ?-all?
@@ -531,30 +545,30 @@ snit::type ::quillapp::project {
     # name - The application name.
     #
     # -gui                - The application should be a GUI
-    # -apptypes typelist  - List of kit, linux, osx, windows.
+    # -exetype exetype    - kit or exe.
     #
     # Specifies that this project builds an application called $name.
 
     proc AppCmd {name args} {
         # FIRST, get the option values
         set gui      0
-        set apptypes kit
+        set exetype  kit
 
         foroption opt args -all {
             -gui {
                 set gui 1
             }
 
-            -apptypes {
-                set apptypes [lshift args]
-                prepare apptypes -listof {kit exe linux osx windows}
+            -exetype {
+                set exetype [lshift args]
+                prepare exetype -oneof {kit exe}
             }
         }
 
         prepare name -required -file
 
         ladd meta(apps)           $name
-        set  meta(apptypes-$name) $apptypes
+        set  meta(exetype-$name)  $exetype
         set  meta(gui-$name)      $gui
     }
 
