@@ -65,11 +65,8 @@ snit::type ::quillapp::config {
         $ps define helper.tkcon       snit::stringtype ""
         $ps define helper.tclapp      snit::stringtype ""
         $ps define helper.teapot-pkg  snit::stringtype ""
-
-        foreach flavor [os flavors] {
-            $ps define helper.basekit.tcl.$flavor snit::stringtype ""
-            $ps define helper.basekit.tk.$flavor  snit::stringtype ""
-        }
+        $ps define helper.basekit.tcl snit::stringtype ""
+        $ps define helper.basekit.tk  snit::stringtype ""
 
         # Load the config file.
         set configFile [env appdata quill.config]

@@ -2,15 +2,12 @@
 
 This is the official list of work to be done.
 
-# For Quill 0.2.x
+# For Quill 0.3.0
 
+* 'quill build all'
+* 'quill build all -platform'
+* 'quill build platforms'
 * Fix bugs as found and reported.
-* Add tests for quill tools
-  * Dual test scheme: modules containing mechanism, which are tested
-    directly.
-  * Tool modules, which are tested using mockup mechanisms.
-  * Goal: test coverage similar to Snit's, so that when I run the tests
-    on Windows or Linux, I've really shown that I've not broken anything.
 * quilldoc(5) Changes:
   * Should manpage(5) be quillman(5)?  Probably.
 * Quill user's guide
@@ -19,18 +16,15 @@ This is the official list of work to be done.
     markings that appear in pkg* files.
   * Requires quilldoc(n) package.
 * Linux Testing
-* Distinguish between linux flavors when building; could be 32 or 64.
-  Support both.
 
-# For Quill 0.3.0
+# For Quill 0.4.0
 
-* Make "platforms" a new project(5) command: lists supported platforms.
-  * app -apptypes becomes -apptype again.
-  * 'quill build all' builds exe for this platform and dist for this
-    platform.
-  * 'quill build all -allplatforms' builds exes for all platforms
-  * Or something like this.  The current scheme isn't quite right, and
-    doesn't handle flavors well.
+* Add tests for quill tools
+  * Dual test scheme: modules containing mechanism, which are tested
+    directly.
+  * Tool modules, which are tested using mockup mechanisms.
+  * Goal: test coverage similar to Snit's, so that when I run the tests
+    on Windows or Linux, I've really shown that I've not broken anything.
 * Use zipfile::encode to build teapot packages.
 * 'quill new lib'
 * 'quill add'

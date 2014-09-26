@@ -42,8 +42,8 @@ quillapp::tool define env {
         DisplayPath tkcon
         DisplayPath teacup 
         DisplayPath tclapp
-        DisplayPath basekit.tcl.[os flavor]
-        DisplayPath basekit.tk.[os flavor]
+        DisplayPath basekit.tcl
+        DisplayPath basekit.tk
         DisplayPath teapot-pkg
 
         puts ""

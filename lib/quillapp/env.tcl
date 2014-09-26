@@ -40,6 +40,8 @@ snit::type ::quillapp::env {
     # Constants
 
     # teapot basekit patterns, by os flavor
+    #
+    # TODO: This will go elsewhere, to support 'quill build all -platforms'
 
     typevariable basekitPattern -array {
         linux   application-base-%t-thread-%v.*-linux-*-ix86
@@ -52,17 +54,13 @@ snit::type ::quillapp::env {
 
     # pathto - Array of normalized paths to tool executables.
     typevariable pathto -array {
-        tclsh               ""
-        tkcon               ""
-        teacup              ""
-        tclapp              ""
-        teapot-pkg          ""
-        basekit.tcl.linux   ""
-        basekit.tcl.osx     ""
-        basekit.tcl.windows ""
-        basekit.tk.linux    ""
-        basekit.tk.osx      ""
-        basekit.tk.windows  ""
+        tclsh        ""
+        tkcon        ""
+        teacup       ""
+        tclapp       ""
+        teapot-pkg   ""
+        basekit.tcl  ""
+        basekit.tk   ""
     }
 
     # pathof - Array of normalized paths to important directories
@@ -135,8 +133,8 @@ snit::type ::quillapp::env {
         # If not, try to find it in the environment
         if {$pathto($helper) eq ""} {
             if {[string match "basekit.*" $helper]} {
-                lassign [split $helper .] dummy tcltk flavor
-                set pathto($helper) [$type GetBaseKit $tcltk $flavor]
+                lassign [split $helper .] dummy tcltk
+                set pathto($helper) [$type GetBaseKit $tcltk]
             } else {
                 set pathto($helper) [$type GetPathTo $helper]
             }
@@ -218,14 +216,16 @@ snit::type ::quillapp::env {
         return [os pathfind [os exefile teapot-pkg]]
     }
 
-    # GetBaseKit tcl|tk flavor
+    # GetBaseKit tcl|tk
     #
     # tcl|tk   - non-gui or gui basekit desired.
-    # flavor   - linux|osx|windows, or "" for this platform.
     #
     # Retrieves the path to the basekit, or "" if it can't find it.
     #
     # The following search is used:
+    #
+    # FIXME: For this purpose, we assume that the flavor is [os flavor].
+    # The other code will move to support 'kite build all -platform'.
     #
     # * First, if the flavor is [os flavor], then we look for it
     #   with the locally installed basekits, and see if there's one
@@ -235,11 +235,10 @@ snit::type ::quillapp::env {
     #   we look in ~/.quill/basekits/, to see if we've cached
     #   one for the same version.
 
-    typemethod GetBaseKit {tcltk flavor} {
+    typemethod GetBaseKit {tcltk} {
         # FIRST, get the flavor.
-        if {$flavor eq ""} {
-            set flavor [os flavor]
-        }
+        # TODO: See note above
+        set flavor [os flavor]
 
         # NEXT, get the desired version.
         set tclver [shortver [env versionof tclsh]]

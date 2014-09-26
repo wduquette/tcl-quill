@@ -78,19 +78,24 @@
 </node>
 </node>
 <node TEXT="Command Strings" ID="ID_814304044" CREATED="1411674840836" MODIFIED="1411674846120">
-<node TEXT="quill build" ID="ID_422745646" CREATED="1411675571205" MODIFIED="1411675575678">
+<node TEXT="quill build" ID="ID_422745646" CREATED="1411675571205" MODIFIED="1411752033635">
+<icon BUILTIN="button_ok"/>
 <node TEXT="all libs, all apps (kit, exe for this platform)" ID="ID_388330116" CREATED="1411675576451" MODIFIED="1411675599793"/>
 </node>
-<node TEXT="quill build lib" ID="ID_1150517015" CREATED="1411675602628" MODIFIED="1411675610116">
+<node TEXT="quill build lib" ID="ID_1150517015" CREATED="1411675602628" MODIFIED="1411752038720">
+<icon BUILTIN="button_ok"/>
 <node TEXT="all libs" ID="ID_1246078451" CREATED="1411675610682" MODIFIED="1411675612928"/>
 </node>
-<node TEXT="quill build lib names..." ID="ID_1785676489" CREATED="1411675615291" MODIFIED="1411675622281">
+<node TEXT="quill build lib names..." ID="ID_1785676489" CREATED="1411675615291" MODIFIED="1411752077443">
+<icon BUILTIN="button_ok"/>
 <node TEXT="These libs (kit, exe for this platform)" ID="ID_1861381149" CREATED="1411675622765" MODIFIED="1411675654225"/>
 </node>
-<node TEXT="quill build app" ID="ID_1987133634" CREATED="1411675625229" MODIFIED="1411675630712">
+<node TEXT="quill build app" ID="ID_1987133634" CREATED="1411675625229" MODIFIED="1411752108035">
+<icon BUILTIN="button_ok"/>
 <node TEXT="all apps" ID="ID_1432117054" CREATED="1411675631486" MODIFIED="1411675634190"/>
 </node>
-<node TEXT="quill build app names..." ID="ID_1793022998" CREATED="1411675636822" MODIFIED="1411675673183">
+<node TEXT="quill build app names..." ID="ID_1793022998" CREATED="1411675636822" MODIFIED="1411752108032">
+<icon BUILTIN="button_ok"/>
 <node TEXT="These apps" ID="ID_362418085" CREATED="1411675642205" MODIFIED="1411675659312">
 <node TEXT="These libs (kit, exe for this platform)" ID="ID_1879047319" CREATED="1411675622765" MODIFIED="1411675654225"/>
 </node>
@@ -106,11 +111,14 @@
 </node>
 </node>
 <node TEXT="Project File Changes" ID="ID_159584158" CREATED="1411674846689" MODIFIED="1411674855799">
-<node TEXT="-apptypes goes back to -apptype." ID="ID_524173864" CREATED="1411674856550" MODIFIED="1411674867475"/>
-<node TEXT="Building for another platform only works if -apptype is exe." ID="ID_1068809168" CREATED="1411674867930" MODIFIED="1411674880386"/>
-<node TEXT="dist name gets a -%platform tag." ID="ID_845161218" CREATED="1411675518866" MODIFIED="1411675534257">
+<node TEXT="-apptypes goes to -exetype." ID="ID_524173864" CREATED="1411674856550" MODIFIED="1411752018797">
+<icon BUILTIN="button_ok"/>
+</node>
+<node TEXT="dist name gets a -%platform tag." ID="ID_845161218" CREATED="1411675518866" MODIFIED="1411752018800">
+<icon BUILTIN="button_ok"/>
 <node TEXT="&quot;tcl&quot; for .kits, actual platform for others." ID="ID_396542396" CREATED="1411675534578" MODIFIED="1411675548704"/>
 </node>
+<node TEXT="Building for another platform only works if -exetype is exe." ID="ID_1068809168" CREATED="1411674867930" MODIFIED="1411752014627"/>
 </node>
 </node>
 </node>
