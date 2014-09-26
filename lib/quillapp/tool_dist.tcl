@@ -59,7 +59,9 @@ quillapp::tool define dist {
         set fdict [dict create]
 
         foreach pattern [project dist patterns $dist] {
-            if {$pattern eq "%libs"} {
+            if {$pattern eq "%apps"} {
+                set fdict [dict merge $fdict [GetAppFiles]]
+            } elseif {$pattern eq "%libs"} {
                 set fdict [dict merge $fdict [GetLibZips]]
             } else {
                 set fdict [dict merge $fdict [GetGlobFiles $pattern]]
@@ -73,20 +75,38 @@ quillapp::tool define dist {
         MakeZip $zipfile $ziproot $fdict
     }
 
+    # GetAppFiles
+    #
+    # Retrieves the file names for the provided applications.
+
+    proc GetAppFiles {} {
+        set result [dict create]
+
+        foreach name [project app names] {
+            set base [project app exename $name]
+            set zfile "bin/$base"
+            set dfile [project root bin $base]
+
+            dict set result $zfile $dfile
+        }
+
+        return $result
+    }
+
     # GetLibZips
     #
-    # Retrieves the provides library .zip files and puts them in the
+    # Retrieves the provided library .zip files and puts them in the
     # root.
     #
-    # TODO: If there aren't project queries for these names and 
-    # directories, there should be.
+    # TODO: There should be a query for the libzip directory.
 
     proc GetLibZips {} {
         set result [dict create]
 
         foreach name [project provide names] {
-            set zfile "package-$name-[project version]-tcl.zip"
-            set dfile [project root .quill teapot $zfile]
+            set zipname [project provide zipfile $name]
+            set zfile "lib/$zipname"
+            set dfile [project root .quill teapot $zipname]
 
             dict set result $zfile $dfile
         }

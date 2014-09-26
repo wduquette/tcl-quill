@@ -148,7 +148,7 @@ proc ::quillapp::prepare {var args} {
 
     foroption opt args -all {
         -file {
-            if {![regexp {^[-[:alnum:]_]+$} $theVar]} {
+            if {![regexp {^[-[:alnum:]._]+$} $theVar]} {
                 throw INVALID \
                     "Input \"$var\" contains illegal characters or whitespace: \"$theVar\""
             }

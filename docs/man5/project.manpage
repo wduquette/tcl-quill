@@ -85,22 +85,18 @@ If the <b -gui> option is specified, the application is a GUI application
 and the Tk package will be required automatically.  When built as a 
 starpack, a Tk basekit will be used.<p>
 
-<defopt {-apptypes kit | exe | linux | osx | windows }>
+<defopt {-exetype kit | exe}>
 
-An application can be built for multiple platforms; the value of 
-<b -apptypes> can be a list of any of the above values.<p>
+Exe type <b kit> results in a "starkit", which can be run against any 
+compatible <tt tclsh>.  If the project requires only pure-tcl external
+libraries, the "starkit" may be usable on any platform.<p>
 
-App type <b kit> results in a "starkit", which can be run against a 
-<tt tclsh> on any platform.<p>
-
-App type <b exe> results in a "starpack", a genuine stand-alone 
+Exe type <b exe> results in a "starpack", a genuine stand-alone 
 executable, for the current platform, whatever it is.<p>
 
 Quill is capable of building cross-platform, i.e., it can build Linux
-executables on Windows and Windows executables on OS X.  If you wish to 
-do that, specify any or all of <b linux>, <b osx> or <b windows> in the
-<b -apptypes> list.  On <tt quill build>, Quill will build the application
-for all listed platforms.<p>
+executables on Windows and Windows executables on OS X.  See the help
+for the <tt quill build> command.<p>
 
 The default application type is <b kit>.<p>
 
@@ -154,6 +150,12 @@ each named distribution; the file will be called<p>
 
 <i project>-<i version>-<i name>.zip<p>
 
+If the <i name> includes the string "<tt %platform>", the string will
+be replaced by the current platform name, as returned by
+<tt platform::identify>.  Since "exe" executable files also include the
+<tt platform::identify> string, this allows one distribution set to support
+installation on most or all platforms.<p>
+
 The contents of the file is determined by the <i patterns>, which is a 
 list of glob-patterns relative to the project's root directory.  For 
 example, the following distribution includes the application, the 
@@ -161,13 +163,15 @@ README file, and the .html files in the <tt docs/> folder:<p>
 
 <example>
 dist install {
+    %apps
     bin/myapp.kit
     README.md
     docs/*.html
 }
 </example>
 
-The list of patterns can also include the special pattern
+The list of patterns can also include the special pattern <b %apps>,
+which pulls in all application files for the platform, and 
 <b %libs>, which adds in the teapot .zip files for each of the library
 packages provided by the project.  These files can be added directly into
 a local teapot using the <tt teacup install> command.<p>

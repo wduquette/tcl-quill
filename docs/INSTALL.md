@@ -10,10 +10,10 @@ This file explains how to install the distribution.
    contains the following:
 
    * `README.md`
-   * `bin\quill-{platform}` or `bin\quill-windows.exe`
-   * `docs\index.html`
-   * `docs\...`
-   * package-quill-{version}-tcl.zip
+   * `bin/quill-{version}-{platform}` or `bin/quill-{version}-{platform}.exe`
+   * `docs/index.html`
+   * `docs/...`
+   * `lib/package-quill-{version}-tcl.zip`
 
 2. Copy the executable from `bin/` to your `~/bin` directory (or wherever
    you prefer), renaming it to `quill` or `quill.exe`.
@@ -24,7 +24,7 @@ This file explains how to install the distribution.
 4. If desired, install the [quill(n) package](mann/index.html) into your
    local teapot.
 
-    $ teacup install package-quill-{version}-tcl.zip
+    $ teacup install lib/package-quill-{version}-tcl.zip
 
 5. You should now be able to enter these commands:
 

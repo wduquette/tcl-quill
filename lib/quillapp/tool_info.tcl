@@ -85,6 +85,14 @@ quillapp::tool define info {
             table puts $table -leader "    " -sep "  "
             puts ""
         }
+
+        if {[got [project dist names]]} {
+            puts "Distribution Sets:"
+
+            foreach dist [project dist names] {
+                puts "    $dist"
+            }
+        }
     }
 }
 

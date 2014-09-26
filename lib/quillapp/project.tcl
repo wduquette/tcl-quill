@@ -374,6 +374,16 @@ snit::type ::quillapp::project {
         return $meta(local-$pkg)
     }
 
+    # provide zipfile lib
+    #
+    # lib     - A provided library name
+    #
+    # Returns the full name of the library's zip file.
+
+    typemethod {provide zipfile} {lib} {
+        return "package-$lib-[project version]-tcl.zip"
+    }
+
     # dist patterns name
     #
     # name - A distribution name
@@ -621,6 +631,9 @@ snit::type ::quillapp::project {
     # with the given name.
 
     proc DistCmd {name patterns} {
+        # Substitute %platform, if present.
+        set name [string map [list %platform [platform::identify]] $name]
+
         prepare name -required -file
 
         if {$name in [project dist names]} {
