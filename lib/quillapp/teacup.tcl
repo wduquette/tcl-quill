@@ -96,6 +96,77 @@ snit::type ::quillapp::teacup {
         return [file normalize $teapot]
     }
 
+    # basekits version
+    #
+    # version - Tcl version
+    #
+    # Returns a table of the available basekits for this version of 
+    # TCL.  Fields include:
+    #
+    #    version   - Actual version
+    #    platform  - platform string
+    #    tcltk     - tcl for non-gui, tk for gui
+    #    threaded  - yes or no
+    #    name      - The teapot app name
+
+    typemethod basekits {version} {
+        # FIRST, get the list of possibilities
+        set results [list]
+
+        foreach name {
+            base-tcl-thread
+            base-tk-thread
+            base-tcl
+            base-tk
+        } {
+            # FIRST, get the matching basekits
+            set table [teacup list --is application --all-platforms $name]
+
+            # NEXT, filter out the ones for the wrong version, and retain
+            # the desired data.
+            foreach inrow $table {
+                if {[VerXY [dict get $inrow version]] ne $version} {
+                    continue
+                }
+
+                dict set row version  [dict get $inrow version]
+                dict set row platform [dict get $inrow platform]
+                dict set row tcltk    [TclOrTk [dict get $inrow name]]
+                dict set row threaded [Threaded? [dict get $inrow name]]
+                dict set row name     [dict get $inrow name]
+                lappend results $row
+            }
+
+        }
+
+        return $results
+    }
+
+    # TclOrTk basekitname
+    #
+    # Returns "tcl" or "tk" given the basekit name.
+
+    proc TclOrTk {basekitname} {
+        if {[string match "base-tk*" $basekitname]} {
+            return "tk"
+        } else {
+            return "tcl"
+        }
+    }
+
+    # Threaded? basekitname
+    #
+    # Returns "yes" or "no".
+
+    proc Threaded? {basekitname} {
+        if {[string match "*-thread" $basekitname]} {
+            return "yes"
+        } else {
+            return "no"
+        }
+    }
+
+
     # getbase tcltk version flavor outdir
     #
     # tcltk   - tcl|tk

@@ -29,6 +29,12 @@ quillapp::tool define build {
 
     quill build lib ?<name>...?
         Build all of the libraries.  Optionally, build the named libraries.
+
+    quill build platforms
+        Quill can build you applications for other platforms, provided 
+        that none of your project's libraries contain compiled code built 
+        for the current platform.  This command lists the platforms for
+        which cross-platform builds can be done.
 } {
     # execute argv
     #
@@ -41,8 +47,14 @@ quillapp::tool define build {
         set targetType [lshift argv]
         set names $argv
 
-        if {$targetType ni {"" app lib}} {
+        if {$targetType ni {"" app lib platforms}} {
             throw FATAL "Usage: [tool usage build]"
+        }
+
+        # NEXT, list platforms on request
+        if {$targetType eq "platforms"} {
+            ListBuildPlatforms
+            return
         }
 
         # NEXT, build provided libraries
@@ -222,5 +234,33 @@ quillapp::tool define build {
         puts "\nBuilding lib $lib:"
         puts [eval exec $command]
     }
+
+    #---------------------------------------------------------------------
+    # List Build Platforms
+
+    # ListBuildPlatforms
+    #
+    # Finds the platforms for the current version of TCL for which 
+    # basekits exist at teapot.activestate.com.
+
+    proc ListBuildPlatforms {} {
+        puts "Platforms for which cross-platform builds can be done:"
+        puts ""
+        
+        set version [VerXY [env versionof tclsh]]
+        table puts [teacup basekits $version] \
+            -showheaders \
+            -sep "  "
+    }
+
+    # VerXY version
+    #
+    # Returns the x.y from a possibly longer version.
+
+    proc VerXY {version} {
+        set vlist [split $version .]
+        return [join [lrange $vlist 0 1] .]
+    }
+
 }
 
