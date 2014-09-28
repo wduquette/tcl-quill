@@ -11,8 +11,6 @@ This is the official list of work to be done.
     * Build all library .zips
     * Build all executables
     * Build distributions
-* 'quill build platforms'
-  * List the platforms for which basekits are available in teapot.activestate.com.
 * 'quill build all -platform'
   * Disallow if no "exe" apps in project.
   * Format documentation
@@ -20,6 +18,7 @@ This is the official list of work to be done.
   * Build all executables
   * Build all distributions that include %platform in the name.
     * Need to do the string map of %platform in a lazy way.
+  * Remove old code related to finding and getting basekits.
 * Fix bugs as found and reported.
 * quilldoc(5) Changes:
   * Should manpage(5) be quillman(5)?  Probably.
