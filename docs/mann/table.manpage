@@ -54,6 +54,13 @@ keys in the output, in order from left to right.<p>
 
 If this option is given, the table will include column headers.<p>
 
+<defopt {-skipsame <i list>}>
+
+If <i list> is given, it should be a list of column names.  If a named
+column has the same value in successive rows, it will be left blank in
+all rows but the first.  This can result in more readable tables, 
+especially when used for the first few columns.<p>
+
 <defopt {-headers <i dict>}>
 
 By default, the column headers are simply the names of the column keys.
@@ -62,10 +69,38 @@ strings by column key.<p>
 
 </deflist options>
 
-<defitem "table puts" {table puts <i table> <i options...>}>
+<defitem "table puts" {table puts <i table> ?<i options...>?}>
 
 Formats the <i table> and writes it to <b stdout>.  The options are
 as for <xref "#table format">.<p>
+
+<defitem "table sort" {table sort <i table> ?<i colspecs>?}>
+
+By default, this command sorts the rows in the table in increasing order
+using a case-sensitive string comparison on each column, taking the column
+order from the first row in the table.  The sorting can be customized
+by specifying a list of column specifications.  Each column spec is a 
+list that begins with the column name; the columns are sorted in the 
+order of the list.  Each column spec may include the following options:<p>
+
+<deflist options>
+
+<defopt {-decreasing}>
+The column will be sorted in decreasing order, rather than increasing.<p>
+
+<defopt {-nocase}>
+String comparisons will be case insensitive.<p>
+
+<defopt {-numeric}>
+Values to be compared will be converted to numeric doubles before comparing.<p>
+
+</deflist options>
+
+For example, 
+
+<example>
+set sorted [table sort $table {last first {age -numeric}}]
+</example>
 
 </deflist commands>
 

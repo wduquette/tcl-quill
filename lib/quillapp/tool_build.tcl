@@ -248,9 +248,17 @@ quillapp::tool define build {
         puts ""
         
         set version [VerXY [env versionof tclsh]]
-        table puts [teacup basekits $version] \
-            -showheaders \
-            -sep "  "
+        set kits [table sort [teacup basekits $version] {
+            platform {version -decreasing} tcltk threaded name 
+        }]
+
+        table puts $kits \
+            -sep         "  "               \
+            -showheaders                    \
+            -skipsame    {platform version} \
+            -columns     {
+                platform version tcltk threaded name
+            }
     }
 
     # VerXY version
