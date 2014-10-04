@@ -384,6 +384,16 @@ snit::type ::quillapp::project {
         return "package-$lib-[project version]-tcl.zip"
     }
 
+    # dist expand name
+    #
+    # name  - A distribution name
+    #
+    # Expands replaceable tokens in the distribution name.
+
+    typemethod {dist expand} {name} {
+        return [string map [list %platform [platform::identify]] $name]
+    }
+
     # dist patterns name
     #
     # name - A distribution name
@@ -632,9 +642,10 @@ snit::type ::quillapp::project {
 
     proc DistCmd {name patterns} {
         # Substitute %platform, if present.
-        set name [string map [list %platform [platform::identify]] $name]
+        prepare name -required
+        set testname [project dist expand $name]
 
-        prepare name -required -file
+        prepare testname -file
 
         if {$name in [project dist names]} {
             throw SYNTAX "Duplicate distribution: \"$name\""

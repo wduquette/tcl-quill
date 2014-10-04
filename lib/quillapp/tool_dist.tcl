@@ -68,7 +68,9 @@ quillapp::tool define dist {
             }
         }
 
-        set zipfile "[project name]-[project version]-$dist.zip"
+        set xdist [project dist expand $dist]
+
+        set zipfile "[project name]-[project version]-$xdist.zip"
         set ziproot [project name]
 
         puts "Making $zipfile..."

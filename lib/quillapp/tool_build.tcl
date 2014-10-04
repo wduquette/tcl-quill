@@ -23,6 +23,9 @@ quillapp::tool define build {
     provided libraries, as listed in the project.quill file.  By
     default, all applications and libraries are built.
 
+    quill build
+        Build all libraries and applications for the current platform.
+
     quill build app ?<name>...?
         Build all of the applications.  Optionally, build the named
         applications.
@@ -35,6 +38,19 @@ quillapp::tool define build {
         that none of your project's libraries contain compiled code built 
         for the current platform.  This command lists the platforms for
         which cross-platform builds can be done.
+
+    quill build all
+        Performs all build related tasks for the current platform, halting
+        on error:
+
+        * Verifies all external depencies.
+        * Runs all tests
+        * Formats all documentation
+        * Builds all library .zip files
+        * Builds all executables
+        * Builds all distributions
+
+        This is the command you use when you are ready to cut a release.
 } {
     # execute argv
     #
