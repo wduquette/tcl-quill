@@ -61,52 +61,124 @@ quillapp::tool define build {
     typemethod execute {argv} {
         # FIRST, get arguments
         set targetType [lshift argv]
-        set names $argv
 
-        if {$targetType ni {"" app lib platforms}} {
+        if {$targetType ni {"" app lib platforms all}} {
             throw FATAL "Usage: [tool usage build]"
         }
 
-        # NEXT, list platforms on request
-        if {$targetType eq "platforms"} {
-            ListBuildPlatforms
-            return
+        if {$targetType eq ""} {
+            set targetType libapp
         }
 
-        # NEXT, build provided libraries
-        if {$targetType in {lib ""}} {
-            if {[llength $names] == 0} {
-                set names [project provide names]
+        # NEXT, dispatch
+        switch -exact $targetType {
+            lib {
+                BuildLibs $argv
             }
-            foreach lib $names {
-                BuildLibZip $lib
+            app {
+                BuildApps $argv
             }
-        }
-
-        # NEXT, build applications
-        if {$targetType in {app ""}} {
-            if {[llength $names] == 0} {
-                set names [project app names]
+            libapp {
+                BuildLibs
+                BuildApps
             }
-
-            foreach app $names {
-                if {$app ni [project app names]} {
-                    throw FATAL "No such application in project.quill: \"$app\""
-                }
-
-                if {[project app exetype $app] eq "exe"} {
-                    set plat [platform::identify]
-                } else {
-                    set plat tcl
-                }
-
-                BuildTclApp $app $plat
+            platforms {
+                ListBuildPlatforms
+            }
+            all {
+                BuildAll
             }
         }
     }
 
     #---------------------------------------------------------------------
+    # Building Library Teapot .zip files
+
+    # BuildLibs ?names?
+    #
+    # Builds teapot .zip files for all libraries, or for the named
+    # libraries.
+
+    proc BuildLibs {{names ""}} {
+        if {[llength $names] == 0} {
+            set names [project provide names]
+        } else {
+            prepare names -listof [project provide names]
+        }
+
+        foreach lib $names {
+            BuildLibZip $lib
+        }
+    }
+
+    # BuildLibZip lib
+    #
+    # lib   - The name of the library
+    #
+    # Creates a teapot.txt file for the library, and then packages
+    # it into <root>/.quill/teapot/* for later installation.
+    #
+    # TODO: Use zipfile::encode instead.
+
+    proc BuildLibZip {lib} {
+        # FIRST, make sure the lib is known.
+        if {$lib ni [project provide names]} {
+            throw FATAL "No such library is provided in project.quill: \"$lib\""
+        }
+        
+        # NEXT, save the teapot.txt file.
+        set teapotTxt [outdent "
+            Package          $lib [project version]
+            Meta entrykeep 
+            Meta included    *
+            Meta platform    tcl
+        "]
+
+        writefile [project root lib $lib teapot.txt] $teapotTxt
+
+        # NEXT, make sure the output directory exists.
+        set outdir [project root .quill teapot]
+        file mkdir $outdir
+
+        # NEXT, prepare the packaging command
+        set command ""
+        lappend command [env pathto teapot-pkg] generate \
+            -t zip                                        \
+            -o $outdir                                    \
+            [project root lib $lib]
+
+        # NEXT, call the command
+        set outfile [file join $outdir package-$lib-[project version]-tcl.zip]
+        puts "\nBuilding lib $lib:"
+        puts [eval exec $command]
+    }
+
+    #---------------------------------------------------------------------
     # Building Tcl Apps
+
+    # BuildApps ?names?
+    #
+    # names  - Optional list of applications to build
+    #
+    # Builds executables for the named or all apps.
+
+    proc BuildApps {{names ""}} {
+        if {[llength $names] == 0} {
+            set names [project app names]
+        } else {
+            prepare names -listof [project app names]
+        }
+
+        foreach app $names {
+            if {[project app exetype $app] eq "exe"} {
+                set plat [platform::identify]
+            } else {
+                set plat tcl
+            }
+
+            BuildTclApp $app $plat
+        }
+    }
 
     # BuildTclApp app plat
     #
@@ -167,9 +239,9 @@ quillapp::tool define build {
             set flavor [os flavor]
 
             if {$guiflag} {
-                set basekit [env pathto basekit.tk.$flavor]
+                set basekit [env pathto basekit.tk]
             } else {
-                set basekit [env pathto basekit.tcl.$flavor]
+                set basekit [env pathto basekit.tcl]
             }
 
             if {$basekit eq ""} {
@@ -209,49 +281,6 @@ quillapp::tool define build {
     }
 
     #---------------------------------------------------------------------
-    # Building Tcl Lib teapot .zip files
-
-    # BuildLibZip lib
-    #
-    # lib   - The name of the library
-    #
-    # Creates a teapot.txt file for the library, and then packages
-    # it into <root>/.quill/teapot/* for later installation.
-
-    proc BuildLibZip {lib} {
-        # FIRST, make sure the lib is known.
-        if {$lib ni [project provide names]} {
-            throw FATAL "No such library is provided in project.quill: \"$lib\""
-        }
-        
-        # NEXT, save the teapot.txt file.
-        set teapotTxt [outdent "
-            Package          $lib [project version]
-            Meta entrykeep 
-            Meta included    *
-            Meta platform    tcl
-        "]
-
-        writefile [project root lib $lib teapot.txt] $teapotTxt
-
-        # NEXT, make sure the output directory exists.
-        set outdir [project root .quill teapot]
-        file mkdir $outdir
-
-        # NEXT, prepare the packaging command
-        set command ""
-        lappend command [env pathto teapot-pkg] generate \
-            -t zip                                        \
-            -o $outdir                                    \
-            [project root lib $lib]
-
-        # NEXT, call the command
-        set outfile [file join $outdir package-$lib-[project version]-tcl.zip]
-        puts "\nBuilding lib $lib:"
-        puts [eval exec $command]
-    }
-
-    #---------------------------------------------------------------------
     # List Build Platforms
 
     # ListBuildPlatforms
@@ -285,6 +314,9 @@ quillapp::tool define build {
         set vlist [split $version .]
         return [join [lrange $vlist 0 1] .]
     }
+
+    #---------------------------------------------------------------------
+    # Build All
 
 }
 
