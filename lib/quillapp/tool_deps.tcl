@@ -55,7 +55,7 @@ quillapp::tool define deps {
         }
 
         if {[llength $argv] == 0} {
-            DisplayDepsStatus
+            $type showstatus
             return
         }
 
@@ -74,11 +74,29 @@ quillapp::tool define deps {
         }
     }
 
-    # DisplayDepsStatus
+    # check
+    #
+    # Checks dependency status, returning 1 if everything is OK, and
+    # 0 otherwise.
+    #
+    # TODO: Probably this should be in a "deps" tool.
+    typemethod check {} {
+        foreach pkg [project require names] {
+            set ver [project require version $pkg]
+
+            if {![teacup installed $pkg $ver]} {
+                return 0
+            }
+        }
+
+        return 1
+    }
+
+    # showstatus
     #
     # Displays the current status.
 
-    proc DisplayDepsStatus {} {
+    typemethod showstatus {} {
         puts "Dependency Status:"
 
         set count 0
@@ -96,6 +114,8 @@ quillapp::tool define deps {
             DisplayPackage $pkg $ver $status
         }
 
+        # TODO: Checking the basekits here is an anachronism.
+        # Clean this up after we do "quill build all -platforms"
         foreach basekit [GetRequiredBasekits] {
             set kitpath [env pathto $basekit]
             if {$kitpath ne ""} { 

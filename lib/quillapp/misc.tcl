@@ -132,6 +132,7 @@ proc ::quillapp::tagreplace {tag text newblock} {
 #    -file      - Value must make a good file name (no special characters
 #                 or internal whitespace).
 #    -oneof     - A list of valid values
+#    -listof    - A list of valid values.
 #    -required  - Value must be non-empty
 #    -tighten   - Condenses internal whitespace
 #    -toupper   - Converts value to upper case

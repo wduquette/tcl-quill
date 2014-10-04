@@ -318,5 +318,47 @@ quillapp::tool define build {
     #---------------------------------------------------------------------
     # Build All
 
+    # BuildAll
+    #
+    # Builds the whole shebang for the current platform, halting on error.
+
+    proc BuildAll {} {
+        puts "quill build all"
+
+        # FIRST, Verify all external depencies.
+        Sep "Verifying external dependencies"
+
+        if {![quillapp::tool::DEPS check]} {
+            puts "External dependencies are not all up to date:\n"
+
+            quillapp::tool::DEPS showstatus
+            return
+        } else {
+            puts "All dependencies are up to date."
+        }
+
+        # NEXT, Run all tests
+
+
+        # NEXT, Format all documentation
+
+        # NEXT, Build all library .zip files
+
+        # NEXT, Build all executables
+
+        # NEXT, Build all distributions
+    }
+
+    # proc Sep message
+    #
+    # message   - A section message
+    #
+    # Outputs a visual separator
+
+    proc Sep {message} {
+        puts "\n$message"
+        puts [string repeat - 65]
+        puts ""
+    }
 }
 
