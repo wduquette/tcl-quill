@@ -338,7 +338,14 @@ quillapp::tool define build {
         }
 
         # NEXT, Run all tests
+        Sep "Running all tests"
 
+        set status [tester runall quiet]
+
+        if {!$status} {
+            puts ""
+            throw FATAL "Build failed due to test failures."
+        }
 
         # NEXT, Format all documentation
 

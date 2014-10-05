@@ -55,23 +55,11 @@ quillapp::tool define test {
 
         # NEXT, one or all
         if {$target eq ""} {
-            # FIRST, we summarize unless -verbose.
-            if {[quillapp::verbose]} {
-                set mode verbose
-            } else {
-                set mode summary
-                puts [outdent {
-                    Summarizing test results.  Use 'quill -verbose test'
-                    to see the details.
-                }]
-                puts ""
-            }
-
+            # FIRST, are there any test targets?
             set count 0
             foreach dir [glob -nocomplain [project root test *]] {
                 if {[file isdirectory $dir]} {
                     incr count
-                    RunTest $mode [file tail $dir] "" $argv
                 }
             }
 
@@ -80,90 +68,29 @@ quillapp::tool define test {
                     "No test targets found in [project root test]."
             }
 
+            # NEXT, we summarize unless -verbose.
+            if {[quillapp::verbose]} {
+                tester runall realtime
+            } else {
+                puts [outdent {
+                    Summarizing test results.  Use 'quill -verbose test'
+                    to see the details.
+                }]
+                puts ""
+                tester runall quiet
+            }
             return
         } else {
             if {![file isdirectory [project root test $target]]} {
                 throw FATAL "'$target' is not a valid test target."
             }
-            RunTest verbose $target $module $argv
+
+            tester runtest $target $module {*}$argv
         }
     }
 
-    # RunTest mode target module options
-    #
-    # mode     - Output mode, verbose or summary
-    # target   - A subdirectory in $root/test
-    # module   - The module name of a module test file in $target.
-    #            Defaults to "all_tests".
-    # optlist  - Any options from the command line.
-    #
-    # Runs the given test script.
-
-    proc RunTest {mode target module optlist} {
-        # FIRST, get the module
-        if {$module eq ""} {
-            set module "all_tests"
-        }
-
-        set fname [project root test $target $module.test]
-
-        if {![file isfile $fname]} {
-            throw FATAL "Cannot find '$module.test'."
-        }
-
-        # NEXT, prepare the environment.
-        set ::env(TCLLIBPATH) [project libpath]
-
-        # NEXT, run the tests.
-        cd [project root test $target]
-        set cmd [list [env pathto tclsh] $fname {*}$optlist]
-
-        if {$mode eq "verbose"} {
-            try {
-                exec {*}$cmd >@ stdout 2>@ stderr
-            } on error {result} {
-                throw FATAL "Error running tests: $result"
-            }
-        } else {
-            try {
-                set output [exec {*}$cmd 2>@1]
-                FilterOutput $target $output
-            } on error {result} {
-                puts ""
-                throw FATAL [outdent "
-                    Error running tests for: $target
-                    --> $result
-
-                    Use 'quill -verbose test' or 'quill test $target'
-                    to see the details.
-                "]
-            }
-        }
-    }
-
-    # FilterOutput target output
-    #
-    # target   - The test target
-    # output   - The output from running the tests.
-    #
-    # Filters the output, showing only the results.
-
-    proc FilterOutput {target output} {
-        set lines [split $output \n]
-        foreach line $lines {
-            if {[string match "Test file error:*" $line]} {
-                throw FATAL $line
-            }
-
-            if {![string match "all_tests.test:*" $line]} {
-                continue
-            }
-
-            set leader [format "%-15s" $target:]
-            regsub {^all_tests\.test\:} $line $leader line
-            puts $line
-        }
-    }
+    #---------------------------------------------------------------------
+    # Helpers
 
     # GetNonOption listvar
     #

@@ -43,6 +43,7 @@ source [file join $::quillapp::library teacup.tcl           ]
 source [file join $::quillapp::library teapot.tcl           ]
 source [file join $::quillapp::library version.tcl          ]
 source [file join $::quillapp::library project.tcl          ]
+source [file join $::quillapp::library tester.tcl           ]
 
 # Project Trees and Elements
 source [file join $::quillapp::library element.tcl          ]
