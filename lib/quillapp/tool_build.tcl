@@ -204,19 +204,22 @@ quillapp::tool define build {
             puts "Building Console app $app as [file tail $outfile]"
         }
 
-        # NEXT, build up the command
+        # NEXT, build up the command.  Paths can be relative to
+        # the project root.
+        cd [project root]
+
         set command [list]
 
         # tclapp, app loader script, lib directories
         lappend command \
             [env pathto tclapp] \
-            [project root bin $app.tcl] \
-            [project root lib * *]
+            [file join bin $app.tcl] \
+            [file join lib * *]
 
         # Lib subdirectories?
         if {[llength [project glob lib * * *]] > 0} {
             lappend command \
-                [project root lib * * *]
+                [file join lib * * *]
         }
 
         # Archive
