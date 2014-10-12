@@ -283,4 +283,9 @@ maptemplate ::app_quill::testFile {package} {
     test dummy-1.1 {dummy test} -body {
         set a false
     } -result {true}
+
+    #-------------------------------------------------------------------------
+    # Cleanup
+
+    ::tcltest::cleanupTests
 }
