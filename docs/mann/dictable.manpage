@@ -1,4 +1,4 @@
-<manpage table(n) "Table Formatting" quill(n)>
+<manpage dictable(n) "dictable formatting" quill(n)>
 
 <section SYNOPSIS>
 
@@ -11,19 +11,19 @@ namespace import ::quill::*
 
 <section DESCRIPTION>
 
-table(n) is a module for formatting plain text tables, represented
-as lists of dictionaries.  The primary constraint is that the dictionaries
+dictable(n) is a module for formatting plain text tables from 
+lists of dictionaries.  The primary constraint is that the dictionaries
 must all have the same keys (or the caller must limit the output to 
 those keys the dictionaries have in common).  It is intended primarily
 to simplify the creation of console output.<p>
 
 <section COMMANDS>
 
-table(n) defines the following commands:<p>
+dictable(n) defines the following commands:<p>
 
 <deflist commands>
 
-<defitem "table format" {table format <i table> ?<i options...>?}>
+<defitem "dictable format" {dictable format <i table> ?<i options...>?}>
 
 Given a "table", a list of dictionaries, this command formats the
 table as a multi-column table.  Each dictionary is output on its
@@ -69,12 +69,12 @@ strings by column key.<p>
 
 </deflist options>
 
-<defitem "table puts" {table puts <i table> ?<i options...>?}>
+<defitem "dictable puts" {dictable puts <i table> ?<i options...>?}>
 
 Formats the <i table> and writes it to <b stdout>.  The options are
-as for <xref "#table format">.<p>
+as for <xref "#dictable format">.<p>
 
-<defitem "table sort" {table sort <i table> ?<i colspecs>?}>
+<defitem "dictable sort" {dictable sort <i table> ?<i colspecs>?}>
 
 By default, this command sorts the rows in the table in increasing order
 using a case-sensitive string comparison on each column, taking the column
@@ -99,7 +99,7 @@ Values to be compared will be converted to numeric doubles before comparing.<p>
 For example, 
 
 <example>
-set sorted [table sort $table {last first {age -numeric}}]
+set sorted [dictable sort $table {last first {age -numeric}}]
 </example>
 
 </deflist commands>

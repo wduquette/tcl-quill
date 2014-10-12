@@ -296,11 +296,11 @@ app_quill::tool define build {
         puts ""
         
         set version [VerXY [env versionof tclsh]]
-        set kits [table sort [teacup basekits $version] {
+        set kits [dictable sort [teacup basekits $version] {
             platform {version -decreasing} tcltk threaded name 
         }]
 
-        table puts $kits \
+        dictable puts $kits \
             -sep         "  "               \
             -showheaders                    \
             -skipsame    {platform version} \

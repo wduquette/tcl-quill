@@ -40,9 +40,9 @@ snit::type ted {
         # set up environment variables for testing.
         set ::env(QUILL_APP_DATA) [file join $info(testdir) appdata]
 
-        # set up quillapp::project::info
-        set ::quillapp::project::info(intree) 1
-        set ::quillapp::project::info(root)   $info(root)
+        # set up app_quill::project::info
+        set ::app_quill::project::info(intree) 1
+        set ::app_quill::project::info(root)   $info(root)
     }
 
     # root args...

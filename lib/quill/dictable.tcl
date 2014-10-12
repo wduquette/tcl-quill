@@ -1,6 +1,6 @@
 #-----------------------------------------------------------------------
 # TITLE:
-#    table.tcl
+#    dictable.tcl
 #
 # AUTHOR:
 #    Will Duquette
@@ -9,20 +9,20 @@
 #    Quill: Project Build System for Tcl
 #
 # DESCRIPTION:
-#    table(n): Formatting and manipulation of "tables" -- lists of
+#    dictable(n): Formatting and manipulation of "tables" -- lists of
 #    dictionaries with identical keys.
 #
 #-----------------------------------------------------------------------
 
 namespace eval ::quill:: {
     namespace export \
-        table
+        dictable
 }
 
 #-------------------------------------------------------------------------
 # code ensemble
 
-snit::type ::quill::table {
+snit::type ::quill::dictable {
     pragma -hasinstances no -hastypedestroy no
 
     # format table ?options...?
@@ -190,7 +190,7 @@ snit::type ::quill::table {
     # Formats the table and prints it to stdout.
 
     typemethod puts {table args} {
-        puts [table format $table {*}$args]
+        puts [$type format $table {*}$args]
     }
 
     #---------------------------------------------------------------------

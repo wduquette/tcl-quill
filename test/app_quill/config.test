@@ -7,7 +7,7 @@
 #    Will Duquette
 #
 # DESCRIPTION:
-#    quillapp(n): Test cases for config.tcl
+#    app_quill(n): Test cases for config.tcl
 
 #-------------------------------------------------------------------------
 # Load the tcltest package
@@ -22,8 +22,8 @@ namespace import ::tcltest::test
 #-------------------------------------------------------------------------
 # Load the package to be tested
 
-source ../../lib/quillapp/pkgModules.tcl
-namespace import ::quillapp::*
+source ../../lib/app_quill/pkgModules.tcl
+namespace import ::app_quill::*
 
 #-------------------------------------------------------------------------
 # Setup

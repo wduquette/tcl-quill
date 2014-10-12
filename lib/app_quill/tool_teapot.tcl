@@ -171,7 +171,7 @@ app_quill::tool define teapot {
             return
         }
 
-        table puts $table \
+        dictable puts $table \
             -showheaders \
             -headers {
                 entity  "Entity Type" 

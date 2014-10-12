@@ -36,6 +36,7 @@ namespace eval ::quill:: {
 
 source [file join $::quill::library code.tcl         ]
 source [file join $::quill::library control.tcl      ]
+source [file join $::quill::library dictable.tcl     ]
 source [file join $::quill::library fileutils.tcl    ]
 source [file join $::quill::library listutils.tcl    ]
 source [file join $::quill::library stringutils.tcl  ]
@@ -47,7 +48,6 @@ source [file join $::quill::library template.tcl     ]
 source [file join $::quill::library maptemplate.tcl  ]
 source [file join $::quill::library parmset.tcl      ]
 source [file join $::quill::library os.tcl           ]
-source [file join $::quill::library table.tcl        ]
 source [file join $::quill::library quilldoc.tcl     ]
 
 

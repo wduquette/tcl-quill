@@ -51,7 +51,7 @@ app_quill::tool define info {
                 lappend table $row
             }
 
-            table puts $table \
+            dictable puts $table \
                 -leader "    " \
                 -sep    "  "   \
                 -showheaders
@@ -82,7 +82,7 @@ app_quill::tool define info {
 
                 lappend table [list p $pkg v $ver t $tag]
             }
-            table puts $table -leader "    " -sep "  "
+            dictable puts $table -leader "    " -sep "  "
             puts ""
         }
 
