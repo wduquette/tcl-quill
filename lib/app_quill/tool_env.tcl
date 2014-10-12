@@ -38,13 +38,17 @@ app_quill::tool define env {
         puts "" 
         puts "Helper Tools:"
 
-        DisplayPath tclsh
-        DisplayPath tkcon
-        DisplayPath teacup 
-        DisplayPath tclapp
-        DisplayPath basekit.tcl
-        DisplayPath basekit.tk
-        DisplayPath teapot-pkg
+        set table [list]
+
+        lappend table [DisplayPath tclsh]
+        lappend table [DisplayPath tkcon]
+        lappend table [DisplayPath teacup ]
+        lappend table [DisplayPath tclapp]
+        lappend table [DisplayPath basekit.tcl]
+        lappend table [DisplayPath basekit.tk]
+        lappend table [DisplayPath teapot-pkg]
+
+        dictable puts $table -sep "  "
 
         puts ""
         puts "!  - Helper tool could not be found on disk."
@@ -56,7 +60,7 @@ app_quill::tool define env {
     #
     # tool    - The tool name
     #
-    # Displays the path and the tool's env (if known).
+    # Returns a dictable dictionary for the path.
 
     proc DisplayPath {tool} {
         set path [env pathto $tool]
@@ -82,12 +86,10 @@ app_quill::tool define env {
 
 
         if {$ver ne ""} {
-            set tag " (v$ver)"
-        } else {
-            set tag ""
+            append path  " (v$ver)"
         }
-        
-        puts [format "%-2s %-20s %s%s" $code $tool $path $tag]
+
+        return [dict create code $code tool $tool path $path]
     }
 }
 
