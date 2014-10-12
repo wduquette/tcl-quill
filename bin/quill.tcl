@@ -29,8 +29,8 @@ package require Tcl 8.6
 package require quillinfo
 
 # quill(n) is the package containing the bulk of the quill code.
-package require quillapp
-namespace import quillapp::*
+package require app_quill
+namespace import app_quill::*
 
 #-------------------------------------------------------------------------
 # Invoke the application
