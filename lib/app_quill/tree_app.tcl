@@ -57,6 +57,7 @@ proc ::app_quill::appTree {project appname} {
 # projectQuill
 #
 # Default project.quill file for an "app" project.
+# TODO: for -exetype exe, the dist should be "install-%platform".
 
 maptemplate ::app_quill::projectQuill {project appname} {
     set tclversion [env versionof tclsh]
@@ -69,6 +70,14 @@ maptemplate ::app_quill::projectQuill {project appname} {
     homepage http://home.page.url
     app %appname
     require Tcl %tclversion
+
+    dist install {
+        %apps
+        docs/*.html
+        docs/man*/*.html
+        README.md
+        LICENSE
+    }
 }
 
 # projectREADME
