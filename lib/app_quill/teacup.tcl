@@ -96,12 +96,13 @@ snit::type ::app_quill::teacup {
         return [file normalize $teapot]
     }
 
-    # basekits version
+    # basekits version ?platform?
     #
-    # version - Tcl version
+    # version  - Tcl version
+    # platform - The actual platform
     #
     # Returns a table of the available basekits for this version of 
-    # TCL.  Fields include:
+    # TCL.  (And optionally this platform.) Fields include:
     #
     #    version   - Actual version
     #    platform  - platform string
@@ -109,7 +110,7 @@ snit::type ::app_quill::teacup {
     #    threaded  - yes or no
     #    name      - The teapot app name
 
-    typemethod basekits {version} {
+    typemethod basekits {version {platform ""}} {
         # FIRST, get the list of possibilities
         set results [list]
 
@@ -134,9 +135,13 @@ snit::type ::app_quill::teacup {
                 dict set row tcltk    [TclOrTk [dict get $inrow name]]
                 dict set row threaded [Threaded? [dict get $inrow name]]
                 dict set row name     [dict get $inrow name]
-                lappend results $row
-            }
 
+                if {$platform eq "" || 
+                    $platform eq [dict get $row platform]
+                } {
+                    lappend results $row
+                }
+            }
         }
 
         return $results
