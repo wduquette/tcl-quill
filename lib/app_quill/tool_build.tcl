@@ -351,12 +351,32 @@ app_quill::tool define build {
         }
 
         # NEXT, Format all documentation
+        # TODO: We should have a "docs" module.
+        Sep "Formatting Documentation"
+        app_quill::tool::DOCS execute {}
 
         # NEXT, Build all library .zip files
+        # TODO: We should have a "builder" module.
+        if {[got [project provide names]]} {
+            Sep "Building Library .zip File(s)"
+            app_quill::tool::BUILD execute lib
+        }
 
         # NEXT, Build all executables
+        # TODO: We should have a "builder" module.
+        if {[got [project app names]]} {
+            Sep "Building Application(s)"
+            app_quill::tool::BUILD execute app
+        }
 
         # NEXT, Build all distributions
+        # TODO: We should have a "dister" module.
+        if {[got [project dist names]]} {
+            Sep "Building Distribution .zip File(s)"
+            app_quill::tool::DIST execute {}
+        }
+
+        puts "\n***** Build Completed Successfully *****"
     }
 
     # proc Sep message
@@ -367,8 +387,7 @@ app_quill::tool define build {
 
     proc Sep {message} {
         puts "\n$message"
-        puts [string repeat - 65]
-        puts ""
+        puts [string repeat - 75]
     }
 }
 
