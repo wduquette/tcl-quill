@@ -4,6 +4,17 @@ Nothing in this file should be presumed to be reflective of anything
 in the project.  Everything in this file is either incomplete, obsolete, 
 or wrong.
 
+## Q: Downloading Basekits
+
+I shouldn't care where basekits come from.  
+
+Any basekit in ~/.quill/basekits that matches the Tcl version should
+be good.
+
+I should offer those as well as the ones from the net.
+
+It probably shouldn't be handled by tool_build.
+
 ## Q: How best to support builds on multiple platforms?
 
 * The existing mechanism with -apptypes is not so good.

@@ -177,27 +177,32 @@ app_quill::tool define build {
         }
 
         foreach app $names {
-            if {[project app exetype $app] eq "exe"} {
-                set plat [platform::identify]
-            } else {
-                set plat tcl
-            }
-
-            BuildTclApp $app $plat
+            BuildTclApp $app
         }
     }
 
-    # BuildTclApp app plat
+    # BuildTclApp app ?bdict?
     #
     # app     - The name of the application
-    # plat    - The desired platform.
+    # bdict   - basekit definition dictionary, or ""
     #
-    # Builds the application using tclapp.
+    # Builds the application using tclapp.  The bdict will only be
+    # non-empty for 'quill build all -platform <platform>'
 
-    proc BuildTclApp {app plat} {
+    proc BuildTclApp {app {bdict ""}} {
         # FIRST, make sure the app is known.
         if {$app ni [project app names]} {
             throw FATAL "App \"$app\" is not defined in project.quill."
+        }
+
+        if {[project app exetype $app] eq "exe"} {
+            if {[dict size $bdict] eq 0} {
+                set plat [platform::identify]
+            } else {
+                set plat [dict get $bdict platform]
+            }
+        } else {
+            set plat tcl
         }
 
         # NEXT, get relevant data
@@ -240,18 +245,15 @@ app_quill::tool define build {
 
         # Prefix
 
-        if {$plat ne "tcl"} {
-            # FIXME: At this point, we can only do the current platform.
-            if {$plat ne [platform::identify]} {
-                throw FATAL "Cross-platform builds temporarily disabled"
-            }
-
-            set flavor [os flavor]
-
-            if {$guiflag} {
-                set basekit [env pathto basekit.tk]
+        if {[project app exetype $app] eq "exe"} {
+            if {$plat eq [platform::identify]} {
+                if {$guiflag} {
+                    set basekit [env pathto basekit.tk]
+                } else {
+                    set basekit [env pathto basekit.tcl]
+                }
             } else {
-                set basekit [env pathto basekit.tcl]
+                set basekit [teacup getkit $bdict]
             }
 
             if {$basekit eq ""} {
@@ -424,7 +426,7 @@ app_quill::tool define build {
             NOTE: Quill will attempt to build this project's executables for 
             platform '$platform'.  Quill assumes that 'quill build all'
             has already succeeded for the current platform--all tests
-            pass, all documentation has been formatted, any library
+            pass, all documentation has been formatted, and any library
             .zip files have been built.
         "]
 
@@ -462,13 +464,16 @@ app_quill::tool define build {
         if {!$exeCount} {
             throw FATAL [outdent "
                 This project does not define any applications that are
-                build as standalone executables.
+                build as standalone executables, so there is nothing to
+                do.
             "]
         }
 
         # NEXT, do we have the flavors we need?
         if {$tclCount > 0} {
-            if {[GetBasekitFlavor $table tcl] eq ""} {
+            set bdict [GetBasekitFlavor $table tcl] 
+
+            if {$bdict eq ""} {
                 throw FATAL [outdent "
                     This project requires a Tcl-only basekit, but none
                     is available for '$platform'
@@ -477,7 +482,8 @@ app_quill::tool define build {
         }
 
         if {$tkCount > 0} {
-            if {[GetBasekitFlavor $table tk] eq ""} {
+            set bdict [GetBasekitFlavor $table tk]
+            if {$bdict eq ""} {
                 throw FATAL [outdent "
                     This project requires a Tk basekit, but none
                     is available for '$platform'
@@ -494,7 +500,13 @@ app_quill::tool define build {
                 continue
             }
 
-            puts "Pretending to build $app for $platform"
+            if {[project app gui $app]} {
+                set bdict [GetBasekitFlavor $table tk]
+            } else {
+                set bdict [GetBasekitFlavor $table tcl]
+            }
+
+            BuildTclApp $app $bdict
         }
 
         # NEXT, Build all distributions that are platform-specific.
@@ -552,7 +564,6 @@ app_quill::tool define build {
             return $d(unthread)
         }
     }
-
 
     # proc Sep message
     #

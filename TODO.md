@@ -5,6 +5,7 @@ This is the official list of work to be done.
 # For Quill 0.3.0
 
 * Next:
+  * Include tclapp command line in log file.
   * Complete table.test.
   * 'quill build all'
     * Check dependencies

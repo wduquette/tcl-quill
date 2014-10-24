@@ -147,6 +147,31 @@ snit::type ::app_quill::teacup {
         return $results
     }
 
+    # getkit bdict
+    #
+    # bdict - A row from a [teacup basekits] dictable.
+    #
+    # Retrieves the basekit if it isn't already local and puts it
+    # in the $appdata/basekits directory.  Returns the path to the
+    # basekit.
+
+    typemethod getkit {bdict} {
+        dict with bdict {}
+        set basename "application-$name-$version-$platform"
+        set fullpath [env appdata basekits $basename]
+
+        if {[file isfile $fullpath]} {
+            puts "File $basename is on disk!"
+            return $fullpath
+        }
+
+        puts "Retrieving $basename from teapot"
+        call get --is application --output [env appdata basekits] \
+            $name $version $platform
+
+        return $fullpath
+    }
+
     # TclOrTk basekitname
     #
     # Returns "tcl" or "tk" given the basekit name.
