@@ -474,7 +474,7 @@ snit::type ::app_quill::project {
         assert {$info(intree)}
 
         # FIRST, set up the slave interpreter to parse this.
-        set interp [smartinterp %AUTO% -commands safe]
+        set interp [smartinterp %AUTO% -commands none]
 
         $interp smartalias project {project version description} 3 3 \
             [myproc ProjectCmd]
