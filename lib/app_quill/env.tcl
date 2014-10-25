@@ -241,7 +241,7 @@ snit::type ::app_quill::env {
         set flavor [os flavor]
 
         # NEXT, get the desired version.
-        set tclver [shortver [env versionof tclsh]]
+        set tclver [verxy [env versionof tclsh]]
 
         if {$tclver eq ""} {
             return ""
@@ -291,15 +291,6 @@ snit::type ::app_quill::env {
         set choices [lsort -increasing [glob -nocomplain $fullpattern]]
         return [lindex $choices end]
     } 
-
-    # shortver version
-    #
-    # Returns the x.y from a possibly longer version.
-
-    proc shortver {version} {
-        set vlist [split $version .]
-        return [join [lrange $vlist 0 1] .]
-    }
 
     #---------------------------------------------------------------------
     # Directory Paths

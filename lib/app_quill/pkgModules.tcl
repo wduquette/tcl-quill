@@ -38,6 +38,7 @@ namespace eval ::app_quill:: {
 # Application Infrastructure
 source [file join $::app_quill::library misc.tcl             ]
 source [file join $::app_quill::library env.tcl              ]
+source [file join $::app_quill::library basekit.tcl          ]
 source [file join $::app_quill::library config.tcl           ]
 source [file join $::app_quill::library teacup.tcl           ]
 source [file join $::app_quill::library teapot.tcl           ]
@@ -55,6 +56,7 @@ source [file join $::app_quill::library tree_app.tcl         ]
 
 # Tools
 source [file join $::app_quill::library tool.tcl             ]
+source [file join $::app_quill::library tool_basekit.tcl     ]
 source [file join $::app_quill::library tool_build.tcl       ]
 source [file join $::app_quill::library tool_config.tcl      ]
 source [file join $::app_quill::library tool_deps.tcl        ]

@@ -18,7 +18,6 @@ app_quill::tool define deps {
     description "Manages external dependencies"
     argspec     {0 - "?<subcommand>? ?<name>...?"}
     needstree   true
-    ensemble    ::app_quill::depstool
 } {
     Quill installs the project's 'require''d packages into a local
     teapot repository (see 'quill help teapot').  Once installed, they 
@@ -114,20 +113,6 @@ app_quill::tool define deps {
             DisplayPackage $pkg $ver $status
         }
 
-        # TODO: Checking the basekits here is an anachronism.
-        # Clean this up after we do "quill build all -platforms"
-        foreach basekit [GetRequiredBasekits] {
-            set kitpath [env pathto $basekit]
-            if {$kitpath ne ""} { 
-                set status "(OK)"
-            } {
-                set status "(Not installed)"
-            }
-
-            DisplayPackage $basekit "" $status
-
-        }
-
         if {$count > 0} {
             puts ""
             puts "$count required package(s) must be installed."
@@ -148,40 +133,6 @@ app_quill::tool define deps {
         puts [format "  %-28s %s" "$pkg $ver" $text]
     }
 
-    # GetRequiredBasekits
-    #
-    # Returns the set of basekit "pathto" symbols that we need 
-    # for this project.
-    #
-    # FIXME: This was originally set up to retrieve all basekits for
-    # the required "apptypes", which were [os flavors].  This was
-    # an abuse of [os flavors]; the flavors are a matter of conventions
-    # in use, not build architectures.  By default, a project is expected
-    # to build only on the current platform; cross-platform builds will
-    # be handled as a separate case, outside of the normal dependency
-    # handling.  As a result, the whole config parms thing needs to be
-    # revisited for base kits.
-
-    proc GetRequiredBasekits {} {
-        set list [list]
-
-        foreach app [project app names] {
-            if {[project app gui $app]} {
-                set tcltk "tk"
-            } else {
-                set tcltk "tcl"
-            }
-
-            set exetype [project app exetype $app]
-
-            if {$exetype ne "kit"} {
-                ladd list basekit.$tcltk
-            }
-        }
-
-        return $list
-    }
-
     # UpdateDeps pkgnames
     #
     # Updates dependencies that are missing.
@@ -190,17 +141,13 @@ app_quill::tool define deps {
         puts "Updating required dependencies..."
         set count 0
 
-        set basekits [GetRequiredBasekits]
-
         if {[llength $pkgnames] == 0} {
-            set pkgnames [concat [project require names] $basekits]
+            set pkgnames [project require names]
         }
 
         foreach pkg $pkgnames {
             if {$pkg in [project require names -all]} {
                 incr count [UpdatePackage $pkg]
-            } elseif {$pkg in $basekits} {
-                incr count [UpdateBasekit $pkg]
             } else {
                 throw FATAL "The project doesn't require any package called \"$pkg\"."
             }
@@ -236,24 +183,6 @@ app_quill::tool define deps {
         return 1
     }
 
-    # UpdateBasekit basekit
-    #
-    # Retrieves the named basekit if it isn't installed, and returns
-    # 1 on update and 0 on no-op.
-
-    proc UpdateBasekit {basekit} {
-        if {[env pathto $basekit] ne ""} {
-            return 0
-        }
-
-        puts "Installing $basekit"
-        set ver [env versionof tclsh]
-        lassign [split $basekit .] dummy tcltk flavor
-        file mkdir [env appdata basekits]
-        teacup getbase $tcltk $ver $flavor [env appdata basekits]
-        return 1
-    }
-
     # RefreshDeps pkgnames
     #
     # Refreshes existing dependencies and installs dependencies
@@ -263,17 +192,13 @@ app_quill::tool define deps {
         puts "Refreshing required dependencies..."
         set count 0
 
-        set basekits [GetRequiredBasekits]
-
         if {[llength $pkgnames] == 0} {
-            set pkgnames [concat [project require names] $basekits]
+            set pkgnames [project require names]
         }
 
         foreach pkg $pkgnames {
             if {$pkg in [project require names -all]} {
                 incr count [RefreshPackage $pkg]
-            } elseif {$pkg in $basekits} {
-                incr count [RefreshBasekit $pkg]
             } else {
                 throw FATAL "The project doesn't require any package called \"$pkg\"."
             }
@@ -306,33 +231,5 @@ app_quill::tool define deps {
         teacup install $pkg $ver
         return 1
     }
-
-
-
-    # RefreshBasekit basekit
-    #
-    # Removes the named basekit if it is installed, and re-installs it,
-    # and returns 1 on update and 0 on no-op.
-
-    proc RefreshBasekit {basekit} {
-        set kitpath [env pathto $basekit]
-
-        if {$kitpath ne ""} {
-            # It might be installed with tclsh.  Only refresh
-            # basekits in the application's data directory.
-            if {![string match "[env appdata]*" $kitpath]} {
-                return 0
-            }
-            file delete -force $kitpath
-        }
-
-        puts "Refreshing $basekit"
-        set ver [env versionof tclsh]
-        lassign [split $basekit .] dummy tcltk flavor
-        file mkdir [env appdata basekits]
-        teacup getbase $tcltk $ver $flavor [env appdata basekits]
-        return 1
-    }
-
 }
 
