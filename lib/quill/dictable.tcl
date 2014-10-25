@@ -193,6 +193,42 @@ snit::type ::quill::dictable {
         puts [$type format $table {*}$args]
     }
 
+    # filter table key pattern ?key pattern...?
+    #
+    # table   - A dictable
+    # key     - A key
+    # pattern - A glob pattern
+    #
+    # Returns a table containing only rows that match the patterns.
+
+    typemethod filter {table args} {
+        set result [list]
+        foreach row $table {
+            if {[FilterMatch $row $args]} {
+                lappend result $row
+            }
+        }
+
+        return $result
+    }
+
+    # FilterMatch row pdict
+    #
+    # row    - A row from a table
+    # pdict  - A dictionary of "key/pattern" pairs
+    #
+    # Returns 1 if all patterns match, and 0 otherwise.
+
+    proc FilterMatch {row pdict} {
+        dict for {key pattern} $pdict {
+            if {![string match $pattern [dict get $row $key]]} {
+                return 0
+            }
+        }
+
+        return 1
+    }
+
     #---------------------------------------------------------------------
     # Helpers
 

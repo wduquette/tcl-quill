@@ -23,6 +23,12 @@ dictable(n) defines the following commands:<p>
 
 <deflist commands>
 
+<defitem "dictable filter" {dictable filter <i table key pattern> ?<i key pattern...>?}>
+
+Returns a table containing all rows from <i table> for which the given 
+patterns match the given keys.  The patterns are standard 
+<tt string match> patterns.<p>
+
 <defitem "dictable format" {dictable format <i table> ?<i options...>?}>
 
 Given a "table", a list of dictionaries, this command formats the
