@@ -2,25 +2,34 @@
 
 This is the official list of work to be done.
 
+# Cross-platform builds
+
+I.e., building Linux and Windows executables on OS X.
+
+Operations:
+* Get dictable of available basekits.
+  * Include all basekits in ~/.quill/ and all from teapot for platforms
+    other than the current.
+  * Present all of the basekits.
+  * Allow the user to specify:
+    * -platform; the latest version and threaded are assumed.
+    * -version; will take the specific version if present.
+    * -nothreads; will take unthreaded basekit over threaded basekit.
+  * Command is:
+    * quill build for <platform> ?<version>? ?options...?
+      * Where options = -nothread.
+
 # For Quill 0.3.0
 
-* Next:
-  * Include tclapp command line in log file.
-  * Complete table.test.
-  * 'quill build all'
-    * Check dependencies
-    * Format documentation
-    * Build all library .zips
-    * Build all executables
-    * Build distributions
 * 'quill build all -platform'
-  * Disallow if no "exe" apps in project.
-  * Format documentation
-  * Build all library .zips
-  * Build all executables
+  * Disallow if no "exe" apps in project.  DONE.
+  * Build all executables.  DONE.
   * Build all distributions that include %platform in the name.
     * Need to do the string map of %platform in a lazy way.
-  * Remove old code related to finding and getting basekits.
+  * Refactor, to make it all clean.  Also, remove old code related to 
+    finding and getting basekits.
+* Include tclapp command line in log file.
+* Complete dictable.test.
 * Fix bugs as found and reported.
 * quilldoc(5) Changes:
   * Should manpage(5) be quillman(5)?  Probably.

@@ -22,7 +22,8 @@ namespace eval ::app_quill:: {
         gentree      \
         prepare      \
         tagsplit     \
-        tagreplace
+        tagreplace   \
+        verxy
 }
 
 #-------------------------------------------------------------------------
@@ -222,5 +223,15 @@ proc ::app_quill::gentree {args} {
         writefile $p $content
     }
 }
+
+# verxy version
+#
+# Returns the x.y from a possibly longer version.
+
+proc ::app_quill::verxy {version} {
+    set vlist [split $version .]
+    return [join [lrange $vlist 0 1] .]
+}
+
 
 
