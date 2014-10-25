@@ -16,7 +16,7 @@
 
 app_quill::tool define build {
     description "Build applications and libraries"
-    argspec     {0 - "?app|lib|platforms|all? ?<args>...?"}
+    argspec     {0 - "?subcommand? ?<args>...?"}
     needstree   true
 } {
     The "quill build" tool builds the project's applications and 
@@ -33,13 +33,7 @@ app_quill::tool define build {
     quill build lib ?<name>...?
         Build all of the libraries.  Optionally, build the named libraries.
 
-    quill build platforms
-        Quill can build you applications for other platforms, provided 
-        that none of your project's libraries contain compiled code built 
-        for the current platform.  This command lists the platforms for
-        which cross-platform builds can be done.
-
-    quill build all ?-platform <platform>?
+    quill build all
         Performs all build related tasks for the current platform, halting
         on error:
 
@@ -52,12 +46,29 @@ app_quill::tool define build {
 
         This is the command you use when you are ready to cut a release.
 
-        If -platform is given, the project is built for the given platform.
-        NOTE: This can only be done successfully if the project's own 
-        code base and any -local required packages are pure-Tcl.  Quill can
-        pull the required basekits and binary external dependencies from
-        teapot.activestate.com, but cannot cross-compile local binary 
-        extensions.
+    quill build for <platform> ?-version <version>? ?-threads yes|no?
+        Builds the project's standalone executables for the named platform,
+        downloading the required basekit(s) if necessary.  By default,
+        Quill will choose the newest threaded basekits for the platform.  
+        Use the options to select particular basekits.
+
+        To see the available basekits, use
+
+           quill basekit list -source local
+
+        Use 'quill basekit get' to acquire additional basekits from 
+        teapot.activestate.com.
+
+        This command assumes that 'quill build all' has been performed
+        successfully; thus, it performs only these tasks:
+
+        * Builds the project's standalone executables for the given platform.
+        * Builds any "%platform"-based distribution sets for the given platform.
+
+        NOTE: An application can only be built "cross-platform" when the
+        application's code is pure-Tcl.  Quill can pull binary external
+        dependencies from teapot.activestate.com, but cannot cross-compile
+        locally-built binary extensions.
 } {
     # execute argv
     #
@@ -67,18 +78,14 @@ app_quill::tool define build {
 
     typemethod execute {argv} {
         # FIRST, get arguments
-        set targetType [lshift argv]
+        set sub [lshift argv]
 
-        if {$targetType ni {"" app lib platforms all}} {
-            throw FATAL "Usage: [tool usage build]"
-        }
-
-        if {$targetType eq ""} {
-            set targetType libapp
+        if {$sub eq ""} {
+            set sub libapp
         }
 
         # NEXT, dispatch
-        switch -exact $targetType {
+        switch -exact $sub {
             lib {
                 BuildLibs $argv
             }
@@ -86,14 +93,37 @@ app_quill::tool define build {
                 BuildApps $argv
             }
             libapp {
+                checkargs "quill build libapp" 0 0 {} $argv
                 BuildLibs
                 BuildApps
             }
-            platforms {
-                ListBuildPlatforms
-            }
             all {
-                BuildAll $argv
+                checkargs "quill build all" 0 0 {} $argv
+                BuildAll 
+            }
+            for {
+                checkargs "quill build for" 1 - {platform ?options...?} $argv
+                set platform [lshift argv]
+
+                set version ""
+                set threads yes
+
+                foroption opt argv -all {
+                    -version { 
+                        set version [lshift argv] 
+                    }
+                    -threads { 
+                        set threads [lshift argv] 
+                        if {$threads ni "yes no 1 0 true false"} {
+                            throw FATAL "Invalid -threads value: \"$threads\""
+                        }
+                    } 
+                }
+
+                BuildFor $platform $version $threads
+            }
+            default {
+                throw FATAL "Unknown subcommand: \"$sub\""
             }
         }
     }
@@ -181,25 +211,27 @@ app_quill::tool define build {
         }
     }
 
-    # BuildTclApp app ?bdict?
+    # BuildTclApp app ?basekit?
     #
     # app     - The name of the application
-    # bdict   - basekit definition dictionary, or ""
+    # basekit   - Full path to basekit or ""
     #
-    # Builds the application using tclapp.  The bdict will only be
-    # non-empty for 'quill build all -platform <platform>'
+    # Builds the application using tclapp.  The basekit will only be
+    # given when 'quill build for' is called; it is the caller's 
+    # responsibility to be sure that it is appropriate for the 
+    # app.
 
-    proc BuildTclApp {app {bdict ""}} {
+    proc BuildTclApp {app {basekit ""}} {
         # FIRST, make sure the app is known.
         if {$app ni [project app names]} {
             throw FATAL "App \"$app\" is not defined in project.quill."
         }
 
         if {[project app exetype $app] eq "exe"} {
-            if {[dict size $bdict] eq 0} {
+            if {[dict size $basekit] eq 0} {
                 set plat [platform::identify]
             } else {
-                set plat [dict get $bdict platform]
+                set plat [dict get $basekit platform]
             }
         } else {
             set plat tcl
@@ -253,7 +285,7 @@ app_quill::tool define build {
                     set basekit [env pathto basekit.tcl]
                 }
             } else {
-                set basekit [teacup getkit $bdict]
+                set basekit [basekit get $basekit]
             }
 
             if {$basekit eq ""} {
@@ -293,76 +325,15 @@ app_quill::tool define build {
     }
 
     #---------------------------------------------------------------------
-    # List Build Platforms
-
-    # ListBuildPlatforms
-    #
-    # Finds the platforms for the current version of TCL for which 
-    # basekits exist at teapot.activestate.com.
-
-    proc ListBuildPlatforms {} {
-        puts "Platforms for which cross-platform builds can be done:"
-        puts ""
-        
-        set version [VerXY [env versionof tclsh]]
-        set kits [dictable sort [teacup basekits $version] {
-            platform {version -decreasing} tcltk threaded name 
-        }]
-
-        dictable puts $kits \
-            -sep         "  "               \
-            -showheaders                    \
-            -skipsame    {platform version} \
-            -columns     {
-                platform version tcltk threaded name
-            }
-    }
-
-    # VerXY version
-    #
-    # Returns the x.y from a possibly longer version.
-
-    proc VerXY {version} {
-        set vlist [split $version .]
-        return [join [lrange $vlist 0 1] .]
-    }
-
-    #---------------------------------------------------------------------
     # Build All
 
-    # BuildAll argv
+    # BuildAll
     #
-    # argv - The command line options.
-    #
-    # Builds the entire project, as directed by the arguments.
+    # Builds the entire project.
 
-    proc BuildAll {argv} {
+    proc BuildAll {} {
         puts "quill build all"
 
-        # FIRST, get the command-line arguments.
-        set platform ""
-        foroption opt argv -all {
-            -platform { set platform [lshift argv] }
-        }
-
-        # NEXT, if -platform is this platform, we're fine.
-        if {$platform eq [platform::identify]} {
-            set platform ""
-        }
-
-        if {$platform eq ""} {
-            BuildAllForHere
-        } else {
-            BuildAllForPlatform $platform
-        }
-    }
-
-
-    # BuildAllForHere
-    #
-    # Builds the whole shebang for the current platform, halting on error.
-
-    proc BuildAllForHere {} {
         # FIRST, Verify all external dependencies
         Sep "Verifying external dependencies"
 
@@ -414,16 +385,62 @@ app_quill::tool define build {
         puts "\n***** Build Completed Successfully *****"
     }
 
-    # BuildAllForPlatform platform
+    #---------------------------------------------------------------------
+    # Build For Platform
+
+    # BuildFor platform version threads
     #
     # platform - The platform to build for.
+    # version  - The specific version, or "" for latest.
+    # threads  - yes, no, or "" to prefer threads but accept no threads.
     #
     # Builds the executables and distribution for the given platform.
+    # By default, Quill will prefer the latest threaded version.
+    
+    proc BuildFor {platform version threads} {
+        # FIRST, get the tcl and tk basekits for the given requirements.
+        array set kits [GetPlatformBasekits $platform $version $threads]
 
-    proc BuildAllForPlatform {platform} {
+        # NEXT, verify that we have a basekit for each app that needs one.
+        set count 0
+
+        foreach app [project app names] {
+            if {[project app exetype $app] ne "exe"} {
+                continue
+            }
+
+            incr count
+
+            if {[project app gui $app]} {
+                if {$kits(tk) eq ""} {
+                    throw FATAL [outdent "
+                        This project requires a Tk basekit, but none
+                        is available given the constraints.
+                    "]
+                }
+            } else {
+                if {$kits(tcl) eq ""} {
+                    throw FATAL [outdent "
+                        This project requires a Tcl-only basekit, but none
+                        is available given the constraints.
+                    "]
+                }
+            }
+        }
+
+        # NEXT, are there any apps to build?
+        if {!$count} {
+            throw FATAL [outdent "
+                This project does not define any applications that are
+                build as standalone executables, so there is nothing to
+                do.
+            "]
+        }
+
+
         puts ""
         puts [outdent "
-            NOTE: Quill will attempt to build this project's executables for 
+            Quill will now attempt to build this project's executables for 
             platform '$platform'.  Quill assumes that 'quill build all'
             has already succeeded for the current platform--all tests
             pass, all documentation has been formatted, and any library
@@ -432,67 +449,7 @@ app_quill::tool define build {
 
         puts ""
 
-        # FIRST, make sure we support this platform.
-        set version [VerXY [env versionof tclsh]]
-        set table [teacup basekits $version $platform]
-
-        if {![got $table]} {
-            puts ""
-            throw FATAL "Basekits are not available for platform '$platform'."
-        }
-
-        # NEXT, gather app info.
-        set exeCount 0
-        set tclCount 0
-        set tkCount  0
-
-        foreach app [project app names] {
-            if {[project app exetype $app] ne "exe"} {
-                continue
-            }
-
-            incr exeCount
-
-            if {[project app gui $app]} {
-                incr tkCount 
-            } else {
-                incr tclCount
-            }
-        }
-
-        # NEXT, are there any apps to build?
-        if {!$exeCount} {
-            throw FATAL [outdent "
-                This project does not define any applications that are
-                build as standalone executables, so there is nothing to
-                do.
-            "]
-        }
-
-        # NEXT, do we have the flavors we need?
-        if {$tclCount > 0} {
-            set bdict [GetBasekitFlavor $table tcl] 
-
-            if {$bdict eq ""} {
-                throw FATAL [outdent "
-                    This project requires a Tcl-only basekit, but none
-                    is available for '$platform'
-                "]
-            }
-        }
-
-        if {$tkCount > 0} {
-            set bdict [GetBasekitFlavor $table tk]
-            if {$bdict eq ""} {
-                throw FATAL [outdent "
-                    This project requires a Tk basekit, but none
-                    is available for '$platform'
-                "]
-            }
-        }
-
         # NEXT, Build all executables
-        # TODO: We should have a "builder" module.
         Sep "Building Application(s)"
 
         foreach app [project app names] {
@@ -501,12 +458,12 @@ app_quill::tool define build {
             }
 
             if {[project app gui $app]} {
-                set bdict [GetBasekitFlavor $table tk]
+                set kdict $kits(tk)
             } else {
-                set bdict [GetBasekitFlavor $table tcl]
+                set kdict $kits(tcl)
             }
 
-            BuildTclApp $app $bdict
+            BuildTclApp $app $kdict
         }
 
         # NEXT, Build all distributions that are platform-specific.
@@ -525,44 +482,58 @@ app_quill::tool define build {
         puts "\n***** Build Completed Successfully *****"
     }
 
-
-    # GetBasekitFlavor table flavor
+    # GetPlatformBasekits platform argv
     #
-    # Returns the best basekit dict for the given flavor.
+    # platform  - The specific platform string
+    # version   - The specific version, or "" for latest.
+    # threads   - yes, no, or "" to prefer threads but accept no threads.
+    #
+    # Returns a dictionary of basekit kdicts for "tcl" and "tk".
 
-    proc GetBasekitFlavor {table flavor} {
-        set candidates [list]
+    proc GetPlatformBasekits {platform version threads} {
+        # FIRST, get the available basekits.
+        dict set filter platform $platform
 
-        set v(thread)   0.0.0
-        set v(unthread) 0.0.0
-        set d(thread)   {}
-        set d(unthread) {}
+        if {$version ne ""} {
+            dict set filter version $version
+        }
 
-        foreach bdict $table {
-            dict with bdict {}
-
-            if {$tcltk ne $flavor} {
-                continue
-            }
-
-            if {$threaded} {
-                if {[package vcompare $version $v(thread)] == 1} {
-                    set v(thread) $version
-                    set d(thread) $bdict
-                }
+        if {$threads ne ""} {
+            if {$threads} {
+                dict set filter threaded yes
             } else {
-                if {[package vcompare $version $v(unthread)] == 1} {
-                    set v(unthread) $version
-                    set d(unthread) $bdict
-                }
+                dict set filter threaded no
             }
         }
 
-        if {$d(thread) ne ""} {
-            return $d(thread)
-        } else {
-            return $d(unthread)
+
+        set kits [dictable filter \
+            [basekit table [env versionof tclsh] -source local] \
+            {*}$filter]
+
+        if {![got $kits]} {
+            throw FATAL "No basekits found."
         }
+
+        # NEXT, we want the basekit with the highest version number.
+        # Find them for both flavors, tcl and tk.
+
+        set ver(tcl) 0.0
+        set kit(tcl) ""
+        set ver(tk)  0.0
+        set kit(tk)  ""
+
+        foreach kdict $kits {
+            set flavor [dict get $kdict tcltk]
+            set kver   [dict get $kdict version]
+
+            if {[package vcompare $kver $ver($flavor)] == 1} {
+                set ver($flavor) $kver
+                set kit($flavor) $kdict
+            }
+        }
+
+        return [array get kit]
     }
 
     # proc Sep message

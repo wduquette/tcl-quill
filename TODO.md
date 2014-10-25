@@ -21,13 +21,9 @@ Operations:
 
 # For Quill 0.3.0
 
-* 'quill build all -platform'
-  * Disallow if no "exe" apps in project.  DONE.
-  * Build all executables.  DONE.
-  * Build all distributions that include %platform in the name.
-    * Need to do the string map of %platform in a lazy way.
-  * Refactor, to make it all clean.  Also, remove old code related to 
-    finding and getting basekits.
+* 'quill build for'
+  * Build distribution sets with "%platform"
+  * Test thoroughly using test project.
 * Include tclapp command line in log file.
 * Complete dictable.test.
 * Fix bugs as found and reported.
