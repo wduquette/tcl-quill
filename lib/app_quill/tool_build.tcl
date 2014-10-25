@@ -294,6 +294,8 @@ app_quill::tool define build {
                 "]
             }
 
+            puts "Basekit: $basekit"
+
             lappend command \
                 -prefix $basekit
         }
@@ -475,7 +477,7 @@ app_quill::tool define build {
                     continue
                 }
 
-                puts "Pretending to build dist $dist for $platform"
+                dist make $dist $platform
             }
         }
 

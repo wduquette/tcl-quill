@@ -303,12 +303,10 @@ snit::type ::app_quill::project {
     # platform.  If plat is missing, uses current platform.
 
     typemethod {app exename} {app {plat ""}} {
-        if {$plat eq ""} {
-            if {$meta(exetype-$app) eq "kit"} {
-                set plat "tcl"
-            } else {
-                set plat [platform::identify]
-            }
+        if {$meta(exetype-$app) eq "kit"} {
+            set plat "tcl"
+        } elseif {$plat eq ""} {
+            set plat [platform::identify]
         }
 
         set base $app-$meta(version)
@@ -384,14 +382,19 @@ snit::type ::app_quill::project {
         return "package-$lib-[project version]-tcl.zip"
     }
 
-    # dist expand name
+    # dist expand name ?plat?
     #
     # name  - A distribution name
+    # plat  - The platform.
     #
     # Expands replaceable tokens in the distribution name.
 
-    typemethod {dist expand} {name} {
-        return [string map [list %platform [platform::identify]] $name]
+    typemethod {dist expand} {name {plat ""}} {
+        if {$plat eq ""} {
+            set plat [platform::identify]
+        }
+
+        return [string map [list %platform $plat] $name]
     }
 
     # dist patterns name

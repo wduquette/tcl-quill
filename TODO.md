@@ -6,23 +6,9 @@ This is the official list of work to be done.
 
 I.e., building Linux and Windows executables on OS X.
 
-Operations:
-* Get dictable of available basekits.
-  * Include all basekits in ~/.quill/ and all from teapot for platforms
-    other than the current.
-  * Present all of the basekits.
-  * Allow the user to specify:
-    * -platform; the latest version and threaded are assumed.
-    * -version; will take the specific version if present.
-    * -nothreads; will take unthreaded basekit over threaded basekit.
-  * Command is:
-    * quill build for <platform> ?<version>? ?options...?
-      * Where options = -nothread.
-
 # For Quill 0.3.0
 
 * 'quill build for'
-  * Build distribution sets with "%platform"
   * Test thoroughly using test project.
 * Include tclapp command line in log file.
 * Complete dictable.test.
