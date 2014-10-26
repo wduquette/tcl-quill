@@ -416,15 +416,21 @@ app_quill::tool define build {
             if {[project app gui $app]} {
                 if {$kits(tk) eq ""} {
                     throw FATAL [outdent "
-                        This project requires a Tk basekit, but none
-                        is available given the constraints.
+                        This project requires a Tk basekit, but no Tk
+                        basekit that meets your constraints was found on
+                        the local disk.  Use 'quill basekit list' to see
+                        the basekits available from the 'net, and 
+                        'quill basekit get' to retrieve the one you need.  
                     "]
                 }
             } else {
                 if {$kits(tcl) eq ""} {
                     throw FATAL [outdent "
-                        This project requires a Tcl-only basekit, but none
-                        is available given the constraints.
+                        This project requires a Tcl-only basekit, but no 
+                        Tcl-only basekit that meets your constraints was found 
+                        on the local disk.  Use 'quill basekit list' to see
+                        the basekits available from the 'net, and 
+                        'quill basekit get' to retrieve the one you need.  
                     "]
                 }
             }
@@ -514,7 +520,7 @@ app_quill::tool define build {
             {*}$filter]
 
         if {![got $kits]} {
-            throw FATAL "No basekits found."
+            return [dict create tcl "" tk ""]
         }
 
         # NEXT, we want the basekit with the highest version number.

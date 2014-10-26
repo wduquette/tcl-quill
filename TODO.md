@@ -2,14 +2,8 @@
 
 This is the official list of work to be done.
 
-# Cross-platform builds
-
-I.e., building Linux and Windows executables on OS X.
-
 # For Quill 0.3.0
 
-* 'quill build for'
-  * Test thoroughly using test project.
 * Include tclapp command line in log file.
 * Complete dictable.test.
 * Fix bugs as found and reported.
