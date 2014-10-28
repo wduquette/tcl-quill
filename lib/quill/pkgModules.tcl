@@ -14,7 +14,7 @@
 #-----------------------------------------------------------------------
 
 # -quill-provide-begin DO NOT EDIT BY HAND
-package provide quill 0.2.2a0
+package provide quill 0.3.0
 # -quill-provide-end
 
 

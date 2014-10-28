@@ -14,7 +14,7 @@
 #-----------------------------------------------------------------------
 
 # -quill-provide-begin DO NOT EDIT BY HAND
-package provide app_quill 0.2.2a0
+package provide app_quill 0.3.0
 # -quill-provide-end
 
 #-----------------------------------------------------------------------
@@ -23,7 +23,7 @@ package provide app_quill 0.2.2a0
 # -quill-require-begin INSERT PACKAGE REQUIRES HERE
 package require snit 2.3
 package require zipfile::encode 0.3
-package require quill 0.2.2a0
+package require quill 0.3.0
 # -quill-require-end
 
 namespace import quill::*
