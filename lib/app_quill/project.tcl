@@ -835,7 +835,7 @@ snit::type ::app_quill::project {
                 if {$package in [project require names -all]} {
                     set ver [project require version $package]
                     lappend nblock "package require $package $ver"
-                } elseif {$package in [project provide names]} {
+                } elseif {[file isdirectory [project root lib $package]]} {
                     lappend nblock "package require $package [project version]"
                 } else {
                     puts [outdent "
