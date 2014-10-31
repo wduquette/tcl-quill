@@ -10,6 +10,7 @@
 teapot.txt
 /*.zip
 *~
+doit.tcl
 
 # SublimeText files
 *.sublime-*
