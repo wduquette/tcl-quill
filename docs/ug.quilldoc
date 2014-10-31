@@ -1,7 +1,8 @@
 <document "Quill <version> User's Guide">
 
 By Will Duquette<br>
-September, 2014<p>
+<tt will -at- wjduquette.com><br>
+October, 2014<p>
 
 <hrule>
 <contents>
@@ -24,7 +25,19 @@ proc root {path} {
 
 <preface intro "Introduction">
 
-TODO: Why Quill came to be written.
+Quill is a tool for automating the various tasks involved in developing,
+testing, documenting, and distributing a modern Tcl/Tk application.  It
+was inspired by <link http://leiningen.org Leiningen>, a similar tool for
+the Clojure programming language, a tool whose convenience and ease of use
+made me distinctly jealous.<p>
+
+Quill is intended for those learning Tcl/Tk for the first time, and also
+for those who build libraries or applications in Tcl/Tk that are intended
+for use by others.<p>
+
+It is still a young project; if it doesn't yet meet your needs, please
+leave an enhancement request at the 
+<link https://github.com/wduquette/tcl-quill/issues "Quill issue tracker">.<p>
 
 <preface ack "Acknowledgements">
 
@@ -38,13 +51,228 @@ Many thanks to the following people who have helped with Quill development:<p>
 
 <section over "Quill Overview">
 
-TODO: Gosh, there's a lot of work to be done here.<p>
+This user's guide assumes that Quill is already installed; see
+<link INSTALL.md> for details on how to install Quill.  If you don't
+have Quill, you can find the latest release at the
+<link https://github.com/wduquette/tcl-quill/releases "Quill Release Page">
 
-<section over.tree "The Project Tree">
-<section over.pfile "The Project File">
+Quill will help you do the following things:<p>
 
-<section projfile "The Project File">
+<ul>
+<li> Set up an initial project tree for your application or library project.
+<li> Manage any external dependencies (i.e., library packages) your project
+     needs, downloading them from <tt teapot.activestate.com> as needed.
+<li> Execute your tests, summarizing the results.
+<li> Allow you to exercise your code in an interactive shell.
+<li> Allow you to run arbitrary scripts against your code base.
+<li> Format your project documentation.
+<li> Build your library packages as teapot .zip files, and install them 
+     into your local teapot.
+<li> Build your applications as starkits or starpacks for your current
+     platform, and install them for local use.
+<li> Build distribution .zip files.
+<li> Build your applications as starpacks against basekits for other 
+     platforms.
+<li> Manage your collection of basekits.
+<li> Manage your local teapot repository.
+<li> <b>Test your code, format your documentation, build your libraries
+     and applications, and prepare them for distribution, with a single
+     command.</b>
+</ul>
 
+Of course, you can do almost all of these things without Quill...but Quill
+aims to make them so easy that all you need to do is write your code.<p>
+
+<section using "Using Quill">
+
+<b TBD:> We need to cover these topics.
+
+<ul>
+<li> Starting a New Project
+<li> The Project Tree
+<li> The Project File
+<li> Running Tests
+<li> Interactive Development
+<li> Formatting Documentation
+<li> Building and Installing Libraries
+<li> Building and Installing Applications
+<li> Distribution Sets
+<li> Managing External Dependencies
+<li> Building for Distribution
+<li> Building for Other Platforms
+<li> Adding Elements to an Existing Project
+<li> Configuring Quill for your Environment
+</ul>
+
+<section using.tool "The Quill Command-line Tool">
+
+Quill is a command-line tool with many subcommands, just like so many 
+other software development tools.  To see what tools are available, 
+enter '<tt quill>' or '<tt quill help>' at the command line.  To get help about a
+specific subcommand, enter '<tt>quill help <i subcommand></tt>'.<p> 
+
+<section using.newproject "Starting a New Project">
+
+A Quill <i>project</i> is the collection of files related to a Tcl application
+or library package (or both together).  To begin working with Quill, then,
+the first thing to do is create a new project.  And the first thing to do
+when starting a new project is to choose the most suitable project template.<p>
+
+<i><b FUTURE:> Quill will support multiple project templates.  At present,
+it supports a single template, '<tt app>', for a generic application.</i><p>
+
+To create a new project, switch to the parent directory of the new project's
+directory tree, and use the '<tt quill new>' tool:<p>
+
+<example>
+$ cd ~/github
+$ quill new app my-project myapp
+...
+$ cd my-project
+$ quill info
+...
+</example>
+
+The '<tt quill new>' command takes the project template name ('<tt app>')
+and the project name, ('<tt my-project>'), and any additional information 
+required by the template (the application name, 'myapp', in this case).  
+It creates  a project tree for the project, rooted at 
+<tt my-project/> in the current directory.<p>
+
+The '<tt quill info>' command displays the new project's metadata in a 
+human-readable form:<p>
+
+<example>
+$ quill info
+my-project 0.0a0: Your project description
+
+Project Tree:
+    /Users/will/github/my-project
+
+Applications:
+    Name   Mode     ExeType
+    -----  -------  -------
+    myapp  Console  kit    
+
+Required Packages:
+    Tcl  8.6.1  
+
+Distribution Sets:
+    install
+</example>
+
+In this listing we see the project's name, and its initial version string
+('<tt 0.0a0>') and description.  It contains code for one application,
+'<tt myapp>', which is a console-mode application to be delivered as a 
+starkit.  The project has only one dependency, on Tcl 8.6.1, which is the
+version of Tcl currently installed on the machine in use.  It defines a 
+single distribution set, '<tt install>', which in turn defines the files to
+be included in the installation .zip file.<p>
+
+Typically you will wish to change some or all of these things.  You might 
+want a GUI application built as a standalone executable, and you'll probably
+have additional external dependencies.  Ultimately you'll need to change
+the version number.<p>
+
+All of these things are defined in the <i project file>, which is called
+<tt project.quill>.<p>
+
+<section using.projfile "The Project File">
+
+The project file is the heart of the Quill system.  Everything Quill needs
+to know about your project is put into the project file, which resides in 
+the root directory of your project's directory tree.  Here is the project
+file for the project we just created in the previous section:<p>
+
+<example>
+$ cd ~/github/my-project
+$ cat project.quill
+project my-project 0.0a0 "Your project description"
+homepage http://home.page.url
+app myapp
+require Tcl 8.6.1
+
+dist install {
+    %apps
+    docs/*.html
+    docs/man*/*.html
+    README.md
+    LICENSE
+}
+</example>
+
+The project file consists of a sequence of statements that define the
+entities in the project.  It always begins with the <tt project> statement,
+which defines the project's name, version number, and description.  The
+<tt app> statement declares that the project defines an application called
+'<tt myapp>', and that it requires version 8.6.1 of a package called 'Tcl'.
+Finally, it defines an installation set called 'install' which contains 
+the built applications, some HTML files from the 
+<root docs/> subtree, and the README and LICENSE files.<p>
+
+The file is usually edited by hand; to change the project's version number,
+just edit the file.  Then, run '<tt quill info>' to verify that the file is
+readable:<p>
+
+<example>
+$ vim project.quill
+$ quill info
+...
+$
+</example>
+
+In addition to the kind of information shown above, you can also 
+<tt provide> library packages; these are Tcl libraries exported by your
+project for use by other project.<p>
+
+The project file syntax is documented in Quill's 
+<xref project(5)> man page.  It's a Tcl-formatted file, naturally, but
+it allows only the commands defined in <xref project(5)>; and on occasion
+Quill will write it out again with edits, so you shouldn't get too attached
+to your formatting.<p>
+
+<section using.projfile.autoupdate "Automatic Code Updates">
+
+Your project code will depend on some of the metadata defined in the 
+project file.  For example, any library packages in your project
+will have the same version number as the project itself; and naturally 
+this project number needs to appear in the code in a variety of places
+(i.e., in <tt package ifneeded> and <tt package provide> statements).<p>
+
+Similarly, your applications will need to <tt package require> some or
+all of the external dependencies list in <tt project.quill>, and will
+need to include the package version numbers.<p>
+
+Quill handles all of this.  Each time a Quill command is executed in the
+project tree. Quill loads <tt project.quill> and updates the project's 
+codebase as needed to match the project's new metadata.<p>
+
+This is another reason why it is a good idea to execute 
+'<tt quill info>' after editing <tt project.quill>: it gives Quill a chance
+to make any necessary changes.<p>
+
+<section using.projfile.quillinfo "The quillinfo(n) Package">
+
+In addition to updating version numbers in the relevant 
+<tt package ifneeded>, <tt package provide>, and <tt package require> 
+statements, Quill also creates a library package, <xref quillinfo(n)>,
+that contains all of the project's metadata, for use by your applications.
+<p>
+
+As an example, your application can retrieve the project version number
+like this:<p>
+
+<example>
+set version [quillinfo version]
+</example>
+
+See the <xref quillinfo(n)> man page for the complete API.  Only a few
+pieces of information are made available at present, but in principle
+everything in <tt project.quill> can be made available.<p>
+
+<section using.projtree "The Project Tree">
+
+TBD.
 <== ====================================================================>
 
 <section lib "Library Packages">
@@ -54,7 +282,7 @@ A Quill project can contain three different kinds of Tcl library:
 
 <ul>
 <li> <b Provided packages>: I.e., those written to be used by other 
-     projects.  These are named in the <xref projfile "project file">
+     projects.  These are named in the <xref using.projfile "project file">
      using the <xref project(5)#provide> statement.<p>
 
 <li> <b Application implementation packages>:  Each application in a Quill
@@ -214,7 +442,7 @@ tokens are "package require".<p>
 
 <topic "<bigmark F>">
 In this line, Snit is an external dependency named in the 
-<xref projfile "project file"> using the <xref project(5)#require>
+<xref using.projfile "project file"> using the <xref project(5)#require>
 statement.  Quill consequently knows the required version number, and
 will make sure to keep this command up-to-date with it.<p>
 </topic>
