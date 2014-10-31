@@ -1,21 +1,24 @@
 # Quill
 
-Quill is a build tool for Tcl/Tk projects, inspired by
-[Leiningen](http://leiningen.org).  It is intended to:
+Quill is a project automation tool for Tcl/Tk projects, inspired by
+[Leiningen](http://leiningen.org).  It is intended to make it easy to 
+build and deploy Tcl applications and libraries.  In particular,
+Quill:
 
-* Create new skeleton project trees.
-* Run test suites
-* Format HTML documentation
-* Manage dependencies
+* Creates new skeleton project trees.
+* Runs test suites
+* Formats HTML documentation
+* Manages dependencies
   * External and internal
-* Execute your project
-* Execute arbitrary scripts in the context of your project's code base
-* Build deployment targets:
+* Executes your project in development
+* Supports interactive development
+* Executes arbitrary scripts in the context of your project's code base
+* Builds deployment targets:
   * Standalone executables ("starpacks")
   * Lightweight executables ("starkits")
   * Reusable packages (teapot .zip modules)
-* Make it easy to build and deploy Tcl applications and libraries.
-* Run cross-platform (Windows, OS X, Linux)
+* Builds distribution .zip files
+* Runs cross-platform (Windows, OS X, Linux)
 
 As such, it is intended to reduce the ancillary costs of defining and
 deploying a Tcl package or executable to as close to zero as possible, by
@@ -23,7 +26,7 @@ automating everything but the actual writing of the code and documentation.
 
 You can follow Quill development at
 [GitHub](https://github.com/wduquette/tcl-quill); also, I'm posting 
-development notes and questions for the Quill users on 
+occasional development notes and questions for the Quill users on 
 [my blog](http://http://www.foothills.wjduquette.com/blog/).
 
 ## Building and Installation
@@ -105,7 +108,7 @@ $ quill install
 Quill can also build library packages and install them into your local
 teapot repository for general use; and if your local teapot is located
 somewhere that requires "root" or "admin" privileges to touch, it can
-also create a new teapot repository for you in your home page.
+also create a new teapot repository for you in your home directory.
 
 Then, you can add `require` statements to your `project.quill` file
 (created for you by `quill new`), and Quill will take care of downloading
@@ -113,7 +116,7 @@ the required packages into your local teapot when you execute
 `quill deps update`.
 
 Finally, if you define a distribution in `project.quill`, Quill will build
-distribution .zip file for you.
+the distribution .zip file for you.
 
 See the [project(5)](./docs/man5/project.manpage) man page for information 
 about the contents of the `project.quill` file, and enter `quill help` at the
@@ -154,10 +157,6 @@ PowerShell or the basic Command Shell, but I'm trying not to rely on that.
 However, I only have access to OS X.  Thus, it would be 
 a great help to me to have users try it out on other platforms and submit
 bug reports and patches.
-
-Note that platform-specific code is concentrated in `lib/quillapp/plat.tcl`.
-That's where Quill finds external programs like `tkcon` and `teacup`, for
-example.
 
 In addition, I've focussed on using ActiveState's "teapot" package 
 repository and TclDevKit tool chain, because I have access to those.

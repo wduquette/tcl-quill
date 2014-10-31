@@ -3,7 +3,7 @@
 #    pkgIndex.tcl
 #
 # PROJECT:
-#    tcl-quill: Quill Project Build System for Tcl/Tk
+#    tcl-quill: Quill Project Automation System for Tcl/Tk
 #
 # DESCRIPTION:
 #    tcl-quill quillinfo(n): pkgIndex file

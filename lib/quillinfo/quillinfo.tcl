@@ -3,7 +3,7 @@
 #    quillinfo.tcl
 #
 # PROJECT:
-#    tcl-quill: Quill Project Build System for Tcl/Tk
+#    tcl-quill: Quill Project Automation System for Tcl/Tk
 #
 # DESCRIPTION:
 #    Project Metadata
@@ -17,7 +17,7 @@
 
 namespace eval ::quillinfo {
     variable meta
-    array set meta {version-zipfile::encode 0.3 gui-quill 0 url http://my.home.page description {Quill Project Build System for Tcl/Tk} provides quill homepage http://github.com/wduquette/tcl-quill requires {Tcl snit textutil::expander zipfile::encode} exetype-quill exe version-textutil::expander 1.3.1 version-snit 2.3 local-Tcl 0 distpat-install-%platform {
+    array set meta {version-zipfile::encode 0.3 gui-quill 0 url http://my.home.page description {Quill Project Automation System for Tcl/Tk} provides quill homepage http://github.com/wduquette/tcl-quill requires {Tcl snit textutil::expander zipfile::encode} exetype-quill exe version-textutil::expander 1.3.1 version-snit 2.3 local-Tcl 0 distpat-install-%platform {
     %apps
     %libs
     docs/*.html

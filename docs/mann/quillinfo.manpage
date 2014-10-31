@@ -1,0 +1,62 @@
+<manpage quillinfo(n) "Project Metadata Package">
+
+<section SYNOPSIS>
+
+<example>
+package require quillinfo
+</example>
+
+<itemlist>
+
+<section DESCRIPTION>
+
+The quillinfo(n) package makes the project's metadata available to the 
+project's applictions.  Quill automatically creates the package for each 
+project that defines at least one application and updates it whenever
+the metadata changes.<p>
+
+The primary piece of information is the project <xref #version> 
+number, but in principle any metadata defined in <tt project.quill> can be
+made available.<p>
+
+The quillinfo(n) package is loaded automatically by Quill's standard 
+application loader script.<p>
+
+<section COMMANDS>
+
+quillinfo(n) defines the following commands:<p>
+
+<deflist commands>
+
+<defitem "description" {quillinfo description}>
+
+Returns the project description.<p>
+
+<defitem "homepage" {quillinfo homepage}>
+
+Returns the URL of the project homepage.<p>
+
+<defitem "isgui" {quillinfo isgui <i app>}>
+
+Returns 1 if the named <i app> is a GUI app, and 0 otherwise.<p>
+
+<defitem "project" {quillinfo project}>
+
+Returns the project name.<p>
+
+<defitem "version" {quillinfo version}>
+
+Returns the project version number.<p>
+
+</deflist commands>
+
+
+<section AUTHOR>
+
+Will Duquette<p>
+
+<section "SEE ALSO">
+
+<xref project(5)>.
+
+</manpage>

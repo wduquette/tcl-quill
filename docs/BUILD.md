@@ -15,21 +15,53 @@ download or clone a particular version from there.  By convention, Quill
 is cloned into `~/github/tcl-quill`, but you should be able to put it
 wherever you like.  Git is not required during the build process.
 
+Then, make sure you have the latest `teacup`; this comes with ActiveTcl.<p>
+
+```
+$ teacup update-self
+```
+
+or
+
+```
+$ sudo teacup update-self
+```
+
+Next, you will need to have several packages present in your local
+teapot in order for Quill to build itself. You
+can see the whole list in `~/github/tcl-quill/project.kite`; each
+`require` statement lists one required package.
+
+You may have some of them already.  To see what's missing, do
+
+```
+$ teacup list --at-default
+```
+
+If necessary, you can acquire the required packages as follows:
+
+```
+$ teacup install <package> <version>
+```
+
+One Quill is built, it can handle these details for you.
+
 Then,
 
 ```
 $ cd ~/github/tcl-quill
 ```
 
-Quill should be able to run as a Tcl script right out of the box; 
-and everything Quill can do, it can do running as a plain Tcl script.
+Once the required packages are installed, Quill should be able to run as a 
+Tcl script right out of the box; and everything Quill can do, it can do 
+running as a plain Tcl script.
 
 ```
 $ ./bin/quill.tcl
 ... (Displays help info)
 ```
 
-Next, verify that it has the tools it needs.  It should be able to find
+Next, verify that it can find the tools it needs.  It should be able to find
 `tclsh`, `teacup`, `tclapp`:
 
 ```
@@ -49,22 +81,11 @@ $ ./bin/quill.tcl teapot
 ... (Displays status of local teapot)
 ```
 
-If it isn't writable, follow Quill's directions to make it so.  You probably also want to obtain the latest `teacup` executable:
+If it isn't writable, follow Quill's directions to make it so.
 
-```
-$ teacup update-self
-```
-
-or
-
-```
-$ sudo teacup update-self
-```
-
-Next, you will need to have several packages present in your local
-teapot--Snit 2.3 and texutil::expander 1.3.1 to begin with, and you
-can see the whole list in `~/github/tcl-quill/project.kite`.  
-(Some of them might already be there).  To find out, execute:
+Quill probably  have created a new local teapot in your home directory 
+during the previous step.  In that case, it will probably want to re-install
+some of its require packages.  To find out, execute:
 
 ```
 $ ./bin/quill.tcl deps
@@ -97,7 +118,8 @@ And then, it can be installed for use on your system:
 $ ./bin/quill install
 ```
 
-This copies `./bin/quill-{platform}` (or `./bin/quill-{platform}.exe`) 
-to `~/bin/`, which is assumed to be on the path.  It also installs Quill's
+This copies `./bin/quill-{version}-{platform}` 
+(or `./bin/quill-{version}-{platform}.exe`) 
+to `~/bin/quill`, which is assumed to be on the path.  It also installs Quill's
 infrastructure library into your local teapot for your use.
 

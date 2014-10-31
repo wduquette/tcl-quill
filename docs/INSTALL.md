@@ -22,7 +22,7 @@ This file explains how to install the distribution.
    `docs/index.html`.
 
 4. If desired, install the [quill(n) package](mann/index.html) into your
-   local teapot.
+   local teapot; then you can use its features in your own projects.
 
     $ teacup install lib/package-quill-{version}-tcl.zip
 
