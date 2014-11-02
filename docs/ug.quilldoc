@@ -2,7 +2,7 @@
 
 By Will Duquette<br>
 <tt will -at- wjduquette.com><br>
-October, 2014<p>
+November, 2014<p>
 
 <hrule>
 <contents>
@@ -19,6 +19,16 @@ proc == {args} {hrule}
 # For project-relative paths
 proc root {path} {
 	return "[tt][i project]/[expand $path][/tt]"
+}
+
+# For indented paths in topic headings.
+proc topicpath {path} {
+    set path "<tt>[string map {+ &nbsp;&nbsp;&nbsp;&nbsp} $path]</tt>"
+    return "[topic $path]"
+}
+
+proc /topicpath {} {
+    return "[/topic]"
 }
 
 }>
@@ -88,12 +98,6 @@ aims to make them so easy that all you need to do is write your code.<p>
 <b TBD:> We need to cover these topics.
 
 <ul>
-<li> Starting a New Project
-<li> The Project Tree
-<li> The Project File
-<li> Running Tests
-<li> Interactive Development
-<li> Formatting Documentation
 <li> Building and Installing Libraries
 <li> Building and Installing Applications
 <li> Distribution Sets
@@ -125,11 +129,11 @@ To create a new project, switch to the parent directory of the new project's
 directory tree, and use the '<tt quill new>' tool:<p>
 
 <example>
-$ cd ~/github
-$ quill new app my-project myapp
+$ <b cd ~/github>
+$ <b quill new app my-project myapp>
 ...
-$ cd my-project
-$ quill info
+$ <b cd my-project>
+$ <b quill info>
 ...
 </example>
 
@@ -143,7 +147,7 @@ The '<tt quill info>' command displays the new project's metadata in a
 human-readable form:<p>
 
 <example>
-$ quill info
+$ <b quill info>
 my-project 0.0a0: Your project description
 
 Project Tree:
@@ -185,8 +189,8 @@ the root directory of your project's directory tree.  Here is the project
 file for the project we just created in the previous section:<p>
 
 <example>
-$ cd ~/github/my-project
-$ cat project.quill
+$ <b cd ~/github/my-project>
+$ <b cat project.quill>
 project my-project 0.0a0 "Your project description"
 homepage http://home.page.url
 app myapp
@@ -215,8 +219,8 @@ just edit the file.  Then, run '<tt quill info>' to verify that the file is
 readable:<p>
 
 <example>
-$ vim project.quill
-$ quill info
+$ <b vim project.quill>
+$ <b quill info>
 ...
 $
 </example>
@@ -272,7 +276,259 @@ everything in <tt project.quill> can be made available.<p>
 
 <section using.projtree "The Project Tree">
 
-TBD.
+There are a nearly infinite number of ways to set up a project directory
+tree; some of those ways work well, and some do not.  A succesful project
+tree is the result of many small decisions, each of which makes the pieces 
+work well together, and many of which are not obvious ahead of time.<p>
+
+But if there are many bad project trees, there are many good ones; the
+choice is to some extent arbitrary.  Quill makes the choice for you,
+mandating a project tree layout that has been known to work in real 
+projects.<p>
+
+<topiclist>
+<topicpath "<i root>/">
+The project root directory.
+</topicpath>
+
+<topicpath "+project.quill">
+The project file; see Section <xref using.projfile>.
+</topicpath>
+
+<topicpath "+README.md">
+The project's "read me" file.
+</topicpath>
+
+<topicpath "+LICENSE">
+The project's license file.
+</topicpath>
+
+<topicpath "+.quill/">
+Quill's private working directory for this project.  It should not be 
+checked into a VCS.
+</topicpath>
+
+<topicpath "+bin/">
+The project "bin" directory.
+</topicpath>
+
+<topicpath "++<i app>.tcl">
+Application loader script for application <i app>.
+</topicpath>
+
+<topicpath "++<i tool>">
+A project-specific tool, usually a Tcl script.
+</topicpath>
+
+<topicpath "+docs/">
+The project documentation directory.  See Section <xref using.docs>.
+</topicpath>
+
+<topicpath "++index.quilldoc">
+The root of the project's documentation tree, in 
+<xref quilldoc(5)> format.
+</topicpath>
+
+<topicpath "++<i document>.quilldoc">
+Some other document, in <xref quilldoc(5)> format.
+</topicpath>
+
+<topicpath "++man1/">
+Man page directory for application man pages.  (Section 1).
+</topicpath>
+
+<topicpath "+++<i app>.manpage">
+Man page for application <i app> in <xref manpage(5)> format.
+</topicpath>
+
+<topicpath "++man5/">
+Man page directory for project file formats.  (Section 5).
+</topicpath>
+
+<topicpath "+++<i format>.manpage">
+Man page for the given file <i format> in <xref manpage(5)> format.
+</topicpath>
+
+<topicpath "++mann/">
+Man page directory for Tcl package APIs.  (Section n).
+</topicpath>
+
+<topicpath "+++<i module>.manpage">
+Man page for the given package <i module> in <xref manpage(5)> format.
+</topicpath>
+
+<topicpath "++mani/">
+Man page directory for Tcl interfaces.  (Section i).
+</topicpath>
+
+<topicpath "+++<i interface>.manpage">
+Man page for the given <i interface> in <xref manpage(5)> format. An
+"interface" is a set of subcommands and semantics supported by multiple
+otherwise unrelated Tcl objects.
+</topicpath>
+
+<topicpath "+lib/">
+Parent directory for the project's Tcl packages.
+</topicpath>
+
+<topicpath "++app_<i app>/">
+Directory for the application <i app>'s implementation package.
+</topicpath>
+
+<topicpath "+++pkgIndex.tcl">
+The package's package index file.
+</topicpath>
+
+<topicpath "+++pkgModules.tcl">
+The package's module loader script.  See Section <xref lib>
+</topicpath>
+
+<topicpath "+++main.tcl">
+Defines the application's <tt main> procedure.
+</topicpath>
+
+<topicpath "+++<i module>.tcl">
+Another package module.
+</topicpath>
+
+<topicpath "++<i lib>/">
+Directory for package <i lib>, which might or might not be "provided" for
+external use.
+</topicpath>
+
+<topicpath "+++pkgIndex.tcl">
+The package's package index file.
+</topicpath>
+
+<topicpath "+++pkgModules.tcl">
+The package's module loader script.  See Section <xref lib>
+</topicpath>
+
+<topicpath "+++<i module>.tcl">
+Another package module.
+</topicpath>
+
+<topicpath "+<i test>/">
+Parent directory for the project's test target directories.
+</topicpath>
+
+<topicpath "++<i target>/">
+A test target directory.  The "<i target>" is usually a package name.
+</topicpath>
+
+<topicpath "+++/all_tests.test">
+The target's main
+<link http://www.tcl.tk/man/tcl8.6/TclCmd/tcltest.htm tcltest(n)>
+script. (Boilerplate; See Section <xref testing>)
+</topicpath>
+
+<topicpath "+++/<i module>.test">
+The tcltest(n) script for the given <i module>.
+</topicpath>
+
+</topiclist><p>
+
+The practices and usage of these directories are discussed in the
+following sections.  And, of course, you can define any other
+subdirectories you need.<p>
+
+<section using.projtree.quill "The Quill Tool and the Project Tree">
+
+Some of Quill's subcommands need to be run within a project tree, and some
+do not.  Of those that do, such as '<tt quill build>' and '<tt quill test>',
+you can execute the command anywhere in the project tree; you do not need
+to be in the project's root directory.<p>
+
+<section using.test "Testing Your Project">
+
+The '<tt quill test>' command executes all of your project's test targets,
+displays a summary of the results:<p>
+
+<example>
+$ <b quill test>
+Summarizing test results.  Use 'quill -verbose test'
+to see the details.
+
+app_quill:      Total   35  Passed  35  Skipped 0   Failed  0
+quill:          Total   169 Passed  167 Skipped 2   Failed  0
+
+$
+</example>
+
+You can execute a particular target or module test as well:<p>
+
+<example>
+$ <b quill test quill>
+... output from running test/quill/all_tests.test ...
+
+$ <b quill test quill listutils>
+... output from running test/quill/listutils.test ...
+
+$
+</example>
+
+Finally, you can add any 
+<link http://www.tcl.tk/man/tcl8.6/TclCmd/tcltest.htm tcltest(n)>
+options you like to the command line.  To run just one family of 
+tests, for example, you can add the <tt -match> option:<p>
+
+<example>
+$ <b quill test quill listutils -match "lshift-*">
+... output from running the lshift-* tests in listutils(n) ...
+
+$
+</example>
+
+See Section <xref testing> for information on how to set up test target
+directories for use with Quill.<p>
+
+<section using.docs "Project Documentation">
+
+Quill directly supports two documentation formats, <xref quilldoc(5)> and
+<xref manpage(5)>.  The two formats are HTML-like, and share a great deal 
+of their syntax.  Both are extensible in Tcl, and are translated into 
+styled HTML.<p>
+
+The <xref quilldoc(5)> format is for short HTML files and full documents
+with section numbers, like this user's guide.  The <xref manpage(5)> format
+is for man pages.  The <xref quilldoc(5)> and <xref manpage(5)> man pages
+go into detail about the formats and how to make use of them.<p>
+
+To format the documentation, use the '<tt quill docs>' command:<p>
+
+<example>
+$ <b quill docs>
+... formats all .quilldoc and .manpage files found in the docs/ tree ...
+
+$ <b quill docs mann>
+... formats all manpages in docs/mann/ ...
+
+$ <b quill docs docs>
+... formats all .quilldoc files in docs/ ...
+
+$ <b quill docs docs/ug.quilldoc>
+... formats the specific file ...
+
+$
+</example>
+
+If any errors are found, they are described in the console output.<p>
+
+<section using.shell "Interactive Development">
+
+When working with new code or debugging a problem, there is often no
+substitute for opening a Tcl shell and exercising the code directly.  The
+'<tt quill shell>' command supports this by invoking 
+<link http://tkcon.sourceforge.net tkcon> in the context of your code 
+base, with the <i auto_path> set so that your packages can be loaded.<p>
+
+Further, if your project defines at least one application then the package 
+for the first app in your <i project.quill> file) is loaded automatically.
+(The app's <tt main> procedure is not executed.)<p>
+
+<i><b FUTURE:> The '<quill shell>' command will allow you to select the
+app whose code you want loaded, or none.</i><p>
+
 <== ====================================================================>
 
 <section lib "Library Packages">
@@ -688,5 +944,8 @@ will each get its own test directory.<p>
 
 In the meantime, test directories must be added by hand, usually by
 copying an existing directory and changing the names.<p>
+
+<== ====================================================================>
+
 
 </document>
