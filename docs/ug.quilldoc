@@ -98,9 +98,6 @@ aims to make them so easy that all you need to do is write your code.<p>
 <b TBD:> We need to cover these topics.
 
 <ul>
-<li> Building and Installing Libraries
-<li> Building and Installing Applications
-<li> Distribution Sets
 <li> Managing External Dependencies
 <li> Building for Distribution
 <li> Building for Other Platforms
@@ -522,12 +519,157 @@ substitute for opening a Tcl shell and exercising the code directly.  The
 <link http://tkcon.sourceforge.net tkcon> in the context of your code 
 base, with the <i auto_path> set so that your packages can be loaded.<p>
 
-Further, if your project defines at least one application then the package 
-for the first app in your <i project.quill> file) is loaded automatically.
-(The app's <tt main> procedure is not executed.)<p>
+Further, if your project defines at least one application then 
+'<tt quill shell>' automatically load the package for the first app in 
+your <i project.quill> file. (The app's <tt main> procedure is not 
+executed.)<p>
 
-<i><b FUTURE:> The '<quill shell>' command will allow you to select the
+<i><b FUTURE:> The '<tt quill shell>' command will allow you to select the
 app whose code you want loaded, or none.</i><p>
+
+<section using.lib "Providing Libraries">
+
+A Quill project can define library packages for use by other projects.
+Such a package is called a <i provided> package, because it is declared
+using the <xref project(5) provide> statement in <tt project.quill>:<p>
+
+<example>
+provide mylib
+</example><p>
+
+Quill does two special things for provided packages.  First, on 
+'<tt quill build>' Quill builds a teapot .zip file for the package.  This
+.zip file is constructed so that it can be installed into any local 
+teapot repository for use by other Tcl programs.  The file is stashed in
+the <root .quill/teapot/> directory, and has a name like this:<p>
+
+<tt>package-<i name>-<i version>-tcl.zip</tt><p>
+
+where <i name> is the package name and <i version> is the package version.<p>
+
+Second, '<tt quill install>' will install the package's .zip file into your
+local teapot, for use by your other projects.<p>
+
+And of course you can define a test target (Section <xref using.test>) and
+man pages (Section <xref using.docs>) for the provided package, just as 
+you can for any of the project's libraries.<p>
+
+See Section <xref lib> for the structure of library packages, whether
+provided or not.<p>
+
+<i><b FUTURE:> At present, Quill requires TclDevKit to build the 
+teapot .zip files.  This is expected to change in the near future.</i><p>
+
+<section using.app "Providing Applications">
+
+A project can also define applications for use by others.  Applications
+are declared in <tt project.quill> using the <xref project(5) app> 
+statement.  Applications may be delivered as starkits or starpacks
+(standalone executables), and starpacks may be console or GUI applications.
+For example, the following <tt app> statement defines a GUI application 
+delivered as a standalone executable:<p>
+
+<example>
+app myapp -exetype exe -gui
+</example>
+
+The first <tt app> statement in <tt project.quill> defines the project's
+<i primary> application.  Quill provides many tools for working with 
+applications:<p>
+
+'<tt quill run>' invokes the project's primary application, passing it any
+command-line arguments.  This is convenient if you don't want to add the
+project's <root bin/> directory to your <tt PATH>.<p>
+
+'<tt quill shell>' loads the primary application's code into a
+<tt tkcon> shell for interactive development and debugging.<p>
+
+'<tt quill build>' builds the application as starkit or starpack in the
+project's <root bin/> directory.  The executable will have a name like<p>
+
+<tt><i name>-<i version>-tcl.kit</tt><p>
+
+(for starkits) or<p>
+
+<tt><i name>-<i version>-<i platform>[.exe]</tt><p>
+
+for standalone executables, where the <i name> is the application name,
+<i version> is the project version number, and <i platform> is the current 
+platform string as returned by
+<link http://www.tcl.tk/man/tcl8.6/TclCmd/platform.htm platform::identify>.<p>
+
+And finally, '<tt quill install>' will install the application into the
+user's <tt ~/bin> directory for local use as <tt><i name>.kit</tt>, 
+<tt><i name>.exe</tt>, or simply <tt><i name></tt>, depending on the 
+application and current platform.<p>
+
+<i><b FUTURE:> At present, Quill requires TclDevKit in order to build the 
+application executables. This will remain an option, but it is hoped that
+other choices will be available in the future.</i><p>
+
+<section using.dist "Building Distribution .zip Files">
+
+So you've written your application or library, and you've installed it for
+local use on your own machine; now you want to make it available to others.
+Quill allows you to define one or more <i distribution sets>.  Each
+distribution set is comprised of a name and a set of file patterns;
+the '<tt quill dist>' command will build each distribution set as a .zip
+file containing the files that match the patterns.<p>
+
+Distribution sets are defined in <tt project.quill> using the
+<xref project(5) dist> statement.  For example, a project that provides
+a set of pure-Tcl libraries might have a distribution set like this:
+
+<example>
+dist install {
+    %libs
+    docs/*.html
+    docs/man*/*.html
+    README.md
+    LICENSE
+}
+</example>
+
+It includes the <tt .html> files from the project's documentation tree,
+the project's README and LICENSE files, and the teapot .zip files for each
+provided library, as indicated by the special pattern <tt %libs>.<p>
+
+When built, this distribution set will result in a file with a name like 
+this:<p>
+
+<tt><i project>-<i version>-install.zip</tt><p>
+
+where <i project> is the project's name and <i version> is the 
+project's version number.<p>
+
+If the project provides an application built as a starpack, it might have
+an installation distribution set that looks like this:
+
+<example>
+dist install-%platform {
+    %apps
+    docs/*.html
+    docs/man*/*.html
+    README.md
+    LICENSE
+}
+</example>
+
+The <tt %apps> pattern is like the <tt %libs> pattern; it matches the
+executable files built by '<tt quill build>'.<p>
+
+The "<tt %platform>" in the distribution set name is present because 
+starpack executables are specific to a particular platform; when the 
+distribution set is built, the "%platform" token will be replaced with
+the actual platform.  If it were built for a 32-bit Windows system, 
+for example, the distribution .zip file would have a name like this:<p>
+
+<tt><i project>-<i version>-install-win32_x86.zip</tt><p>
+
+The project can define any number of distribution sets for different 
+purposes.  For example, a project might want to define a "docs" 
+distribution.<p>
+
 
 <== ====================================================================>
 
