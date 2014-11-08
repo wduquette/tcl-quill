@@ -1012,7 +1012,8 @@ A Quill project can contain three different kinds of Tcl library:
 <li> <b Application implementation packages>:  Each application in a Quill
      project is represented as a loader script and an implementation
      package.  If the application is called <tt><i name></tt>, then its 
-     implementation package is called <tt><i name>app</tt>.<p>
+     implementation package is called <tt>app_<i name></tt>.  
+     See Section <xref app> for specifics.<p>
 
 <li> <b Application infrastructure packages>:  A project may define a number
      of library packages to be used solely by the project's own 
@@ -1281,7 +1282,257 @@ This part is up to the user.<p>
 
 <section app "Application Structure">
 
-TBD>
+An application called <i name> in a Quill project is defined by:
+
+<ul>
+<li> An '<tt>app <i name></tt>' statement in the <tt project.quill> file.
+<li> An application loader script, <root "bin/<i name>.tcl">.
+<li> An application implementation package, <root "lib/app_<i name>">.
+<li> Zero or more application infrastructure packages required by the
+     implementation package.
+</ul><p>
+
+<section app.loader "The Application Loader Script">
+
+The application loader script is created automatically by 
+'<tt quill new>'.  <i><b FUTURE:> '<tt quill add app>' will also add 
+application loader scripts automatically.</i>  It is almost completely
+boilerplate.<p>
+
+The application loader script performs the following functions:<p>
+
+<ul>
+<li> Sets the <tt auto_path> to point to the project's code.
+<li> Requires the correct version of Tcl.
+<li> Requires the project's <xref quillinfo(n)> package.
+<li> If the application is a GUI app, requires the correct version of
+     Tk.
+<li> Requires the application's implementation package, 
+     <tt>app_<i name></tt>, and imports names from the application's
+     namespace, <tt>::app_<i name></tt>.
+<li> Executes the application's <tt main> routine, which was defined by
+     the application's implementation package.
+</ul>
+
+The programmer can edit the loader script as desired, but there should
+generally be little need to do so.  If particular common cases arise that
+this loader doesn't handle, the application metadata and the loader 
+boilerplate should be updated to handle them.<p>
+
+Here is an example loader script:<p>
+
+<listing>
+#!/bin/sh
+# -*-tcl-*-
+# the next line restarts using tclsh\ <mark A>
+exec tclsh "$0" "$@"
+
+#-------------------------------------------------------------------------
+# NAME: myapp.tcl <mark B>
+#
+# PROJECT:
+#  my-project: Your project description
+#
+# DESCRIPTION:
+#  Loader script for the myapp(1) tool.
+#
+#-------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------
+# Prepare to load application
+
+set bindir [file dirname [info script]] <mark C>
+set libdir [file normalize [file join $bindir .. lib]]
+
+set auto_path [linsert $auto_path 0 $libdir]
+
+# -quill-tcl-begin <mark D>
+package require Tcl 8.6.1 <mark E>
+# -quill-tcl-end <mark D>
+
+# quillinfo(n) is a generated package containing this project's 
+# metadata.
+package require quillinfo <mark F>
+
+# If it's a gui, load Tk.
+if {[quillinfo isgui myapp]} { <mark G>
+# -quill-tk-begin <mark D>
+    package require Tk 8.6.1 <mark E>
+# -quill-tk-end <mark D>
+}
+
+# app_myapp(n) is the package containing the bulk of the 
+# myapp code.  In particular, this package defines the
+# "main" procedure.
+package require app_myapp <mark H>
+namespace import app_myapp::*
+
+#-------------------------------------------------------------------------
+# Invoke the application
+
+if {!$tcl_interactive} { <mark I>
+    if {[catch {
+        main $argv
+    } result eopts]} {
+        if {[dict get $eopts -errorcode] eq "FATAL"} { <mark J>
+            # The application has flagged a FATAL error; display it 
+            # and halt.
+            puts $result
+            exit 1
+        } else {
+            puts "Unexpected error: $result"
+            puts "Error Code: ([dict get $eopts -errorcode])\n"
+            puts [dict get $eopts -errorinfo]
+        }
+    }
+}
+</listing>
+
+<topiclist>
+<topic "<bigmark A>">
+The application loader script can be run directly on Un*x-like platforms;
+it will be run against whatever <tt tclsh> is on the <tt PATH>.  
+Alternatively, you can execute it using '<tt quill run>'.<p>
+</topic>
+
+<topic "<bigmark B>">
+Quill uses your project's metadata when creating the file header.
+Update it to describe your module as desired.<p>
+</topic>
+
+<topic "<bigmark C>">
+The loader script sets up the <tt auto_path> to point at the user's
+code.  Any local teapots are presumed to be on the path already.
+Note: it can cause confusion to set the <tt TCL_LIB_PATH> environment
+variable when working with Quill projects.<p>
+</topic>
+
+<topic "<bigmark D>">
+These marks allow Quill to update the Tcl and Tk version as your project
+changes.  Do not edit the code between the marks.<p>
+</topic>
+
+<topic "<bigmark E>">
+Quill determines the Tcl/Tk version from the 
+'<tt>require Tcl</tt>' statement in <tt project.quill>, and from the
+version of the development <tt tclsh>, as found on the <tt PATH> or 
+overridden by a <xref using.config "configuration setting"><p>
+</topic>
+
+<topic "<bigmark F>">
+The loader always requires the <xref quillinfo(n)> package, which gives 
+the application access to the project metadata.<p>
+</topic>
+
+<topic "<bigmark G>">
+If the metadata indicates that this app is a GUI app, then Tk is 
+loaded automatically.<p>
+</topic>
+
+<topic "<bigmark H>">
+The loader requires the application's implementation package, and imports
+all exported commands from the package's namespace.  Note that the global
+namespace is there for the user of the application; it is up to the
+developer whether application code resides in other namespaces or not.<p>
+</topic>
+
+<topic "<bigmark I>">
+The loader doesn't execute the application's <tt main> routine when the
+application is loaded into an interactive shell.  This gives the 
+developer the ability to run it interactive from the shell command line,
+as desired.<p>
+</topic>
+
+<topic "<bigmark J>">
+This code allows the application to exit with a fatal error message just
+by calling '<tt throw FATAL>' with the error message.  Any other error
+code will result in an "Unexpected error" message and a stack trace.
+</topic>
+
+</topiclist>
+
+<section app.package "The Application Implementation Package">
+
+Application <i name>'s implementation package is called 
+'<tt>app_<i name></tt>' and has the same structure as any other library
+package, as described in Section <xref lib>.  There are two differences:<p>
+
+<ul>
+<li> First, a typical library package <i lib> will usually define its code
+     in the '<tt>::<i lib></tt>' namespace, and export relevant commands.
+     An application implementation can but need not do this, since the 
+     global namespace is owned by the application.<p>
+
+<li> Second, the implementation package must define a routine called 
+     <tt main> which takes one argument, the list of command-line 
+     arguments.  This routine may be defined in the global namespace or
+     in the package namespace and exported.<p>
+</ul>
+
+By convention, the <tt main> routine is defined in a module called
+<tt main.tcl>, though this is not required.  A typical <tt main.tcl>
+might look like this:<p>
+
+<listing>
+#-------------------------------------------------------------------------
+# TITLE: 
+#    main.tcl <mark A>
+#
+# PROJECT:
+#    my-project: Your project description
+#
+# DESCRIPTION:
+#    app_myapp(n): main procedure
+#
+#-------------------------------------------------------------------------
+
+<mark B>
+
+#-------------------------------------------------------------------------
+# Exported Commands
+
+namespace eval ::app_myapp { <mark C>
+    namespace export \
+        main
+}
+
+#-------------------------------------------------------------------------
+# Commands
+
+# main argv
+#
+# Dummy procedure
+
+proc ::app_myapp::main {argv} {
+    puts "[quillinfo project] [quillinfo version]" <mark D>
+    puts ""
+    puts "Args: <lb>$argv<rb>"
+}
+</listing>
+
+<topiclist>
+<topic "<bigmark A>">
+Quill uses your project's metadata when creating the file header.
+Update it to describe your module as desired.<p>
+</topic>
+
+<topic "<bigmark B>">
+Notice that there are no <tt package require> or <tt package provide>
+commands here.  Those go in <tt pkgModules.tcl>; see 
+<xref lib.pkgmodules>.<p>
+</topic>
+
+<topic "<bigmark C>">
+The default template puts <tt main> in the package namespace, and 
+exports it; alternatively, you can put <tt main> in the global 
+namespace.<p>
+</topic>
+
+<topic "<bigmark D>">
+This part is up to the developer.<p>
+</topic>
+</topiclist>
+
 
 <== ====================================================================>
 

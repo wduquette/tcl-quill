@@ -1,23 +1,18 @@
 # Project TODO List
 
-This is the official list of work to be done.
+This is the official list of work to be done, along with possibilities,
+blue sky ideas, and what-not.
 
 # For Quill 0.3.0
 
-* Include tclapp command line in log file.
-* Complete dictable.test.
 * Fix bugs as found and reported.
-* quilldoc(5) Changes:
-  * Should manpage(5) be quillman(5)?  Probably.
-* Quill user's guide
-  * Documents how to use Quill
-  * Documents Quill conventions, e.g., where to require packages, and the
-    markings that appear in pkg* files.
-  * Requires quilldoc(n) package.
-* Linux Testing
 
 # For Quill 0.4.0
 
+* Include tclapp command line in log file.
+* Complete dictable.test.
+* quilldoc(5) Changes:
+  * Should manpage(5) be quillman(5)?  Probably.
 * Add tests for quill tools
   * Dual test scheme: modules containing mechanism, which are tested
     directly.
