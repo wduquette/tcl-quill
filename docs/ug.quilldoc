@@ -95,17 +95,6 @@ aims to make them so easy that all you need to do is write your code.<p>
 
 <section using "Using Quill">
 
-<b TBD:> We need to cover these topics.
-
-<ul>
-<li> Building for Distribution
-<li> Building for Other Platforms
-<li> Adding Elements to an Existing Project
-<li> Configuring Quill for your Environment
-</ul>
-
-<section using.tool "The Quill Command-line Tool">
-
 Quill is a command-line tool with many subcommands, just like so many 
 other software development tools.  To see what tools are available, 
 enter '<tt quill>' or '<tt quill help>' at the command line.  To get help about a
@@ -526,6 +515,136 @@ executed.)<p>
 <i><b FUTURE:> The '<tt quill shell>' command will allow you to select the
 app whose code you want loaded, or none.</i><p>
 
+<section using.require "Managing External Dependencies">
+
+Quill will manage your project's external dependencies; which is to say
+the library packages written by others that are required by your project.
+In particular, it will determine whether these libraries are available in
+your local environment, and if necessary it will go acquire them from 
+<tt teapot.activestate.com>.<p>
+
+<b NOTE:> Before this mechanism will work properly, it may be necessary 
+to set up your own local "teapot"; see 
+Section <xref using.require.teapot>.<p>
+
+External dependencies are declared in <tt project.quill> using the 
+<xref project(5) require> statement:<p>
+
+<example>
+require snit 2.3
+require mylib 1.2 -local
+</example><p>
+
+This example requires two packages, "snit" and "mylib".  The "mylib" 
+package is declared to be "local", which is to say it's a package that's
+built and installed locally; if it isn't available, there's no point 
+in looking for it at <tt teapot.activestate.com>.<p>
+
+To check whether all of your project's external dependencies are available
+locally, use this:<p>
+
+<example>
+$ quill deps
+Dependency Status:
+  snit 2.3      (Missing)
+  mylib 1.2     (OK)
+</example><p>
+
+To retrieve missing dependencies,<p>
+
+<example>
+$ quill deps update
+...
+</example><p>
+
+Quill will attempt to retrieve all missing depedencies, and will report 
+on its success or failure.
+
+Finally, you can refresh any or all dependencies, explicitly downloading
+a new copy, by using:<p>
+
+<example>
+$ quill deps refresh
+...
+</example><p>
+
+<section using.require.code "Using Required Packages">
+
+Quill makes sure that the declared dependencies are available; it does not
+load them into your applications automatically.  This is because your project might define multiple applications and libraries, each of which may use a
+subset of the declared dependencies.<p>
+
+Instead, your applications and library packages must call 
+<tt package require> in the usual way for each needed dependency.  However,
+Quill does provide a mechanism to keep the package version numbers in sync
+between <tt project.quill> and your code.  See Section <xref lib> for
+details.<p>
+
+<section using.require.teapot "Setting Up a Local Teapot">
+
+ActiveTcl provides a local "teapot repository", which is a place to put
+library packages such any script running on the local machine can access
+them.  Quill requires that this local teapot be writable by the user; 
+otherwise Quill can't update it to contain your project's external
+dependencies.  Unfortunately, the standard installation locations for 
+ActiveTcl on most platforms are such that the average user will <i>not</i>
+have write access to the installation teapot.  If this is the case,
+the user will need to create their own local teapot; and Quill can help.<p>
+
+First, see if there is a problem:<p>
+
+<example>
+$ quill teapot
+Teapot Status:
+    Location:  /Users/<i name>/.quill/teapot
+    Writable?  Yes
+    Linked?    Yes
+
+The local teapot is writable, and is properly linked
+to the default Tcl shell.  
+
+Everything appears to be OK.
+</example>
+
+In this the local teapot exists, and is writable, and everything is fine.
+If you see output like this there is nothing more to do.<p>
+
+The first time Quill is used, though, this is not likely to be the case.
+To resolve the problem, then, do this:<p>
+
+<example>
+$ quill teapot fix
+...
+</example>
+
+This command will do two things.  First, it will create a new local teapot
+in your home directory, e.g., as <tt ~/.quill/teapot/>.  (The precise
+location varies by operating system).  Being in your home directory, this
+teapot is writable.<p>
+
+Second, '<tt quill teapot fix>' will output a short script; executing this
+script with admin privileges will link the new teapot to your development
+<tt tclsh>, and will also resolve several issues related to running
+the <tt teacup> executable with admin privileges.<p>
+
+On a Linux or OSX system, for example, you would run this script 
+using <tt sudo>:<p>
+
+<example>
+$ sudo ~/.quill/fixteapot
+...
+$
+</example>
+
+On Windows, the script would be called <tt fixteapot.bat>, and would need
+to be run by a user with Admin privileges.<p>
+
+The '<tt quill teapot fix>' command will output the script file's full path
+name; you are encouraged to look at the script and verify that it isn't 
+doing anything nefarious.<p>
+
+
+
 <section using.lib "Providing Libraries">
 
 A Quill project can define library packages for use by other projects.
@@ -669,133 +788,211 @@ The project can define any number of distribution sets for different
 purposes.  For example, a project might want to define a "docs" 
 distribution.<p>
 
-<section using.require "Managing External Dependencies">
+<section using.buildall "Building the Project for Distribution">
 
-Quill will manage your project's external dependencies; which is to say
-the library packages written by others that are required by your project.
-In particular, it will determine whether these libraries are available in
-your local environment, and if necessary it will go acquire them from 
-<tt teapot.activestate.com>.<p>
-
-<b NOTE:> Before this mechanism will work properly, it may be necessary 
-to set up your own local "teapot"; see 
-Section <xref using.require.teapot>.<p>
-
-External dependencies are declared in <tt project.quill> using the 
-<xref project(5) require> statement:<p>
+Once your project is in good order, you can build it for distribution on
+your development platform with one command:
 
 <example>
-require snit 2.3
-require mylib 1.2 -local
-</example><p>
-
-This example requires two packages, "snit" and "mylib".  The "mylib" 
-package is declared to be "local", which is to say it's a package that's
-built and installed locally; if it isn't available, there's no point 
-in looking for it at <tt teapot.activestate.com>.<p>
-
-To check whether all of your project's external dependencies are available
-locally, use this:<p>
-
-<example>
-$ quill deps
-Dependency Status:
-  snit 2.3      (Missing)
-  mylib 1.2     (OK)
-</example><p>
-
-To retrieve missing dependencies,<p>
-
-<example>
-$ quill deps update
-...
-</example><p>
-
-Quill will attempt to retrieve all missing depedencies, and will report 
-on its success or failure.
-
-Finally, you can refresh any or all dependencies, explicitly downloading
-a new copy, by using:<p>
-
-<example>
-$ quill deps refresh
-...
-</example><p>
-
-<section using.require.code "Using Required Packages">
-
-Quill makes sure that the declared dependencies are available; it does not
-load them into your applications automatically.  This is because your project might define multiple applications and libraries, each of which may use a
-subset of the declared dependencies.<p>
-
-Instead, your applications and library packages must call 
-<tt package require> in the usual way for each needed dependency.  However,
-Quill does provide a mechanism to keep the package version numbers in sync
-between <tt project.quill> and your code.  See Section <xref lib> for
-details.<p>
-
-<section using.require.teapot "Setting Up a Local Teapot">
-
-ActiveTcl provides a local "teapot repository", which is a place to put
-library packages such any script running on the local machine can access
-them.  Quill requires that this local teapot be writable by the user; 
-otherwise Quill can't update it to contain your project's external
-dependencies.  Unfortunately, the standard installation locations for 
-ActiveTcl on most platforms are such that the average user will <i>not</i>
-have write access to the installation teapot.  If this is the case,
-the user will need to create their own local teapot; and Quill can help.<p>
-
-First, see if there is a problem:<p>
-
-<example>
-$ quill teapot
-Teapot Status:
-    Location:  /Users/<i name>/.quill/teapot
-    Writable?  Yes
-    Linked?    Yes
-
-The local teapot is writable, and is properly linked
-to the default Tcl shell.  
-
-Everything appears to be OK.
-</example>
-
-In this the local teapot exists, and is writable, and everything is fine.
-If you see output like this there is nothing more to do.<p>
-
-The first time Quill is used, though, this is not likely to be the case.
-To resolve the problem, then, do this:<p>
-
-<example>
-$ quill teapot fix
-...
-</example>
-
-This command will do two things.  First, it will create a new local teapot
-in your home directory, e.g., as <tt ~/.quill/teapot/>.  (The precise
-location varies by operating system).  Being in your home directory, this
-teapot is writable.<p>
-
-Second, '<tt quill teapot fix>' will output a short script; executing this
-script with admin privileges will link the new teapot to your development
-<tt tclsh>, and will also resolve several issues related to running
-the <tt teacup> executable with admin privileges.<p>
-
-On a Linux or OSX system, for example, you would run this script 
-using <tt sudo>:<p>
-
-<example>
-$ sudo ~/.quill/fixteapot
+$ quill build all
 ...
 $
 </example>
 
-On Windows, the script would be called <tt fixteapot.bat>, and would need
-to be run by a user with Admin privileges.<p>
+This command will:<p>
 
-The '<tt quill teapot fix>' command will output the script file's full path
-name; you are encouraged to look at the script and verify that it isn't 
-doing anything nefarious.<p>
+<ul>
+<li> Verify all external dependencies.
+<li> Run all tests.
+<li> Format all documentation.
+<li> Build teapot .zip files for all provided libraries.
+<li> Build all app executables for the current platform.
+<li> Build all distribution sets for the current platform.
+</ul>
+
+If there is a problem anywhere along the way, the build will halt with a 
+detailed error message.<p>
+
+<section using.buildfor "Building for Other Platforms">
+
+Quill can build your applications for any platform for which you have
+a basekit, provided that your application code and any local dependencies 
+are all pure-Tcl.  (External dependencies from <tt teapot.activestate.com>
+need not be pure-Tcl.)  The first step is acquire the required basekit(s); 
+the second is to build your project using them.<p>
+
+<section using.buildfor.basekits "Acquiring Basekits">
+
+When building your apps for your development platform, Quill uses the
+basekits delivered with ActiveTcl.  For other platforms you'll need to 
+acquire the necessary basekits; and the easiest source is 
+<tt teapot.activestate.com>.  Quill will manage this for you.
+
+First, use the '<tt quill basekit>' command to see what 
+basekits are available to you:<p>
+
+<example>
+$ quill basekit
+Finding basekits at teapot.activestate.com...
+
+Platforms for which cross-platform builds can be done:
+
+platform                version         name             tcltk  source
+----------------------  --------------  ---------------  -----  ------
+linux-glibc2.3-ix86     8.6.3.0.298609  base-tcl-thread  tcl    web   
+                                        base-tk-thread   tk     web   
+                        8.6.1.1.298358  base-tcl-thread  tcl    local 
+                        8.6.1.1.297892  base-tcl         tcl    web   
+                                        base-tk          tk     web   
+linux-glibc2.3-x86_64   8.6.3.0.298584  base-tcl-thread  tcl    web   
+                                        base-tk-thread   tk     web   
+                        8.6.2.1.298536  base-tcl-thread  tcl    local 
+macosx-universal        8.6.0.0.296279  base-tcl-thread  tcl    web   
+                                        base-tk-thread   tk     web   
+macosx10.5-i386-x86_64  8.6.3.0.298584  base-tcl-thread  tcl    web   
+                                        base-tk-thread   tk     web   
+win32-ix86                              base-tcl-thread  tcl    web   
+                                        base-tk-thread   tk     web   
+                        8.6.2.1.298536  base-tk-thread   tk     local 
+                        8.6.2.0.298433  base-tcl-thread  tcl    local 
+win32-x86_64            8.6.3.0.298609  base-tcl-thread  tcl    web   
+                                        base-tk-thread   tk     web   
+
+$
+</example>
+
+Basekits with a source of "local" have already been downloaded to your
+machine; basekits with a source of "web" are available for download.
+Note that only Tcl 8.6 basekits are listed; that's because the project
+I'm working on has the '<tt require Tcl 8.6>' statement in 
+<tt project.quill>.  If it required Tcl 8.5, we'd see Tcl 8.5 basekits
+instead.<p>
+
+You then have your choices of the precise platform and version of Tcl,
+whether you want the Tk GUI toolkit included, and whether you want threaded
+or unthreaded Tcl (most distributions are now threaded).<p>
+
+The next step is to retrieve the basekits you want using 
+<tt quill basekit get>.  For example, to get threaded Tcl and Tk
+basekits for all platforms for Tcl 8.6.2,<p>
+
+<example>
+$ quill basekit get "*" "8.6.2*" "*"
+...
+$
+</example>
+
+This command takes three arguments, the basekit name, the version, and
+the platform; each argument can contain glob-style wildcard characters 
+as shown.  (The double-quotes are to protect the wildcard characters from
+your shell.)<p>
+
+Quill will download all matching basekits and save them locally.  If you
+wish to see which basekits you have available locally, use this command:<p>
+
+<example>
+$ quill basekit list -source local
+Platforms for which cross-platform builds can be done:
+
+platform               version         name             tcltk  source
+---------------------  --------------  ---------------  -----  ------
+linux-glibc2.3-ix86    8.6.1.1.298358  base-tcl-thread  tcl    local 
+linux-glibc2.3-x86_64  8.6.2.1.298536  base-tcl-thread  tcl    local 
+win32-ix86                             base-tk-thread   tk     local 
+                       8.6.2.0.298433  base-tcl-thread  tcl    local 
+$
+</example>
+
+See '<tt quill help basekit'> for the full syntax of the 
+<tt 'quill basekit'> command.<p>
+
+<section using.buildfor.build "Building with a Basekit">
+
+To build your apps for a particular platform using a basekit, first 
+acquire the needed basekit(s) as required above.  You'll want a 
+'<tt base-tcl-*>' basekit for all non-GUI apps, and a 
+'<tt base-tk-*>' basekit for
+all GUI apps.  Then, use '<tt quill build all>' to build for your current
+platform. (These steps can be done in either order).<p>
+
+Then use '<tt quill build for>' for the desired platform.  For example,
+to build for 32-bit Windows,<p>
+
+<example>
+$ quill build for win32-ix86
+...
+$
+</example>
+
+Quill will build all applications with <tt -exetype exe> using the locally available basekits for <tt win32-ix86> with the highest version number.  Then,
+it will build any distribution sets that have '<tt %platform>' embedded 
+in their names, substituting <tt win32-ix86> for '<tt %platform>'.<p>
+
+This is why you must run '<tt quill build all>' before running 
+'<tt quill build for>'; the latter builds only the applications, assuming
+that any documentation and library teapot .zip files are already available.<p>
+
+If you wish to run with a specific version or without threading (if both
+threaded and unthreaded are available) you can use the <tt -version> and
+<tt -threads> options.  See '<tt quill help build>' for specifics.<p>
+
+
+<section using.element "Adding Elements to a Project">
+
+<i><b FUTURE:> The '<tt quill add>' command will add application,
+library, and other skeleton elements to your project using templates,
+updating <tt project.quill> as required.</i><p>
+
+In the mean time, the easiest way to add a new library or application is 
+to copy and rename the required files and directories.  See 
+Sections <xref lib>, <xref app>, and <xref testing> for complete
+descriptions of Quill's expectations with regard to library packages,
+applications, and test targets.<p>
+
+<section using.config "Configuring Quill">
+
+Quill typically requires very little configuration.  It will find your 
+development <tt tclsh>, <tt tkcon>, <tt teacup>, <tt tclapp>, and basekits
+on your path and use them without any further ado.  To see what tools
+Quill plans to use, execute this command:<p>
+
+<example>
+$ quill env
+Quill 0.3.0 thinks it is running on Mac OSX.
+
+Local Teapot: /Users/will/.quill/teapot
+
+Helper Tools:
+    tclsh        /usr/local/bin/tclsh (v8.6.1)                                  
+    tkcon        /usr/bin/tkcon                                                 
+    teacup       /usr/local/bin/teacup (v8.5.15.1.298288)                       
+    tclapp       /usr/local/bin/tclapp                                          
+    basekit.tcl  /Library/Tcl/basekits/base-tcl8.6-thread-macosx10.5-i386-x86_64
+    basekit.tk   /Library/Tcl/basekits/base-tk8.6-thread-macosx10.5-i386-x86_64 
+    teapot-pkg   /usr/local/bin/teapot-pkg                                      
+
+!  - Helper tool could not be found on disk.
++  - Path is configured explicitly.
+</example>
+
+If you have multiple versions of any tool on your system, or if Quill
+cannot locate the required tools, you can use the 
+'<tt quill config>' command to tell Quill where to find them:<p>
+
+<example>
+$ quill config list
+... list of configuration parameters and value ...
+$ quill config set helper.tclsh <i pathToTclShell>...
+$
+</example>
+
+See '<tt quill help config>' for the complete syntax of the 
+'<tt quill config>' command.<p>
+
+
+
+
+
 
 
 
@@ -1079,6 +1276,12 @@ export some commands.<p>
 This part is up to the user.<p>
 </topic>
 </topiclist>
+
+<== ====================================================================>
+
+<section app "Application Structure">
+
+TBD>
 
 <== ====================================================================>
 
