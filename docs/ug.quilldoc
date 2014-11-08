@@ -98,7 +98,6 @@ aims to make them so easy that all you need to do is write your code.<p>
 <b TBD:> We need to cover these topics.
 
 <ul>
-<li> Managing External Dependencies
 <li> Building for Distribution
 <li> Building for Other Platforms
 <li> Adding Elements to an Existing Project
@@ -669,6 +668,136 @@ for example, the distribution .zip file would have a name like this:<p>
 The project can define any number of distribution sets for different 
 purposes.  For example, a project might want to define a "docs" 
 distribution.<p>
+
+<section using.require "Managing External Dependencies">
+
+Quill will manage your project's external dependencies; which is to say
+the library packages written by others that are required by your project.
+In particular, it will determine whether these libraries are available in
+your local environment, and if necessary it will go acquire them from 
+<tt teapot.activestate.com>.<p>
+
+<b NOTE:> Before this mechanism will work properly, it may be necessary 
+to set up your own local "teapot"; see 
+Section <xref using.require.teapot>.<p>
+
+External dependencies are declared in <tt project.quill> using the 
+<xref project(5) require> statement:<p>
+
+<example>
+require snit 2.3
+require mylib 1.2 -local
+</example><p>
+
+This example requires two packages, "snit" and "mylib".  The "mylib" 
+package is declared to be "local", which is to say it's a package that's
+built and installed locally; if it isn't available, there's no point 
+in looking for it at <tt teapot.activestate.com>.<p>
+
+To check whether all of your project's external dependencies are available
+locally, use this:<p>
+
+<example>
+$ quill deps
+Dependency Status:
+  snit 2.3      (Missing)
+  mylib 1.2     (OK)
+</example><p>
+
+To retrieve missing dependencies,<p>
+
+<example>
+$ quill deps update
+...
+</example><p>
+
+Quill will attempt to retrieve all missing depedencies, and will report 
+on its success or failure.
+
+Finally, you can refresh any or all dependencies, explicitly downloading
+a new copy, by using:<p>
+
+<example>
+$ quill deps refresh
+...
+</example><p>
+
+<section using.require.code "Using Required Packages">
+
+Quill makes sure that the declared dependencies are available; it does not
+load them into your applications automatically.  This is because your project might define multiple applications and libraries, each of which may use a
+subset of the declared dependencies.<p>
+
+Instead, your applications and library packages must call 
+<tt package require> in the usual way for each needed dependency.  However,
+Quill does provide a mechanism to keep the package version numbers in sync
+between <tt project.quill> and your code.  See Section <xref lib> for
+details.<p>
+
+<section using.require.teapot "Setting Up a Local Teapot">
+
+ActiveTcl provides a local "teapot repository", which is a place to put
+library packages such any script running on the local machine can access
+them.  Quill requires that this local teapot be writable by the user; 
+otherwise Quill can't update it to contain your project's external
+dependencies.  Unfortunately, the standard installation locations for 
+ActiveTcl on most platforms are such that the average user will <i>not</i>
+have write access to the installation teapot.  If this is the case,
+the user will need to create their own local teapot; and Quill can help.<p>
+
+First, see if there is a problem:<p>
+
+<example>
+$ quill teapot
+Teapot Status:
+    Location:  /Users/<i name>/.quill/teapot
+    Writable?  Yes
+    Linked?    Yes
+
+The local teapot is writable, and is properly linked
+to the default Tcl shell.  
+
+Everything appears to be OK.
+</example>
+
+In this the local teapot exists, and is writable, and everything is fine.
+If you see output like this there is nothing more to do.<p>
+
+The first time Quill is used, though, this is not likely to be the case.
+To resolve the problem, then, do this:<p>
+
+<example>
+$ quill teapot fix
+...
+</example>
+
+This command will do two things.  First, it will create a new local teapot
+in your home directory, e.g., as <tt ~/.quill/teapot/>.  (The precise
+location varies by operating system).  Being in your home directory, this
+teapot is writable.<p>
+
+Second, '<tt quill teapot fix>' will output a short script; executing this
+script with admin privileges will link the new teapot to your development
+<tt tclsh>, and will also resolve several issues related to running
+the <tt teacup> executable with admin privileges.<p>
+
+On a Linux or OSX system, for example, you would run this script 
+using <tt sudo>:<p>
+
+<example>
+$ sudo ~/.quill/fixteapot
+...
+$
+</example>
+
+On Windows, the script would be called <tt fixteapot.bat>, and would need
+to be run by a user with Admin privileges.<p>
+
+The '<tt quill teapot fix>' command will output the script file's full path
+name; you are encouraged to look at the script and verify that it isn't 
+doing anything nefarious.<p>
+
+
 
 
 <== ====================================================================>
