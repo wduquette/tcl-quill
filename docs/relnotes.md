@@ -4,6 +4,8 @@
 
 Significant Changes:
 
+* There is now a minimally complete user's guide.
+* Quill can now format section-numbered documents as well as man pages.
 * Quill build products reference the full platform string.  I.e., Quill now knows 
   the difference between 32-bit and 64-bit Linux.
 * `quill build all`: One command now serves to:
@@ -26,6 +28,9 @@ Significant Changes:
 
 Issues Closed in Quill v0.3.0
 
+* #39 quilldoc(n): xref of top-level section includes erroneous "."
+* #38 quilldoc(n): 'section' stack traces if prior section cannot be found.
+* #37 quilldoc(n): xref fails with an error on unknown xref ID
 * #35 Quill doesn't update "package require" version for unprovided packages
 * #30 Default Distribution set
 * #29 New project has zero test failures
