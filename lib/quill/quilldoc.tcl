@@ -624,7 +624,9 @@ snit::type ::quill::quilldoc {
             }
             set url "$trans(manroot)/man$num/$name.html"
         } else {
-            throw INVALID "Unrecognized xref: \"$pageId\""
+            # FIXME: Need a better mechanism for warnings
+            puts "Warning: Unrecognized xref \"$ref\"\n in $trans(infile)"
+            return "<b>&lt;xref [list $ref]&gt;</b>"
         }
 
         if {$anchor ne ""} {
