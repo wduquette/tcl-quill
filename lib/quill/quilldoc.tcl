@@ -761,7 +761,7 @@ snit::type ::quill::quilldoc {
         # NEXT, if it's a preface it can't be a child.
         if {$stype eq "preface" && $level > 0} {
             throw INVALID [outdent "
-                Invalid section level: $id is a level $level section ID,
+                Invalid section level: '$id' is a level $level section ID,
                 but preface sections cannot have subsections.
             "]
         }
@@ -770,7 +770,7 @@ snit::type ::quill::quilldoc {
         # a toplevel ID.
         if {$stype ne $ptype && $level != 0} {
             throw INVALID [outdent "
-                Invalid section level: $id is a level $level section ID, but
+                Invalid section level: '$id' is a level $level section ID, but
                 as the first $stype in the document it must be a 
                 level 0 ID.
             "]
@@ -790,7 +790,7 @@ snit::type ::quill::quilldoc {
             set psegment [lindex $psegments $i]
             if {$segment ne $psegment} {
                 throw INVALID [outdent "
-                    Section ID $id cannot logically follow section $prev.
+                    Section ID '$id' cannot logically follow section '$pid'.
                 "] 
             }
 
