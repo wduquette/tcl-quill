@@ -365,7 +365,7 @@ The package's package index file.
 </topicpath>
 
 <topicpath "+++pkgModules.tcl">
-The package's module loader script.  See Section <xref lib>
+The package's module loader script.  See Section <xref lib>.
 </topicpath>
 
 <topicpath "+++main.tcl">
@@ -386,7 +386,7 @@ The package's package index file.
 </topicpath>
 
 <topicpath "+++pkgModules.tcl">
-The package's module loader script.  See Section <xref lib>
+The package's module loader script.  See Section <xref lib>.
 </topicpath>
 
 <topicpath "+++<i module>.tcl">
@@ -404,7 +404,7 @@ A test target directory.  The "<i target>" is usually a package name.
 <topicpath "+++/all_tests.test">
 The target's main
 <link http://www.tcl.tk/man/tcl8.6/TclCmd/tcltest.htm tcltest(n)>
-script. (Boilerplate; See Section <xref testing>)
+script. (Boilerplate; See Section <xref testing>.)
 </topicpath>
 
 <topicpath "+++/<i module>.test">

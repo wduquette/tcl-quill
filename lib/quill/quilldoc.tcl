@@ -282,13 +282,13 @@ snit::type ::quill::quilldoc {
 
                 section {
                     set trans(number-$id) $fullnum
-                    set trans(linktext-$id) "Section $fullnum"
+                    set trans(linktext-$id) [string trimright $fullnum .]
                 }
 
                 appendix {
                     set fullnum [AppendixNum $fullnum]
                     set trans(number-$id) $fullnum
-                    set trans(linktext-$id) "Appendix $fullnum"
+                    set trans(linktext-$id) [string trimright $fullnum .]
                 }
 
                 default {
