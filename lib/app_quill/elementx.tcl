@@ -48,6 +48,7 @@ snit::type ::app_quill::elementx {
     # tree-$name         - 1 if this is a full project tree, and 0 if it
     #                      just a branch.
     # help-$name         - The help text for the element.
+    # argspec-$name      - The element's argspec: {min max usage}
 
     typevariable info -array {
         names {}
@@ -88,8 +89,9 @@ snit::type ::app_quill::elementx {
         set info(ensemble-$name) $ensemble
 
         # TODO: better validation before we allow plugins!
-        set info(description-$name) [dict get $meta description]
-        set info(tree-$name)        [dict get $meta tree]
+        set info(description-$name) [outof $meta description]
+        set info(tree-$name)        [outof $meta tree]
+        set info(argspec-$name)     [outof $meta argspec]
         set info(help-$name)        $helptext
 
         if {$info(tree-$name)} {
@@ -192,23 +194,63 @@ snit::type ::app_quill::elementx {
     # overwriting anything in the way.
 
     typemethod newtree {name project args} {
-        # FIRST, get the -force flag, if present.
+        # FIRST, do we have such a tree?
+        if {![$type istree $name]} {
+            throw FATAL \
+                "Quill has no project tree template called \"$name\"."
+        }
+
+        # NEXT, is the project name valid?
+        # TBD: validate project name
+
+        # NEXT, get the -force flag, if present.
+        set force [GetForceOption args]
 
         # NEXT, ensure we are not in a project tree (or -force)
+        if {[project intree]} {
+            if {!$force} {
+                throw FATAL [outdent {
+                    To create a project within an existing project, include
+                    the -force option.
+                }]
+            }
+
+            # TBD: Be sure we clear and reset the project metadata.
+        }
 
         # NEXT, ensure that the project directory doesn't yet exist
         # (or -force).
+        if {[file exists $project]} {
+            if {!$force} {
+                throw FATAL [outdent "
+                    \"$project\" already exists in the current
+                    working directory.  To overwrite an existing project 
+                    directory, include the -force option.
+                "]
+            } else {
+                if {[file isfile $project]} {
+                    throw FATAL [outdent "
+                        \"$project\" already exists in the current working
+                        directory, and as it is a regular file Quill cannot
+                        overwrite it with a project directory.    
+                    "]
+                }
+            }
+        }
+
+        # NEXT, check the argument list.  The element will need to check
+        # any options, and can get the project name from [project name].
+        checkargs "quill new $name $project" {*}$info(argspec-$name) $args
 
         # NEXT, create the project directory, and initialize the project
         # metadata.  (It will be updated by the element.)
-        #
-        # TBD: make sure that a good FATAL message is produced if the
-        # argument list is wrong.
+        # TBD.
 
         # NEXT, get and save the element's files, and update the 
         # project metadata.
 
         # NEXT, save the project metadata to the project file.
+        # TBD
     }
 
     # add name args
@@ -220,6 +262,8 @@ snit::type ::app_quill::elementx {
     # project tree.  By default, the operation will fail if any of
     # the files to be created by the element already exist.  If -force
     # is given, it will overwrite existing files.
+    #
+    # TODO: Recast this like newtree, above.
 
     typemethod add {name args} {
         # FIRST, get the -force flag, if present.
@@ -236,6 +280,27 @@ snit::type ::app_quill::elementx {
 
         # NEXT, update the project metadata and save it to the 
         # project file.
+    }
+
+    #---------------------------------------------------------------------
+    # Helpers
+
+    # GetForceOption listvar
+    #
+    # listvar   - An argument list
+    #
+    # Returns 1 if the listvar's value includes "-force", and 0 otherwise.
+    # Removes -force from the listvar.
+
+    proc GetForceOption {listvar} {
+        upvar 1 $listvar argv
+
+        if {"-force" in $argv} {
+            ldelete argv -force
+            return 1
+        }
+
+        return 0
     }
 }
 

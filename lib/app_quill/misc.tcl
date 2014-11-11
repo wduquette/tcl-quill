@@ -20,6 +20,8 @@ namespace eval ::app_quill:: {
 	namespace export \
 		checkargs    \
         gentree      \
+        into         \
+        outof        \
         prepare      \
         tagsplit     \
         tagreplace   \
@@ -233,5 +235,21 @@ proc ::app_quill::verxy {version} {
     return [join [lrange $vlist 0 1] .]
 }
 
+# into dictvar keys... value
+#
+# dictvar   - A dictionary variable
+# keys...   - One or more keys
+# value     - A value
+#
+# Alias for dict set
 
+interp alias {} ::app_quill::into {} dict set
 
+# outof dict keys... 
+#
+# dict      - A dictionary 
+# keys...   - One or more keys
+#
+# Alias for dict get
+
+interp alias {} ::app_quill::outof {} dict get
