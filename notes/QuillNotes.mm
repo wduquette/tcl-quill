@@ -185,6 +185,14 @@
 <node TEXT="But consider doing it in practice" ID="ID_21889227" CREATED="1415558414812" MODIFIED="1415558422848"/>
 </node>
 </node>
+<node TEXT="Decisions" ID="ID_1719307880" CREATED="1415671740033" MODIFIED="1415671741543">
+<node TEXT="Both tree and element templates are called &quot;elements&quot;; tree templates have the &quot;-project&quot; flag set." ID="ID_1845869934" CREATED="1415671741745" MODIFIED="1415671773333"/>
+<node TEXT="The element object doesn&apos;t save the elements to disk; rather, it returns a dictionary of files and content to create" ID="ID_358108448" CREATED="1415671774969" MODIFIED="1415671808799">
+<node TEXT="No error handling" ID="ID_482728512" CREATED="1415671854559" MODIFIED="1415671860139"/>
+<node TEXT="The overall element object can handle -force" ID="ID_951541444" CREATED="1415671860603" MODIFIED="1415671868910"/>
+</node>
+<node TEXT="The element object has a separate call to update the project.quill file." ID="ID_1128488633" CREATED="1415671810966" MODIFIED="1415671838398"/>
+</node>
 </node>
 </node>
 </map>

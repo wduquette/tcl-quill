@@ -1,0 +1,241 @@
+#-------------------------------------------------------------------------
+# TITLE: 
+#    elementx.tcl
+#
+# AUTHOR:
+#    Will Duquette
+# 
+# PROJECT:
+#    Quill: Project Build System for Tcl/Tk
+#
+# DESCRIPTION:
+#    Framework for Quill project elements.
+#
+# TBD:
+#    At present this is elementx.  When complete, the old element.tcl
+#    and tree.tcl modules will go away, and this will become element.tcl.
+#
+#-------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------
+# Namespace Export
+
+namespace eval ::app_quill:: {
+    namespace export \
+        elementx
+} 
+
+#-------------------------------------------------------------------------
+# Element Framework Singleton
+
+snit::type ::app_quill::elementx {
+    # Make it a singleton
+    pragma -hasinstances no -hastypedestroy no
+
+    #---------------------------------------------------------------------
+    # Type Variables
+
+    # info
+    #
+    # Array of data about the available elements.
+    #
+    # names              - List of element names (names).
+    # trees              - List of names of project tree elements.
+    # branches           - List of names of branch elements.
+    # 
+    # ensemble-$name     - The element's ensemble command.
+    # description-$name  - The element's one-line description
+    # tree-$name         - 1 if this is a full project tree, and 0 if it
+    #                      just a branch.
+    # help-$name         - The help text for the element.
+
+    typevariable info -array {
+        names {}
+    }
+
+    #---------------------------------------------------------------------
+    # Element Definition
+
+    # define name meta helptext body
+    #
+    # name         - The element's name
+    # meta         - A dictionary of items that define the element.
+    # helptext     - The element's help text, which will be outdented 
+    #                automatically.
+    # body         - The element's body, a snit::type body.
+    #
+    # Defines the element.  The meta should define the description and
+    # tree values.  The body should define the files and metadata
+    # typemethods.
+
+    typemethod define {name meta helptext body} {
+        # FIRST, get the ensemble name
+        set name     [string tolower $name]
+        set ensemble ::app_quill::elementx::[string toupper $name]
+
+        # NEXT, save the body.
+        set preamble {
+            pragma -hasinstances no -hastypedestroy yes
+
+        }
+
+        snit::type $ensemble "$preamble\n$body"
+
+
+        # NEXT, save the metadata
+        ladd info(names) $name
+
+        set info(ensemble-$name) $ensemble
+
+        # TODO: better validation before we allow plugins!
+        set info(description-$name) [dict get $meta description]
+        set info(tree-$name)        [dict get $meta tree]
+        set info(help-$name)        $helptext
+
+        if {$info(tree-$name)} {
+            ladd info(trees) $name
+        } else {
+            ladd info(branches) $name
+        }
+    }
+
+    #---------------------------------------------------------------------
+    # Queries
+
+    # names
+    #
+    # Returns the names of the currently defined elements.
+
+    typemethod names {} {
+        return [lsort $info(names)]
+    }
+
+    # trees
+    #
+    # Returns the names of the currently defined elements that define
+    # full project trees.
+
+    typemethod trees {} {
+        return [lsort $info(trees)]
+    }
+
+    # branches
+    #
+    # Returns the names of the currently defined elements that define
+    # project subtrees (branches).
+
+    typemethod branches {} {
+        return [lsort $info(branches)]
+    }
+
+    # exists name
+    #
+    # name   - The name of an element
+    # 
+    # Returns 1 if the element exists, and 0 otherwise.
+
+    typemethod exists {name} {
+        if {$name in $info(names)} {
+            return 1
+        }
+
+        return 0
+    }
+
+    # istree name
+    #
+    # name   - The name of an element
+    # 
+    # Returns 1 if it is a tree element, and 0 otherwise.
+
+    typemethod istree {name} {
+        if {$name in $info(trees)} {
+            return 1
+        }
+
+        return 0
+    }
+
+    # isbranch name
+    #
+    # name   - The name of an element
+    # 
+    # Returns 1 if it is a branch element, and 0 otherwise.
+
+    typemethod isbranch {name} {
+        if {$name in $info(branches)} {
+            return 1
+        }
+
+        return 0
+    }
+
+    # description name
+    #
+    # name - The name of an element
+    # 
+    # Returns the element's description.
+
+    typemethod description {tool} {
+        return $info(description-$name)
+    }
+
+    # newtree name project args
+    #
+    # name    - Name of a tree element
+    # project - The new project's name 
+    # args    - The element's arguments, plus (optionally) "-force"
+    #
+    # Creates a new project tree.  By default, we cannot be in an existing
+    # tree, and the $project directory must not exist.  If -force is one
+    # of the arguments, then the new tree will be created regardless
+    # overwriting anything in the way.
+
+    typemethod newtree {name project args} {
+        # FIRST, get the -force flag, if present.
+
+        # NEXT, ensure we are not in a project tree (or -force)
+
+        # NEXT, ensure that the project directory doesn't yet exist
+        # (or -force).
+
+        # NEXT, create the project directory, and initialize the project
+        # metadata.  (It will be updated by the element.)
+        #
+        # TBD: make sure that a good FATAL message is produced if the
+        # argument list is wrong.
+
+        # NEXT, get and save the element's files, and update the 
+        # project metadata.
+
+        # NEXT, save the project metadata to the project file.
+    }
+
+    # add name args
+    #
+    # name   - Name of a branch element
+    # args   - The element's arguments, plus (optionally) "-force"
+    #
+    # Adds the element to the current project.  We must be in a 
+    # project tree.  By default, the operation will fail if any of
+    # the files to be created by the element already exist.  If -force
+    # is given, it will overwrite existing files.
+
+    typemethod add {name args} {
+        # FIRST, get the -force flag, if present.
+
+        # NEXT, ensure that we are in a project tree.
+
+        # NEXT, retrieve the element's files, and verify that none of
+        # them exists (or -force). 
+        #
+        # TBD: Make sure that a good FATAL message is produced if the
+        # argument list is wrong.
+
+        # NEXT, save the element's files.
+
+        # NEXT, update the project metadata and save it to the 
+        # project file.
+    }
+}
+

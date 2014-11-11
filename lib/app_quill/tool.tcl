@@ -23,7 +23,7 @@ namespace eval ::app_quill:: {
 } 
 
 #-------------------------------------------------------------------------
-# Tool Singleton: versiontool
+# Tool Singleton
 
 snit::type ::app_quill::tool {
     # Make it a singleton
