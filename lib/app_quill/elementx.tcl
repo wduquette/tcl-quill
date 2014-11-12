@@ -66,8 +66,7 @@ snit::type ::app_quill::elementx {
     # body         - The element's body, a snit::type body.
     #
     # Defines the element.  The meta should define the description and
-    # tree values.  The body should define the files and metadata
-    # typemethods.
+    # tree values.  The body should define the "expand" typemethod.
 
     typemethod define {name meta helptext body} {
         # FIRST, get the ensemble name
