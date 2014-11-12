@@ -42,6 +42,7 @@ snit::type ::app_quill::elementx {
     # names              - List of element names (names).
     # trees              - List of names of project tree elements.
     # branches           - List of names of branch elements.
+    #                      TODO: Should be filesets.
     # 
     # ensemble-$name     - The element's ensemble command.
     # description-$name  - The element's one-line description
@@ -51,7 +52,9 @@ snit::type ::app_quill::elementx {
     # argspec-$name      - The element's argspec: {min max usage}
 
     typevariable info -array {
-        names {}
+        names    {}
+        trees    {}
+        branches {}
     }
 
     #---------------------------------------------------------------------

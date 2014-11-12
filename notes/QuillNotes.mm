@@ -186,12 +186,39 @@
 </node>
 </node>
 <node TEXT="Decisions" ID="ID_1719307880" CREATED="1415671740033" MODIFIED="1415671741543">
-<node TEXT="Both tree and element templates are called &quot;elements&quot;; tree templates have the &quot;-project&quot; flag set." ID="ID_1845869934" CREATED="1415671741745" MODIFIED="1415671773333"/>
-<node TEXT="The element object doesn&apos;t save the elements to disk; rather, it returns a dictionary of files and content to create" ID="ID_358108448" CREATED="1415671774969" MODIFIED="1415671808799">
+<node TEXT="Terminology" ID="ID_1845869934" CREATED="1415671741745" MODIFIED="1415811535115">
+<node TEXT="File templates" ID="ID_358656759" CREATED="1415811535638" MODIFIED="1415811540749">
+<node TEXT="Based on maptemplate" ID="ID_350493207" CREATED="1415811541271" MODIFIED="1415811545447"/>
+<node TEXT="For individual files" ID="ID_311867384" CREATED="1415811545763" MODIFIED="1415811548234"/>
+</node>
+<node TEXT="fileset template" ID="ID_1364904248" CREATED="1415811551622" MODIFIED="1415811583510">
+<node TEXT="An element module" ID="ID_655545197" CREATED="1415811562990" MODIFIED="1415811570151"/>
+<node TEXT="Defines a set of files within a project" ID="ID_1676744615" CREATED="1415811570532" MODIFIED="1415811588428"/>
+</node>
+<node TEXT="tree template" ID="ID_1326740146" CREATED="1415811589311" MODIFIED="1415811594672">
+<node TEXT="An element module" ID="ID_612248367" CREATED="1415811594921" MODIFIED="1415811597588"/>
+<node TEXT="Defines a complete new project tree" ID="ID_1694263180" CREATED="1415811597947" MODIFIED="1415811607057"/>
+</node>
+</node>
+<node TEXT="A file template returns the contents of a file given parameters" ID="ID_358108448" CREATED="1415671774969" MODIFIED="1415811627675">
 <node TEXT="No error handling" ID="ID_482728512" CREATED="1415671854559" MODIFIED="1415671860139"/>
 <node TEXT="The overall element object can handle -force" ID="ID_951541444" CREATED="1415671860603" MODIFIED="1415671868910"/>
 </node>
-<node TEXT="The element object has a separate call to update the project.quill file." ID="ID_1128488633" CREATED="1415671810966" MODIFIED="1415671838398"/>
+<node TEXT="An element module returns a dictionary:" ID="ID_1128488633" CREATED="1415671810966" MODIFIED="1415811655695">
+<node TEXT="files" ID="ID_1472769565" CREATED="1415811656074" MODIFIED="1415811658274">
+<node TEXT="$path" ID="ID_1292911428" CREATED="1415811658966" MODIFIED="1415811666651">
+<node TEXT="content" ID="ID_1341680583" CREATED="1415811667866" MODIFIED="1415811669614"/>
+</node>
+</node>
+<node TEXT="metadata" ID="ID_1249057538" CREATED="1415811670949" MODIFIED="1415811674147">
+<node TEXT="list..." ID="ID_1795875327" CREATED="1415811674463" MODIFIED="1415811680289">
+<node TEXT="project add command" ID="ID_1757378078" CREATED="1415811680477" MODIFIED="1415811685353"/>
+</node>
+</node>
+</node>
+<node TEXT="Element modules use file templates to generate file content" ID="ID_1489987291" CREATED="1415811704968" MODIFIED="1415811754668"/>
+<node TEXT="The element command uses the element module to retrieve its dict" ID="ID_705532308" CREATED="1415811725623" MODIFIED="1415811853307"/>
+<node TEXT="Then it can judge whether to create the files or not given -force and the existing files." ID="ID_777860" CREATED="1415811853653" MODIFIED="1415811904410"/>
 </node>
 </node>
 </node>
