@@ -19,6 +19,13 @@
 #    project metadata changes.  How do we avoid parsing the element 
 #    parameters twice?
 #
+# TODO: 
+#    How to represent the files? As a maptemplate?  That doesn't go well
+#    in a snit::type body.  I might need file templates as a distinct thing,
+#    different from an element. 
+#
+#    Better word than template?
+#
 #-------------------------------------------------------------------------
 
 ::app_quill::elementx define testtarget {
