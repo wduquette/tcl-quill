@@ -595,3 +595,40 @@ maptemplate ::qfile::quillinfo.tcl {} {
         }
     }
 }
+
+# README.md
+#
+# Default README.md file for a Quill project.
+
+maptemplate ::qfile::README.md {} {
+    set project [project name]
+} {
+    # %project
+
+    A description of your new project.
+}
+
+# index.quilldoc
+#
+# Default index.quilldoc file for the project documentation.
+
+maptemplate ::qfile::index.quilldoc {} {
+    set project [project name]
+} {
+    <document "%project Documentation Tree">
+
+    <preface general "General Documents">
+
+    TBD<p>
+
+    <preface man "Man Pages">
+
+    <ul>
+    <li><link "man1/index.html" "Section (1): Applications">
+    <li><link "man5/index.html" "Section (5): File Formats">
+    <li><link "mann/index.html" "Section (n): Tcl Commands">
+    <li><link "mani/index.html" "Section (i): Tcl Interfaces">
+    </ul><p>
+
+    </document>
+}

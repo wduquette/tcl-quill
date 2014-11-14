@@ -48,8 +48,8 @@ proc ::app_quill::appTree {project appname} {
     project loadinfo
 
     # NEXT, create files and elements.
-    gentree README.md           [projectREADME]    \
-            docs/index.quilldoc [projectDocsIndex]
+    gentree README.md           [::qfile::README.md]     \
+            docs/index.quilldoc [::qfile::index.quilldoc]
     element quillinfo
     element app $appname
 }
@@ -80,39 +80,3 @@ maptemplate ::app_quill::projectQuill {project appname} {
     }
 }
 
-# projectREADME
-#
-# Default README.md file for a Quill project.
-
-maptemplate ::app_quill::projectREADME {} {
-    set project [project name]
-} {
-    # %project
-
-    A description of your new project.
-}
-
-# projectDocsIndex
-#
-# Default index.html file for the project documentation.
-
-maptemplate ::app_quill::projectDocsIndex {} {
-    set project     [project name]
-} {
-    <document "%project Documentation Tree">
-
-    <preface general "General Documents">
-
-    TBD<p>
-
-    <preface man "Man Pages">
-
-    <ul>
-    <li><link "man1/index.html" "Section (1): Applications">
-    <li><link "man5/index.html" "Section (5): File Formats">
-    <li><link "mann/index.html" "Section (n): Tcl Commands">
-    <li><link "mani/index.html" "Section (i): Tcl Interfaces">
-    </ul><p>
-
-    </document>
-}
