@@ -25,6 +25,12 @@ namespace eval ::app_quill:: {
         elementx
 } 
 
+namespace eval ::app_quill::elementx {
+    namespace export \
+        write        \
+        queue
+}
+
 #-------------------------------------------------------------------------
 # Element Framework Singleton
 
@@ -41,20 +47,33 @@ snit::type ::app_quill::elementx {
     #
     # names              - List of element names (names).
     # trees              - List of names of project tree elements.
-    # branches           - List of names of branch elements.
-    #                      TODO: Should be filesets.
+    # filesets           - List of names of non-tree elements.
     # 
     # ensemble-$name     - The element's ensemble command.
     # description-$name  - The element's one-line description
     # tree-$name         - 1 if this is a full project tree, and 0 if it
-    #                      just a branch.
+    #                      just an element.
     # help-$name         - The help text for the element.
     # argspec-$name      - The element's argspec: {min max usage}
 
     typevariable info -array {
         names    {}
         trees    {}
-        branches {}
+        filesets {}
+    }
+
+    # trans
+    #
+    # Transient data used while adding a single element.
+    #
+    #    force   - 1 if the force flag is set, and 0 otherwise.
+    #    files   - Dictionary relpath -> content
+    #    queue   - List of Commands to execute
+    
+    typevariable trans -array {
+        force 0
+        files {}
+        queue {}
     }
 
     #---------------------------------------------------------------------
@@ -68,8 +87,13 @@ snit::type ::app_quill::elementx {
     #                automatically.
     # body         - The element's body, a snit::type body.
     #
-    # Defines the element.  The meta should define the description and
-    # tree values.  The body should define the "expand" typemethod.
+    # Defines the element.  The meta should define:
+    # 
+    #    description  - A one-line description of the element.
+    #    tree         - 1 if this is a full tree, and 0 otherwise.
+    #    argspec      - The basic argument spec {min max usage}
+    #
+    # The body must define the "add" typemethod.
 
     typemethod define {name meta helptext body} {
         # FIRST, get the ensemble name
@@ -79,7 +103,10 @@ snit::type ::app_quill::elementx {
         # NEXT, save the body.
         set preamble {
             pragma -hasinstances no -hastypedestroy yes
-
+            typeconstructor {
+                # Include the helper procs into the element's namespace.
+                namespace import ::app_quill::elementx::*
+            }
         }
 
         snit::type $ensemble "$preamble\n$body"
@@ -99,7 +126,7 @@ snit::type ::app_quill::elementx {
         if {$info(tree-$name)} {
             ladd info(trees) $name
         } else {
-            ladd info(branches) $name
+            ladd info(filesets) $name
         }
     }
 
@@ -123,13 +150,13 @@ snit::type ::app_quill::elementx {
         return [lsort $info(trees)]
     }
 
-    # branches
+    # filesets
     #
     # Returns the names of the currently defined elements that define
-    # project subtrees (branches).
+    # project subtrees (filesets).
 
-    typemethod branches {} {
-        return [lsort $info(branches)]
+    typemethod filesets {} {
+        return [lsort $info(filesets)]
     }
 
     # exists name
@@ -160,14 +187,14 @@ snit::type ::app_quill::elementx {
         return 0
     }
 
-    # isbranch name
+    # isfileset name
     #
     # name   - The name of an element
     # 
-    # Returns 1 if it is a branch element, and 0 otherwise.
+    # Returns 1 if it is a file set element, and 0 otherwise.
 
-    typemethod isbranch {name} {
-        if {$name in $info(branches)} {
+    typemethod isfileset {name} {
+        if {$name in $info(filesets)} {
             return 1
         }
 
@@ -184,6 +211,9 @@ snit::type ::app_quill::elementx {
         return $info(description-$name)
     }
 
+    #---------------------------------------------------------------------
+    # Actions
+
     # newtree name project args
     #
     # name    - Name of a tree element
@@ -196,6 +226,9 @@ snit::type ::app_quill::elementx {
     # overwriting anything in the way.
 
     typemethod newtree {name project args} {
+        # FIRST, clear transient data
+        ClearTrans
+
         # FIRST, do we have such a tree?
         if {![$type istree $name]} {
             throw FATAL \
@@ -206,11 +239,11 @@ snit::type ::app_quill::elementx {
         # TBD: validate project name
 
         # NEXT, get the -force flag, if present.
-        set force [GetForceOption args]
+        set trans(force) [GetForceOption args]
 
         # NEXT, ensure we are not in a project tree (or -force)
         if {[project intree]} {
-            if {!$force} {
+            if {!$trans(force)} {
                 throw FATAL [outdent {
                     To create a project within an existing project, include
                     the -force option.
@@ -223,7 +256,7 @@ snit::type ::app_quill::elementx {
         # NEXT, ensure that the project directory doesn't yet exist
         # (or -force).
         if {[file exists $project]} {
-            if {!$force} {
+            if {!$trans(force)} {
                 throw FATAL [outdent "
                     \"$project\" already exists in the current
                     working directory.  To overwrite an existing project 
@@ -264,28 +297,130 @@ snit::type ::app_quill::elementx {
     # project tree.  By default, the operation will fail if any of
     # the files to be created by the element already exist.  If -force
     # is given, it will overwrite existing files.
-    #
-    # TODO: Recast this like newtree, above.
 
     typemethod add {name args} {
-        # FIRST, get the -force flag, if present.
+        # FIRST, clear the transient data
+        ClearTrans
 
-        # NEXT, ensure that we are in a project tree.
+        # NEXT, do we have such a file set?
+        if {![$type isfileset $name]} {
+            throw FATAL \
+                "Quill has no file set template called \"$name\"."
+        }
 
-        # NEXT, retrieve the element's files, and verify that none of
-        # them exists (or -force). 
-        #
-        # TBD: Make sure that a good FATAL message is produced if the
-        # argument list is wrong.
+        # NEXT, get the -force flag, if present.
+        set trans(force) [GetForceOption args]
 
-        # NEXT, save the element's files.
+        # NEXT, check the argument list.  The element will need to check
+        # any options, and can get the project name from [project name].
+        checkargs "quill add $name" {*}$info(argspec-$name) $args
 
-        # NEXT, update the project metadata and save it to the 
-        # project file.
+        fileset $name {*}$args
+
+        # NEXT, execute the queued actions.
+        WriteFiles
+        ExecuteQueue
+
+        # NEXT, save the project metadata to the project file.
+        # TBD
+    }
+
+    # WriteFiles
+    #
+    # If any of the files already exists, throws FATAL
+    # unless the -force flag is set.
+
+    proc WriteFiles {} {
+        # FIRST, make sure none of the files exist.
+        if {!$trans(force)} {
+            foreach filename [dict keys $trans(files)] {
+                set fullname [GetPath $filename]
+
+                if {[file exists $fullname]} {
+                    throw FATAL [outdent "
+                        This element file already exists:
+
+                            $fullname
+
+                        To overwrite it, use the -force option.
+                    "]
+                }
+            }
+        }
+
+        # NEXT, write the files.
+        dict for {filename content} $trans(files) {
+            set fullname [GetPath $filename]
+            writefile $fullname $content
+        }
+    } 
+
+    # ExecuteQueue
+    #
+    # Executes the commands in the queue.
+
+    proc ExecuteQueue {} {
+        if {![got $trans(queue)]} {
+            return
+        }
+
+        try {
+            namespace eval :: [join $trans(queue) \n]
+        } on error {result} {
+            throw FATAL "Error in element plugin: $result"
+        }
+    }
+
+    #---------------------------------------------------------------------
+    # Commands for use by elements.
+
+    # fileset name args
+    #
+    # name  - A file set name
+    # args  - The arguments for that file set.
+    #
+    # Includes the file set into the current element.
+
+    proc fileset {name args} {
+        $info(ensemble-$name) add {*}$args
+    }
+
+
+    # write relpath content
+    #
+    # relpath    - A path relative to project root, with forward slashes
+    # content    - The content to write.
+    #
+    # Queues up a file to be written.
+
+    proc write {relpath content} {
+        into trans(files) $relpath $content
+        return
+    }
+
+    # queue command...
+    #
+    # command...   - A command to execute at the proper time.
+    #
+    # Queues up a command to be executed.
+
+    proc queue {args} {
+        lappend trans(queue) $args
+        return
     }
 
     #---------------------------------------------------------------------
     # Helpers
+
+    # ClearTrans
+    #
+    # Clears the transient data.
+
+    proc ClearTrans {} {
+        set trans(force) 0
+        set trans(files) [dict create]
+        set trans(queue) [list]
+    }
 
     # GetForceOption listvar
     #
@@ -303,6 +438,18 @@ snit::type ::app_quill::elementx {
         }
 
         return 0
+    }
+
+    # GetPath path
+    #
+    # path   - A relative path with forward slashes
+    #
+    # Returns the full path.
+
+    proc GetPath {path} {
+        set pathlist [split $path "/"]
+
+        return [project root {*}$pathlist]
     }
 }
 

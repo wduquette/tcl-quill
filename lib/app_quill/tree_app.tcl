@@ -50,8 +50,8 @@ proc ::app_quill::appTree {project appname} {
     # NEXT, create files and elements.
     gentree README.md           [::qfile::README.md]     \
             docs/index.quilldoc [::qfile::index.quilldoc]
-    element quillinfo
-    element app $appname
+    elementx add quillinfo
+    elementx add app $appname
 }
 
 # projectQuill
