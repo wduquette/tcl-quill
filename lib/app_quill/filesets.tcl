@@ -20,6 +20,7 @@
     the application implementation package, and the implementation
     package's test target.
 } {
+    # TODO: other application options, to pass through to project.quill.
     typemethod add {app} {
         prepare app -required -file
 
@@ -29,6 +30,8 @@
         write docs/man1/$app.manpage [::qfile::man1.manpage $app]
 
         queue os setexecutable [project root bin $app.tcl]
+
+        metadata app $app
     }
 }
 
@@ -38,6 +41,8 @@
 } {
     This element creates a library package skeleton.
 } {
+    # TODO: other package options, to pass through to project.quill.
+
     typemethod add {package {module ""}} {
         prepare package -required -file
         prepare module  -file
@@ -51,10 +56,14 @@
         write lib/$package/pkgIndex.tcl   [::qfile::pkgIndex.tcl $package]
         write lib/$package/pkgModules.tcl [::qfile::pkgModules.tcl $package $module]
 
+        # TODO: Possibly, this should be two distinct file sets, one for 
+        # applications and one for normal library packages.
         if {$module eq "main"} {
             write lib/$package/main.tcl     [::qfile::main.tcl $package]
         } else {
             write lib/$package/$package.tcl [::qfile::module.tcl $package]
+
+            metadata provide $package
         }
     }
 }

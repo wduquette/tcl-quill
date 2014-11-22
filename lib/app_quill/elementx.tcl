@@ -28,6 +28,7 @@ namespace eval ::app_quill:: {
 namespace eval ::app_quill::elementx {
     namespace export \
         fileset      \
+        metadata     \
         queue        \
         write
 }
@@ -72,14 +73,16 @@ snit::type ::app_quill::elementx {
     #
     # Transient data used while adding a single element.
     #
-    #    force   - 1 if the force flag is set, and 0 otherwise.
-    #    files   - Dictionary relpath -> content
-    #    queue   - List of Commands to execute
+    #    force    - 1 if the force flag is set, and 0 otherwise.
+    #    files    - Dictionary relpath -> content
+    #    metadata - Commands to add to project.quill
+    #    queue    - List of Commands to execute
     
     typevariable trans -array {
-        force 0
-        files {}
-        queue {}
+        force    0
+        files    {}
+        metadata {}
+        queue    {}
     }
 
     #---------------------------------------------------------------------
@@ -98,7 +101,8 @@ snit::type ::app_quill::elementx {
     #    description  - A one-line description of the element.
     #    argspec      - The basic argument spec {min max usage}
     #
-    # The body must define the "add" typemethod.
+    # The body must define the "add" typemethod, which takes the
+    # project name plus any element-specific arguments.
 
     typemethod deftree {name meta helptext body} {
         # FIRST, get the ensemble name and id.
@@ -146,7 +150,8 @@ snit::type ::app_quill::elementx {
     #    description  - A one-line description of the element.
     #    argspec      - The basic argument spec {min max usage}
     #
-    # The body must define the "add" typemethod.
+    # The body must define the "add" typemethod, which takes the
+    # element-specific arguments.
 
     typemethod defset {name meta helptext body} {
         # FIRST, get the ensemble name and id.
@@ -349,15 +354,16 @@ snit::type ::app_quill::elementx {
         # any options, and can get the project name from [project name].
         checkargs "quill new $name $project" {*}$info(argspec-$id) $args
 
-        # NEXT, create the project directory, and initialize the project
-        # metadata.  (It will be updated by the element.)
-        # TBD.
+        # NEXT, create the project directory.
+        project newroot [file join [pwd] $project]
 
-        # NEXT, get and save the element's files, and update the 
-        # project metadata.
+        $info(ensemble-$id) add $project {*}$args
 
-        # NEXT, save the project metadata to the project file.
-        # TBD
+
+        # NEXT, execute the queued actions.
+        WriteFiles
+        ExecuteQueue
+        SaveMetadata
     }
 
     # newset name args
@@ -370,7 +376,7 @@ snit::type ::app_quill::elementx {
     # the files to be created by the element already exist.  If -force
     # is given, it will overwrite existing files.
 
-    typemethod add {name args} {
+    typemethod newset {name args} {
         # FIRST, clear the transient data
         ClearTrans
 
@@ -394,11 +400,7 @@ snit::type ::app_quill::elementx {
         # NEXT, execute the queued actions.
         WriteFiles
         ExecuteQueue
-
-        # NEXT, save the project metadata to the project file.
-        # TODO: Need a command "meta" that queues up a command to be
-        # appended to the project.quill file.  Then we just append
-        # the queued commands.
+        SaveMetadata
     }
 
     # WriteFiles
@@ -447,6 +449,24 @@ snit::type ::app_quill::elementx {
         }
     }
 
+    # SaveMetadata
+    #
+    # Saves accumulated metadata into project.quill.
+
+    proc SaveMetadata {} {
+        if {![got $trans(metadata)]} {
+            return
+        }
+
+        set f [open [project root project.quill] a]
+
+        puts $f ""
+        puts $f [join $trans(metadata) \n]
+        puts $f ""
+
+        close $f
+    }
+
     #---------------------------------------------------------------------
     # Commands for use by elements.
 
@@ -460,18 +480,17 @@ snit::type ::app_quill::elementx {
     proc fileset {name args} {
         set id $info(fsid-$name)
         $info(ensemble-$id) add {*}$args
+        return
     }
 
-
-    # write relpath content
+    # metadata command...
     #
-    # relpath    - A path relative to project root, with forward slashes
-    # content    - The content to write.
+    # command... - A command to append to project.quill.
     #
-    # Queues up a file to be written.
+    # Adds a project(5) command to project.quill.
 
-    proc write {relpath content} {
-        into trans(files) $relpath $content
+    proc metadata {args} {
+        lappend trans(metadata) $args
         return
     }
 
@@ -485,6 +504,19 @@ snit::type ::app_quill::elementx {
         lappend trans(queue) $args
         return
     }
+
+    # write relpath content
+    #
+    # relpath    - A path relative to project root, with forward slashes
+    # content    - The content to write.
+    #
+    # Queues up a file to be written.
+
+    proc write {relpath content} {
+        into trans(files) $relpath $content
+        return
+    }
+
 
     #---------------------------------------------------------------------
     # Helpers
