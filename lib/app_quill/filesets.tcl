@@ -12,9 +12,8 @@
 #    File Set elements
 #-------------------------------------------------------------------------
 
-::app_quill::elementx define app {
+::app_quill::elementx defset app {
     description "Application Skeleton"
-    tree        0
     argspec     {1 1 app}
 } {
     This element creates a new application skeleton: the loader script,
@@ -33,9 +32,8 @@
     }
 }
 
-::app_quill::elementx define package {
+::app_quill::elementx defset package {
     description "Library Package Skeleton"
-    tree        0
     argspec     {1 2 "package ?module?"}
 } {
     This element creates a library package skeleton.
@@ -61,9 +59,8 @@
     }
 }
 
-::app_quill::elementx define quillinfo {
+::app_quill::elementx defset quillinfo {
     description "quillinfo(n) Library Template"
-    tree        0
     argspec     {0 0 ""}
 } {
     This element creates a quillinfo library.
@@ -75,13 +72,12 @@
     }
 }
 
-::app_quill::elementx define testtarget {
+::app_quill::elementx defset testtarget {
     description "Test target directory"
-    tree        0
     argspec     {1 1 target}
 } {
-This element creates a single test target directory called <target>.
-It will contain two files, all_tests.test and <target>.test.
+    This element creates a single test target directory called <target>.
+    It will contain two files, all_tests.test and <target>.test.
 } {
     # add target
     # 
@@ -108,3 +104,4 @@ It will contain two files, all_tests.test and <target>.test.
         return
     }
 }
+

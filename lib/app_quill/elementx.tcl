@@ -27,8 +27,9 @@ namespace eval ::app_quill:: {
 
 namespace eval ::app_quill::elementx {
     namespace export \
-        write        \
-        queue
+        fileset      \
+        queue        \
+        write
 }
 
 #-------------------------------------------------------------------------
@@ -45,18 +46,23 @@ snit::type ::app_quill::elementx {
     #
     # Array of data about the available elements.
     #
-    # names              - List of element names (names).
+    # counter            - # of defined IDs
+    # ids                - List of element IDs (integers).
     # trees              - List of names of project tree elements.
     # filesets           - List of names of non-tree elements.
     # 
-    # ensemble-$name     - The element's ensemble command.
-    # description-$name  - The element's one-line description
-    # tree-$name         - 1 if this is a full project tree, and 0 if it
-    #                      just an element.
-    # help-$name         - The help text for the element.
-    # argspec-$name      - The element's argspec: {min max usage}
+    # treeid-$name       - ID of a tree element given its name.
+    # fsid-$name         - ID of a file set element given its name.
+    # 
+    # ensemble-$id       - The element's ensemble command.
+    # argspec-$id        - The element's argspec: {min max usage}
+    # description-$id    - The element's one-line description
+    # tree-$id           - 1 if this is a full project tree, and 0 if it
+    #                      just a file set.
+    # help-$id           - The help text for the element.
 
     typevariable info -array {
+        counter  0
         names    {}
         trees    {}
         filesets {}
@@ -79,7 +85,7 @@ snit::type ::app_quill::elementx {
     #---------------------------------------------------------------------
     # Element Definition
 
-    # define name meta helptext body
+    # deftree name meta helptext body
     #
     # name         - The element's name
     # meta         - A dictionary of items that define the element.
@@ -90,13 +96,12 @@ snit::type ::app_quill::elementx {
     # Defines the element.  The meta should define:
     # 
     #    description  - A one-line description of the element.
-    #    tree         - 1 if this is a full tree, and 0 otherwise.
     #    argspec      - The basic argument spec {min max usage}
     #
     # The body must define the "add" typemethod.
 
-    typemethod define {name meta helptext body} {
-        # FIRST, get the ensemble name
+    typemethod deftree {name meta helptext body} {
+        # FIRST, get the ensemble name and id.
         set name     [string tolower $name]
         set ensemble ::app_quill::elementx::[string toupper $name]
 
@@ -113,73 +118,90 @@ snit::type ::app_quill::elementx {
 
 
         # NEXT, save the metadata
-        ladd info(names) $name
-
-        set info(ensemble-$name) $ensemble
-
-        # TODO: better validation before we allow plugins!
-        set info(description-$name) [outof $meta description]
-        set info(tree-$name)        [outof $meta tree]
-        set info(argspec-$name)     [outof $meta argspec]
-        set info(help-$name)        $helptext
-
-        if {$info(tree-$name)} {
-            ladd info(trees) $name
+        if {$name in $info(trees)} {
+            set id $info(treeid-$name)
         } else {
-            ladd info(filesets) $name
+            set id [incr info(counter)]
+            set info(treeid-$name) $id
+            lappend info(trees) $name
         }
+ 
+        set info(tree-$id)        1
+        set info(ensemble-$id)    $ensemble
+        set info(description-$id) [outof $meta description]
+        set info(argspec-$id)     [outof $meta argspec]
+        set info(help-$id)        $helptext
     }
+
+    # defset name meta helptext body
+    #
+    # name         - The element's name
+    # meta         - A dictionary of items that define the element.
+    # helptext     - The element's help text, which will be outdented 
+    #                automatically.
+    # body         - The element's body, a snit::type body.
+    #
+    # Defines the element.  The meta should define:
+    # 
+    #    description  - A one-line description of the element.
+    #    argspec      - The basic argument spec {min max usage}
+    #
+    # The body must define the "add" typemethod.
+
+    typemethod defset {name meta helptext body} {
+        # FIRST, get the ensemble name and id.
+        set name     [string tolower $name]
+        set ensemble ::app_quill::elementx::[string toupper $name]
+
+        # NEXT, save the body.
+        set preamble {
+            pragma -hasinstances no -hastypedestroy yes
+            typeconstructor {
+                # Include the helper procs into the element's namespace.
+                namespace import ::app_quill::elementx::*
+            }
+        }
+
+        snit::type $ensemble "$preamble\n$body"
+
+
+        # NEXT, save the metadata
+        if {$name in $info(filesets)} {
+            set id $info(fsid-$name)
+        } else {
+            set id [incr info(counter)]
+            set info(fsid-$name) $id
+            lappend info(filesets) $name
+        }
+ 
+        set info(tree-$id)        0
+        set info(ensemble-$id)    $ensemble
+        set info(description-$id) [outof $meta description]
+        set info(argspec-$id)     [outof $meta argspec]
+        set info(help-$id)        $helptext
+    }
+
+
 
     #---------------------------------------------------------------------
-    # Queries
+    # Tree Queries
 
-    # names
-    #
-    # Returns the names of the currently defined elements.
-
-    typemethod names {} {
-        return [lsort $info(names)]
-    }
-
-    # trees
+    # tree names
     #
     # Returns the names of the currently defined elements that define
     # full project trees.
 
-    typemethod trees {} {
+    typemethod {tree names} {} {
         return [lsort $info(trees)]
     }
 
-    # filesets
-    #
-    # Returns the names of the currently defined elements that define
-    # project subtrees (filesets).
-
-    typemethod filesets {} {
-        return [lsort $info(filesets)]
-    }
-
-    # exists name
+    # tree exists name
     #
     # name   - The name of an element
     # 
-    # Returns 1 if the element exists, and 0 otherwise.
+    # Returns 1 if the tree element exists, and 0 otherwise.
 
-    typemethod exists {name} {
-        if {$name in $info(names)} {
-            return 1
-        }
-
-        return 0
-    }
-
-    # istree name
-    #
-    # name   - The name of an element
-    # 
-    # Returns 1 if it is a tree element, and 0 otherwise.
-
-    typemethod istree {name} {
+    typemethod {tree exists} {name} {
         if {$name in $info(trees)} {
             return 1
         }
@@ -187,13 +209,46 @@ snit::type ::app_quill::elementx {
         return 0
     }
 
-    # isfileset name
+    # tree description name
+    #
+    # name - The name of an element
+    # 
+    # Returns the tree element's description.
+
+    typemethod {tree description} {name} {
+        set id $info(treeid-$name)
+        return $info(description-$id)
+    }
+
+    # tree help name
+    #
+    # name - The name of an element
+    # 
+    # Returns the tree element's help text.
+
+    typemethod {tree help} {name} {
+        set id $info(treeid-$name)
+        return $info(help-$id)
+    }
+
+
+
+    # fileset names
+    #
+    # Returns the names of the currently defined elements that define
+    # project subtrees (filesets).
+
+    typemethod {fileset names} {} {
+        return [lsort $info(filesets)]
+    }
+
+    # fileset exists name
     #
     # name   - The name of an element
     # 
-    # Returns 1 if it is a file set element, and 0 otherwise.
+    # Returns 1 if the file set element exists, and 0 otherwise.
 
-    typemethod isfileset {name} {
+    typemethod {fileset exists} {name} {
         if {$name in $info(filesets)} {
             return 1
         }
@@ -201,15 +256,30 @@ snit::type ::app_quill::elementx {
         return 0
     }
 
-    # description name
+    # fileset description name
     #
     # name - The name of an element
     # 
-    # Returns the element's description.
+    # Returns the fileset element's description.
 
-    typemethod description {tool} {
-        return $info(description-$name)
+    typemethod {fileset description} {name} {
+        set id $info(fsid-$name)
+        return $info(description-$id)
     }
+
+
+    # fileset help name
+    #
+    # name - The name of an element
+    # 
+    # Returns the fileset element's help.
+
+    typemethod {fileset help} {name} {
+        set id $info(fsid-$name)
+        return $info(help-$id)
+    }
+
+
 
     #---------------------------------------------------------------------
     # Actions
@@ -230,10 +300,12 @@ snit::type ::app_quill::elementx {
         ClearTrans
 
         # FIRST, do we have such a tree?
-        if {![$type istree $name]} {
+        if {![$type tree exists $name]} {
             throw FATAL \
                 "Quill has no project tree template called \"$name\"."
         }
+
+        set id $info(treeid-$name)
 
         # NEXT, is the project name valid?
         # TBD: validate project name
@@ -275,7 +347,7 @@ snit::type ::app_quill::elementx {
 
         # NEXT, check the argument list.  The element will need to check
         # any options, and can get the project name from [project name].
-        checkargs "quill new $name $project" {*}$info(argspec-$name) $args
+        checkargs "quill new $name $project" {*}$info(argspec-$id) $args
 
         # NEXT, create the project directory, and initialize the project
         # metadata.  (It will be updated by the element.)
@@ -288,9 +360,9 @@ snit::type ::app_quill::elementx {
         # TBD
     }
 
-    # add name args
+    # newset name args
     #
-    # name   - Name of a branch element
+    # name   - Name of a file set element
     # args   - The element's arguments, plus (optionally) "-force"
     #
     # Adds the element to the current project.  We must be in a 
@@ -303,17 +375,19 @@ snit::type ::app_quill::elementx {
         ClearTrans
 
         # NEXT, do we have such a file set?
-        if {![$type isfileset $name]} {
+        if {![$type fileset exists $name]} {
             throw FATAL \
                 "Quill has no file set template called \"$name\"."
         }
+
+        set id $info(fsid-$name)
 
         # NEXT, get the -force flag, if present.
         set trans(force) [GetForceOption args]
 
         # NEXT, check the argument list.  The element will need to check
         # any options, and can get the project name from [project name].
-        checkargs "quill add $name" {*}$info(argspec-$name) $args
+        checkargs "quill add $name" {*}$info(argspec-$id) $args
 
         fileset $name {*}$args
 
@@ -322,7 +396,9 @@ snit::type ::app_quill::elementx {
         ExecuteQueue
 
         # NEXT, save the project metadata to the project file.
-        # TBD
+        # TODO: Need a command "meta" that queues up a command to be
+        # appended to the project.quill file.  Then we just append
+        # the queued commands.
     }
 
     # WriteFiles
@@ -382,7 +458,8 @@ snit::type ::app_quill::elementx {
     # Includes the file set into the current element.
 
     proc fileset {name args} {
-        $info(ensemble-$name) add {*}$args
+        set id $info(fsid-$name)
+        $info(ensemble-$id) add {*}$args
     }
 
 

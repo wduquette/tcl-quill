@@ -1,6 +1,6 @@
 <map version="freeplane 1.2.0">
 <!--To view this file, download free mind mapping software Freeplane from http://freeplane.sourceforge.net -->
-<node TEXT="Quill Notes" ID="ID_1723255651" CREATED="1283093380553" MODIFIED="1411674110340"><hook NAME="MapStyle" zoom="1.5">
+<node TEXT="Quill Notes" ID="ID_1723255651" CREATED="1283093380553" MODIFIED="1411674110340"><hook NAME="MapStyle">
 
 <map_styles>
 <stylenode LOCALIZED_TEXT="styles.root_node">
@@ -227,6 +227,7 @@
 <node TEXT="Tree and branch elements use file sets" ID="ID_87880603" CREATED="1415926912010" MODIFIED="1415926926522"/>
 <node TEXT="Updating project metadata is an aspect of the &quot;quill new&quot; and &quot;quill add&quot; commands" ID="ID_1363936484" CREATED="1415926940569" MODIFIED="1415926962145"/>
 <node TEXT="Project metadata is associated with tree and branch objects, not file sets." ID="ID_1906036803" CREATED="1415926962722" MODIFIED="1415926980117"/>
+<node TEXT="Tree and file set names can overlap!" ID="ID_789956928" CREATED="1416693529825" MODIFIED="1416693541767"/>
 </node>
 </node>
 </node>

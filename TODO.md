@@ -3,10 +3,6 @@
 This is the official list of work to be done, along with possibilities,
 blue sky ideas, and what-not.
 
-# For Quill 0.3.0
-
-* Fix bugs as found and reported.
-
 # For Quill 0.4.0
 
 * Include tclapp command line in log file.
