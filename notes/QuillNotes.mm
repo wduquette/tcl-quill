@@ -201,6 +201,8 @@
 </node>
 </node>
 <node TEXT="Next Step" ID="ID_831595068" CREATED="1415926659127" MODIFIED="1415926662720">
+<node TEXT="Make tree_app an elementx in trees." ID="ID_1575004115" CREATED="1416004425018" MODIFIED="1416004436833"/>
+<node TEXT="Add a lib elementx in trees, and test both of them." ID="ID_293284627" CREATED="1416004437237" MODIFIED="1416004448990"/>
 <node TEXT="Need to be able to save the project file." ID="ID_1029399540" CREATED="1415926663246" MODIFIED="1415926703541"/>
 <node TEXT="Commands to initialize new project directory" ID="ID_1065725005" CREATED="1415926704093" MODIFIED="1415926721221"/>
 <node TEXT="Commands to add metadata" ID="ID_489557565" CREATED="1415926721665" MODIFIED="1415926727645"/>
