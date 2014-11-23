@@ -596,7 +596,7 @@ maptemplate ::qfile::quillinfo.tcl {} {
     }
 }
 
-# README.md
+# LICENSE
 #
 # Default README.md file for a Quill project.
 
@@ -606,6 +606,18 @@ maptemplate ::qfile::README.md {} {
     # %project
 
     A description of your new project.
+}
+
+# LICENSE
+#
+# Default LICENSE file for a Quill project.
+
+maptemplate ::qfile::LICENSE {} {
+    set project [project name]
+} {
+    # %project
+
+    Your license text.
 }
 
 # index.quilldoc

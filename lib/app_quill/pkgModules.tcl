@@ -55,6 +55,7 @@ source [file join $::app_quill::library tree_app.tcl           ]
 source [file join $::app_quill::library elementx.tcl           ]
 source [file join $::app_quill::library qfiles.tcl             ]
 source [file join $::app_quill::library filesets.tcl           ]
+source [file join $::app_quill::library trees.tcl              ]
 
 # Tools
 source [file join $::app_quill::library tool.tcl               ]
