@@ -41,7 +41,7 @@ app_quill::tool define new {
         # NEXT, make sure it's a valid tree type.
         set ttype [lshift argv]
 
-        if {$ttype ni [tree names]} {
+        if {$ttype ni [elementx tree names]} {
             throw FATAL [outdent "
                 Quill doesn't define a project tree type called 
                 \"$ttype\".  Enter \"quill new\" without any other
@@ -52,39 +52,24 @@ app_quill::tool define new {
         # NEXT, if we have a tree type but no additional arguments,
         # display the description and usage information for the
         # tree type.
-        array set tdata [tree get $ttype]
 
-        set len [llength $argv]
+        set project [lshift argv]
+        prepare project -file
 
-        if {$len < $tdata(min) || 
-            ($tdata(max) ne "-" && $len > $tdata(max))
-        } {
-            puts "Usage: quill new $ttype $tdata(usage)\n\n"
-            puts $tdata(help)
-
-            return
+        if {$project eq ""} {
+            puts [elementx tree usage $ttype]
+            puts [string repeat - 70]
+            puts [outdent [elementx tree help $ttype]]
+            exit
         }
 
-        # NEXT, if we're in a tree that's a problem.
-        if {[project intree]} {
-            throw FATAL [outdent {
-                Quill will not create a project tree within another
-                project tree.  Please move to a directory outside
-                any project tree.
-            }]
+        puts "Creating a new \"$ttype\" project tree at $project/...\n"
+        try {
+            elementx newtree $ttype $project {*}$argv
+        } trap INVALID {result} {
+            throw FATAL $result
         }
-
-        # NEXT, validate the new project name
-        set project [lindex $argv 0]
-        # TODO
-
-        # NEXT, if there's already a tree here, that's a problem.
-        if {[file exists $project]} {
-            throw FATAL "A directory called \"$project\" already exists here."
-        }
-
-        # NEXT, create the project tree
-        tree $ttype {*}$argv
+        return
     }
 
     # DisplayTreeTypeList
@@ -93,16 +78,19 @@ app_quill::tool define new {
 
     proc DisplayTreeTypeList {} {
         puts "Quill supports the following project tree types:\n"
-        puts ""
 
-        set fmt "  %-8s %s"
+        set table [list]
 
-        puts [format $fmt "Type"     "Arguments"]
-        puts [format $fmt "--------" "---------------------------------"]
-        foreach ttype [tree names] {
-            set usage [tree get $ttype usage]
-            puts [format $fmt $ttype $usage]
+        foreach ttype [elementx tree names] {
+            set description [elementx tree description $ttype]
+
+            lappend table [list Type $ttype Description $description]
         }
+
+        dictable puts $table  \
+            -showheaders      \
+            -leader      "  " \
+            -sep         "  "
 
         puts ""
 

@@ -152,7 +152,7 @@ proc ::app_quill::prepare {var args} {
 
     foroption opt args -all {
         -file {
-            if {![regexp {^[-[:alnum:]._]+$} $theVar]} {
+            if {$theVar ne "" && ![regexp {^[-[:alnum:]._]+$} $theVar]} {
                 throw INVALID \
                     "Input \"$var\" contains illegal characters or whitespace: \"$theVar\""
             }

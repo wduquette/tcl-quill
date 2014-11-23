@@ -18,7 +18,7 @@
 
 ::app_quill::elementx deftree app {
     description "Application Project Skeleton"
-    argspec     {1 1 app}
+    argspec     {1 1 <app>}
 } {
     The "app" tree type creates a project tree skeleton for a Tcl
     application given a project name and an application name.
@@ -36,7 +36,9 @@
         prepare app -required -file
 
         # FIRST, begin to set up the project.quill content.
-        metadata project $project 0.0a0 "Your project description"
+        gentree project.quill [::qfile::project.quill $project]
+        project loadinfo
+
         metadata homepage http://home.page.url
 
         # NEXT, add the application skeleton
@@ -57,13 +59,14 @@
         }
 
         metadata require Tcl $tclVersion
-        metadata dist install {
-            %apps
-            docs/*.html
-            docs/man*/*.html
-            README.md
-            LICENSE
-        }
+        metadata dist install \
+{
+    %apps
+    docs/*.html
+    docs/man*/*.html
+    README.md
+    LICENSE
+}
     }
 }
 
@@ -72,7 +75,7 @@
 
 ::app_quill::elementx deftree lib {
     description "Library Project Skeleton"
-    argspec     {1 1 lib}
+    argspec     {1 1 <lib>}
 } {
     The "lib" tree type creates a project tree skeleton for a Tcl
     library package given a project name and a library name.
@@ -88,7 +91,9 @@
         prepare lib -required -file
 
         # FIRST, begin to set up the project.quill content.
-        metadata project $project 0.0a0 "Your project description"
+        gentree project.quill [::qfile::project.quill $project]
+        project loadinfo
+
         metadata homepage http://home.page.url
 
         # NEXT, add the liblication skeleton
@@ -108,13 +113,14 @@
         }
 
         metadata require Tcl $tclVersion
-        metadata dist install {
-            %libs
-            docs/*.html
-            docs/man*/*.html
-            README.md
-            LICENSE
-        }
+        metadata dist install \
+{
+    %libs
+    docs/*.html
+    docs/man*/*.html
+    README.md
+    LICENSE
+}
     }
 }
 

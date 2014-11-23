@@ -107,7 +107,7 @@ snit::type ::app_quill::elementx {
     typemethod deftree {name meta helptext body} {
         # FIRST, get the ensemble name and id.
         set name     [string tolower $name]
-        set ensemble ::app_quill::elementx::[string toupper $name]
+        set ensemble ::app_quill::elementx::tree[string toupper $name]
 
         # NEXT, save the body.
         set preamble {
@@ -156,7 +156,7 @@ snit::type ::app_quill::elementx {
     typemethod defset {name meta helptext body} {
         # FIRST, get the ensemble name and id.
         set name     [string tolower $name]
-        set ensemble ::app_quill::elementx::[string toupper $name]
+        set ensemble ::app_quill::elementx::fs[string toupper $name]
 
         # NEXT, save the body.
         set preamble {
@@ -223,6 +223,19 @@ snit::type ::app_quill::elementx {
     typemethod {tree description} {name} {
         set id $info(treeid-$name)
         return $info(description-$id)
+    }
+
+    # tree usage name
+    #
+    # name - The name of a tree element
+    #
+    # Returns the tree element's usage string.
+
+    typemethod {tree usage} {name} {
+        set id $info(treeid-$name)
+        set arglist [lindex $info(argspec-$id) 2]
+
+        return "quill new $name <project> $arglist"
     }
 
     # tree help name
@@ -311,9 +324,6 @@ snit::type ::app_quill::elementx {
         }
 
         set id $info(treeid-$name)
-
-        # NEXT, is the project name valid?
-        # TBD: validate project name
 
         # NEXT, get the -force flag, if present.
         set trans(force) [GetForceOption args]

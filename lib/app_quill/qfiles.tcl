@@ -19,6 +19,17 @@
 
 namespace eval ::qfile {}
 
+# project.quill project
+#
+# project - A project name
+#
+# Creates the initial project.quill file.
+
+maptemplate ::qfile::project.quill {project} {
+    project %project 0.0a0 "Your project description"
+}
+
+
 # pkgIndex.tcl package
 #
 # package - A package name
