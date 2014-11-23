@@ -41,7 +41,7 @@ app_quill::tool define new {
         # NEXT, make sure it's a valid tree type.
         set ttype [lshift argv]
 
-        if {$ttype ni [elementx tree names]} {
+        if {$ttype ni [element tree names]} {
             throw FATAL [outdent "
                 Quill doesn't define a project tree type called 
                 \"$ttype\".  Enter \"quill new\" without any other
@@ -57,15 +57,15 @@ app_quill::tool define new {
         prepare project -file
 
         if {$project eq ""} {
-            puts [elementx tree usage $ttype]
+            puts [element tree usage $ttype]
             puts [string repeat - 70]
-            puts [outdent [elementx tree help $ttype]]
+            puts [outdent [element tree help $ttype]]
             exit
         }
 
         puts "Creating a new \"$ttype\" project tree at $project/...\n"
         try {
-            elementx newtree $ttype $project {*}$argv
+            element newtree $ttype $project {*}$argv
         } trap INVALID {result} {
             throw FATAL $result
         }
@@ -81,8 +81,8 @@ app_quill::tool define new {
 
         set table [list]
 
-        foreach ttype [elementx tree names] {
-            set description [elementx tree description $ttype]
+        foreach ttype [element tree names] {
+            set description [element tree description $ttype]
 
             lappend table [list Type $ttype Description $description]
         }

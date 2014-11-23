@@ -48,7 +48,7 @@ source [file join $::app_quill::library project.tcl            ]
 source [file join $::app_quill::library tester.tcl             ]
 
 # New-style Elements
-source [file join $::app_quill::library elementx.tcl           ]
+source [file join $::app_quill::library element.tcl           ]
 source [file join $::app_quill::library qfiles.tcl             ]
 source [file join $::app_quill::library filesets.tcl           ]
 source [file join $::app_quill::library trees.tcl              ]

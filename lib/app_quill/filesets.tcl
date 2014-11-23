@@ -12,7 +12,7 @@
 #    File Set elements
 #-------------------------------------------------------------------------
 
-::app_quill::elementx defset app {
+::app_quill::element defset app {
     description "Application Skeleton"
     argspec     {1 1 app}
 } {
@@ -35,7 +35,7 @@
     }
 }
 
-::app_quill::elementx defset package {
+::app_quill::element defset package {
     description "Library Package Skeleton"
     argspec     {1 2 "package ?module?"}
 } {
@@ -68,7 +68,7 @@
     }
 }
 
-::app_quill::elementx defset quillinfo {
+::app_quill::element defset quillinfo {
     description "quillinfo(n) Library Template"
     argspec     {0 0 ""}
 } {
@@ -81,7 +81,7 @@
     }
 }
 
-::app_quill::elementx defset testtarget {
+::app_quill::element defset testtarget {
     description "Test target directory"
     argspec     {1 1 target}
 } {
@@ -94,7 +94,7 @@
     #
     # Tries to add the element to the current project.  
     #
-    # TODO: Provide some commands for use in elementx code.  elementx::
+    # TODO: Provide some commands for use in element code.  element::
     # procs imported into the element singleton.
     #
     #     write filepath content

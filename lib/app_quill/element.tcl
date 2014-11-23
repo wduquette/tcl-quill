@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------
 # TITLE: 
-#    elementx.tcl
+#    element.tcl
 #
 # AUTHOR:
 #    Will Duquette
@@ -11,10 +11,6 @@
 # DESCRIPTION:
 #    Framework for Quill project elements.
 #
-# TBD:
-#    At present this is elementx.  When complete, the old element.tcl
-#    and tree.tcl modules will go away, and this will become element.tcl.
-#
 #-------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------
@@ -22,10 +18,10 @@
 
 namespace eval ::app_quill:: {
     namespace export \
-        elementx
+        element
 } 
 
-namespace eval ::app_quill::elementx {
+namespace eval ::app_quill::element {
     namespace export \
         fileset      \
         metadata     \
@@ -36,7 +32,7 @@ namespace eval ::app_quill::elementx {
 #-------------------------------------------------------------------------
 # Element Framework Singleton
 
-snit::type ::app_quill::elementx {
+snit::type ::app_quill::element {
     # Make it a singleton
     pragma -hasinstances no -hastypedestroy no
 
@@ -107,14 +103,14 @@ snit::type ::app_quill::elementx {
     typemethod deftree {name meta helptext body} {
         # FIRST, get the ensemble name and id.
         set name     [string tolower $name]
-        set ensemble ::app_quill::elementx::tree[string toupper $name]
+        set ensemble ::app_quill::element::tree[string toupper $name]
 
         # NEXT, save the body.
         set preamble {
             pragma -hasinstances no -hastypedestroy yes
             typeconstructor {
                 # Include the helper procs into the element's namespace.
-                namespace import ::app_quill::elementx::*
+                namespace import ::app_quill::element::*
             }
         }
 
@@ -156,14 +152,14 @@ snit::type ::app_quill::elementx {
     typemethod defset {name meta helptext body} {
         # FIRST, get the ensemble name and id.
         set name     [string tolower $name]
-        set ensemble ::app_quill::elementx::fs[string toupper $name]
+        set ensemble ::app_quill::element::fs[string toupper $name]
 
         # NEXT, save the body.
         set preamble {
             pragma -hasinstances no -hastypedestroy yes
             typeconstructor {
                 # Include the helper procs into the element's namespace.
-                namespace import ::app_quill::elementx::*
+                namespace import ::app_quill::element::*
             }
         }
 

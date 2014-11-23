@@ -16,7 +16,7 @@
 #-------------------------------------------------------------------------
 # Application Project Skeleton
 
-::app_quill::elementx deftree app {
+::app_quill::element deftree app {
     description "Application Project Skeleton"
     argspec     {1 1 <app>}
 } {
@@ -73,7 +73,7 @@
 #-------------------------------------------------------------------------
 # Library Project Skeleton
 
-::app_quill::elementx deftree lib {
+::app_quill::element deftree lib {
     description "Library Project Skeleton"
     argspec     {1 1 <lib>}
 } {
