@@ -3,11 +3,11 @@
 This is the official list of work to be done, along with possibilities,
 blue sky ideas, and what-not.
 
-# For Quill 0.3.0
-
-* Fix bugs as found and reported.
-
 # For Quill 0.4.0
+
+* Enhance tree and file set elements, e.g., add -description to trees.
+* Add additional file set elements for adding individual files
+  (e.g., another module to a library).
 
 * Include tclapp command line in log file.
 * Complete dictable.test.
@@ -20,9 +20,6 @@ blue sky ideas, and what-not.
   * Goal: test coverage similar to Snit's, so that when I run the tests
     on Windows or Linux, I've really shown that I've not broken anything.
 * Use zipfile::encode to build teapot packages.
-* 'quill new lib'
-* 'quill add'
-  * Requires ability to save project.quill.
 * 'quill clean'
   * docstool's clean feature needs to clean up all *.html
 * Add check on "teacup" executable for build 298288 or later.

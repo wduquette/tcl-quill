@@ -99,6 +99,23 @@ test gentree-1.3 {multiple files} -setup {
 } -result {{A Contents} {B Contents}}
 
 #-------------------------------------------------------------------------
+# into
+
+test into-1.1 {can set dictionary value} -body {
+    set dict [dict create]
+    into dict a 1
+    set dict
+} -result {a 1}
+
+#-------------------------------------------------------------------------
+# outof
+
+test outof-1.1 {can get dictionary value} -body {
+    set dict [dict create a 1 b 2 c 3]
+    outof $dict b
+} -result {2}
+
+#-------------------------------------------------------------------------
 # prepare
 
 test prepare-1.1 {trims string} -body {

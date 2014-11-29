@@ -25,7 +25,7 @@ namespace eval ::quillinfo {
     docs/*.md
     LICENSE
     README.md
-} apps quill local-zipfile::encode 0 local-textutil::expander 0 local-snit 0 version 0.3.0 version-Tcl 8.6 project tcl-quill dists install-%platform}
+} apps quill local-zipfile::encode 0 local-textutil::expander 0 local-snit 0 version 0.4.0 version-Tcl 8.6 project tcl-quill dists install-%platform}
 
     namespace export \
         project      \
