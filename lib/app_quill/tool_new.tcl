@@ -63,7 +63,6 @@ app_quill::tool define new {
             exit
         }
 
-        puts "Creating a new \"$ttype\" project tree at $project/...\n"
         try {
             element newtree $ttype $project {*}$argv
         } trap INVALID {result} {

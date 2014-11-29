@@ -327,13 +327,15 @@ snit::type ::app_quill::element {
         # NEXT, ensure we are not in a project tree (or -force)
         if {[project intree]} {
             if {!$trans(force)} {
-                throw FATAL [outdent {
+                throw FATAL [outdent "
+                    The current working directory is in an existing
+                    project tree.
+
+                    Normally, Quill will not create nested projects.
                     To create a project within an existing project, include
                     the -force option.
-                }]
+                "]
             }
-
-            # TBD: Be sure we clear and reset the project metadata.
         }
 
         # NEXT, ensure that the project directory doesn't yet exist
@@ -361,6 +363,7 @@ snit::type ::app_quill::element {
         checkargs "quill new $name $project" {*}$info(argspec-$id) $args
 
         # NEXT, create the project directory.
+        puts "Creating a new \"$name\" project tree at $project/...\n"
         project newroot [file join [pwd] $project]
 
         $info(ensemble-$id) add $project {*}$args

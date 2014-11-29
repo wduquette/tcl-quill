@@ -136,8 +136,6 @@ snit::type ::app_quill::project {
     # new projects.
 
     typemethod newroot {rootdir} {
-        assert {![project intree]}
-
         set info(root) $rootdir
         file mkdir $info(root)
         cd $info(root)
