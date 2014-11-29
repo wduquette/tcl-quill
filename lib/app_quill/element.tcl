@@ -443,15 +443,17 @@ snit::type ::app_quill::element {
                 }
             }
 
-            puts "Adding this element would overwrite the following files:"
-            puts ""
+            if {[got $list]} {
+                puts "Adding this element would overwrite the following files:"
+                puts ""
 
-            foreach file $list {
-                puts "    $file"
+                foreach file $list {
+                    puts "    $file"
+                }
+
+                puts ""
+                throw FATAL "To add the element anyway, use the -force option."
             }
-
-            puts ""
-            throw FATAL "To add the element anyway, use the -force option."
         }
 
 

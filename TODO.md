@@ -5,6 +5,7 @@ blue sky ideas, and what-not.
 
 # For Quill 0.4.0
 
+* Update QUG.
 * Enhance tree and file set elements, e.g., add -description to trees.
 * Add additional file set elements for adding individual files
   (e.g., another module to a library).
