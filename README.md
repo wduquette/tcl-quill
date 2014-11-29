@@ -27,7 +27,7 @@ automating everything but the actual writing of the code and documentation.
 You can follow Quill development at
 [GitHub](https://github.com/wduquette/tcl-quill); also, I'm posting 
 occasional development notes and questions for the Quill users on 
-[my blog](http://http://www.foothills.wjduquette.com/blog/).
+[my blog](http://www.foothills.wjduquette.com/blog/).
 
 ## Building and Installation
 
