@@ -29,6 +29,12 @@
         write bin/$app.tcl           [::qfile::app.tcl $app]
         write docs/man1/$app.manpage [::qfile::man1.manpage $app]
 
+        if {![file exists [project root lib quillinfo]]} {
+            write lib/quillinfo/pkgIndex.tcl   [::qfile::quillinfoPkgIndex]
+            write lib/quillinfo/pkgModules.tcl [::qfile::quillinfoPkgModules]
+            write lib/quillinfo/quillinfo.tcl  [::qfile::quillinfo.tcl]
+        }
+
         queue os setexecutable [project root bin $app.tcl]
 
         metadata app $app

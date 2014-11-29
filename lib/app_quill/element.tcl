@@ -433,20 +433,27 @@ snit::type ::app_quill::element {
     proc WriteFiles {} {
         # FIRST, make sure none of the files exist.
         if {!$trans(force)} {
+            set list [list]
+
             foreach filename [dict keys $trans(files)] {
                 set fullname [GetPath $filename]
 
                 if {[file exists $fullname]} {
-                    throw FATAL [outdent "
-                        This element file already exists:
-
-                            $fullname
-
-                        To overwrite it, use the -force option.
-                    "]
+                    lappend list $fullname
                 }
             }
+
+            puts "Adding this element would overwrite the following files:"
+            puts ""
+
+            foreach file $list {
+                puts "    $file"
+            }
+
+            puts ""
+            throw FATAL "To add the element anyway, use the -force option."
         }
+
 
         # NEXT, write the files.
         dict for {filename content} $trans(files) {

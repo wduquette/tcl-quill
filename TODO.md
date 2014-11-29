@@ -5,10 +5,6 @@ blue sky ideas, and what-not.
 
 # For Quill 0.4.0
 
-* 'quill add'
-  * Should there be an element wrapper around a file set?
-    * Error checking?
-  * Test with error cases and -force
 * Enhance tree and file set elements, e.g., add -description to trees.
 * Add additional file set elements for adding individual files
   (e.g., another module to a library).
