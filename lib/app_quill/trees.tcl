@@ -49,7 +49,9 @@
         write LICENSE                [::qfile::LICENSE]
         write docs/index.quilldoc    [::qfile::index.quilldoc]
         write docs/man1/$app.manpage [::qfile::man1.manpage $app]
-        fileset quillinfo
+        write lib/quillinfo/pkgIndex.tcl   [::qfile::quillinfoPkgIndex]
+        write lib/quillinfo/pkgModules.tcl [::qfile::quillinfoPkgModules]
+        write lib/quillinfo/quillinfo.tcl  [::qfile::quillinfo.tcl]
 
         # NEXT, complete the project.quill content.
         set tclVersion [env versionof tclsh]

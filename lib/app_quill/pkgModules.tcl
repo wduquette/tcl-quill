@@ -48,13 +48,14 @@ source [file join $::app_quill::library project.tcl            ]
 source [file join $::app_quill::library tester.tcl             ]
 
 # New-style Elements
-source [file join $::app_quill::library element.tcl           ]
+source [file join $::app_quill::library element.tcl            ]
 source [file join $::app_quill::library qfiles.tcl             ]
 source [file join $::app_quill::library filesets.tcl           ]
 source [file join $::app_quill::library trees.tcl              ]
 
 # Tools
 source [file join $::app_quill::library tool.tcl               ]
+source [file join $::app_quill::library tool_add.tcl           ]
 source [file join $::app_quill::library tool_basekit.tcl       ]
 source [file join $::app_quill::library tool_build.tcl         ]
 source [file join $::app_quill::library tool_config.tcl        ]

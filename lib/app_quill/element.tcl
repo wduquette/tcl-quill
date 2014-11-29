@@ -282,6 +282,19 @@ snit::type ::app_quill::element {
     }
 
 
+    # fileset usage name
+    #
+    # name - The name of a fileset element
+    #
+    # Returns the fileset element's usage string.
+
+    typemethod {fileset usage} {name} {
+        set id $info(fsid-$name)
+        set arglist [lindex $info(argspec-$id) 2]
+
+        return "quill add $name <project> $arglist"
+    }
+
     # fileset help name
     #
     # name - The name of an element
@@ -438,6 +451,7 @@ snit::type ::app_quill::element {
         # NEXT, write the files.
         dict for {filename content} $trans(files) {
             set fullname [GetPath $filename]
+            puts "File: $fullname"
             writefile $fullname $content
         }
     } 
@@ -465,6 +479,11 @@ snit::type ::app_quill::element {
     proc SaveMetadata {} {
         if {![got $trans(metadata)]} {
             return
+        }
+
+        puts ""
+        foreach item $trans(metadata) {
+            puts "project.quill: $item"
         }
 
         set f [open [project root project.quill] a]

@@ -14,7 +14,7 @@
 
 ::app_quill::element defset app {
     description "Application Skeleton"
-    argspec     {1 1 app}
+    argspec     {1 1 <app>}
 } {
     This element creates a new application skeleton: the loader script,
     the application implementation package, and the implementation
@@ -37,7 +37,7 @@
 
 ::app_quill::element defset package {
     description "Library Package Skeleton"
-    argspec     {1 2 "package ?module?"}
+    argspec     {1 2 "<package> ?<module>?"}
 } {
     This element creates a library package skeleton.
 } {
@@ -61,29 +61,16 @@
         if {$module eq "main"} {
             write lib/$package/main.tcl     [::qfile::main.tcl $package]
         } else {
-            write lib/$package/$package.tcl [::qfile::module.tcl $package]
+            write lib/$package/$module.tcl [::qfile::module.tcl $module]
 
             metadata provide $package
         }
     }
 }
 
-::app_quill::element defset quillinfo {
-    description "quillinfo(n) Library Template"
-    argspec     {0 0 ""}
-} {
-    This element creates a quillinfo library.
-} {
-    typemethod add {} {
-        write lib/quillinfo/pkgIndex.tcl   [::qfile::quillinfoPkgIndex]
-        write lib/quillinfo/pkgModules.tcl [::qfile::quillinfoPkgModules]
-        write lib/quillinfo/quillinfo.tcl  [::qfile::quillinfo.tcl]
-    }
-}
-
 ::app_quill::element defset testtarget {
     description "Test target directory"
-    argspec     {1 1 target}
+    argspec     {1 1 <target>}
 } {
     This element creates a single test target directory called <target>.
     It will contain two files, all_tests.test and <target>.test.
