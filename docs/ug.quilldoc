@@ -2,7 +2,7 @@
 
 By Will Duquette<br>
 <tt will -at- wjduquette.com><br>
-November, 2014<p>
+December, 2014<p>
 
 <hrule>
 <contents>
@@ -106,9 +106,6 @@ A Quill <i>project</i> is the collection of files related to a Tcl application
 or library package (or both together).  To begin working with Quill, then,
 the first thing to do is create a new project.  And the first thing to do
 when starting a new project is to choose the most suitable project template.<p>
-
-<i><b FUTURE:> Quill will support multiple project templates.  At present,
-it supports a single template, '<tt app>', for a generic application.</i><p>
 
 To create a new project, switch to the parent directory of the new project's
 directory tree, and use the '<tt quill new>' tool:<p>
@@ -557,7 +554,7 @@ $ quill deps update
 ...
 </example><p>
 
-Quill will attempt to retrieve all missing depedencies, and will report 
+Quill will attempt to retrieve all missing dependencies, and will report 
 on its success or failure.
 
 Finally, you can refresh any or all dependencies, explicitly downloading
@@ -939,15 +936,38 @@ threaded and unthreaded are available) you can use the <tt -version> and
 
 <section using.element "Adding Elements to a Project">
 
-<i><b FUTURE:> The '<tt quill add>' command will add application,
+The '<tt quill add>' command adds application,
 library, and other skeleton elements to your project using templates,
-updating <tt project.quill> as required.</i><p>
+updating <tt project.quill> as required.  To see a list of available 
+templates, enter
 
-In the mean time, the easiest way to add a new library or application is 
-to copy and rename the required files and directories.  See 
-Sections <xref lib>, <xref app>, and <xref testing> for complete
-descriptions of Quill's expectations with regard to library packages,
-applications, and test targets.<p>
+<example>
+$ quill add
+...
+$
+</example>
+
+To see a description of one of the templates, "<tt app>", say, enter
+
+<example>
+$ quill add app
+...
+</example>
+
+Then to create the element, use '<tt quill add>' with the arguments required
+by the template:<p>
+
+<example>
+$ quill add app mynewapp
+...
+$
+</example>
+
+Alternatively, you can add a new library or application manually by 
+copying and renaming the required files and directories from an existing
+library or application.  See Sections <xref lib>, <xref app>, and 
+<xref testing> for complete descriptions of Quill's expectations with 
+regard to library packages, applications, and test targets.<p>
 
 <section using.config "Configuring Quill">
 
@@ -991,12 +1011,6 @@ See '<tt quill help config>' for the complete syntax of the
 
 
 
-
-
-
-
-
-
 <== ====================================================================>
 
 <section lib "Library Packages">
@@ -1024,8 +1038,8 @@ A project library called <i name>, of any of these three kinds, resides in
 the project's <root "lib/<i name>"> directory.<p>
 
 At least one library package is included in each new project.  Additional
-packages can be added using the <tt quill add> command (not yet implemented)
-or by hand, by copying an existing library.<p>
+packages can be added using the <tt quill add> command,
+or by copying an existing library manually.<p>
 
 Quill has some very specific expectations of project library packages; for
 the details, see the following subsections.<p>
@@ -1295,8 +1309,7 @@ An application called <i name> in a Quill project is defined by:
 <section app.loader "The Application Loader Script">
 
 The application loader script is created automatically by 
-'<tt quill new>'.  <i><b FUTURE:> '<tt quill add app>' will also add 
-application loader scripts automatically.</i>  It is almost completely
+'<tt quill new app>' or '<tt quill add app>'.  It is almost completely
 boilerplate.<p>
 
 The application loader script performs the following functions:<p>
@@ -1660,17 +1673,15 @@ Quill project have such a file; see <xref lib.pkgmodules> for details.<p>
 
 <section testing.new "Adding New Test Targets">
 
-At present each Quill project contains one test target, for the 
-application's implementation package.  Ultimately, you will be
-able to use the <tt quill add> command (FIXME) to add new
-library packages, as well as new applications (each of which gets its
-corresponding implementation package); each library created in this way
-will each get its own test directory.<p>
+At present each new Quill project contains one test target, for project's
+initial application or library package.  You can also use the 
+'<tt quill add>'' command to add new applications and libraries 
+(each of which gets its corresponding implementation package); each 
+package created in this way will each get its own test directory.
+Finally, you can also use '<tt quill add>' to add a test target by 
+itself.<p>
 
-In the meantime, test directories must be added by hand, usually by
+And, of course, test directories may be added by hand, usually by
 copying an existing directory and changing the names.<p>
-
-<== ====================================================================>
-
 
 </document>

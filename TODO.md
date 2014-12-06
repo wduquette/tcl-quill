@@ -3,9 +3,8 @@
 This is the official list of work to be done, along with possibilities,
 blue sky ideas, and what-not.
 
-# For Quill 0.4.0
+# For Quill 0.5.0
 
-* Update QUG.
 * Enhance tree and file set elements, e.g., add -description to trees.
 * Add additional file set elements for adding individual files
   (e.g., another module to a library).
@@ -34,9 +33,6 @@ blue sky ideas, and what-not.
 ## Existing Tools
 
 Quill's existing tools should provide the following additional features:
-
-* quill add
-  * Add a lib or app to the project.
 
 * quill build
   * Build as ".app" on OSX.
