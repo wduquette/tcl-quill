@@ -33,11 +33,19 @@ app_quill::tool define basekit {
         Lists all available basekits for other platforms and the 
         configured Tcl version (see 'quill env'), and indicates 
         whether they are on the local disk or at teapot.activestate.com.
+        (This is equivalent to 'quill basekit list -source all'.)
+
+    quill basekit list ?-source local|web|all?
+        Lists the basekits available from the given source: the 
+        local repository, from ActiveState's teapot, or both.
 
     quill basekit get <name> <version> <platform>
         Retrieves the stated basekit(s) from teapot.activestate.com and
         saves it locally.  The arguments can contain wildcards; all
-        matching basekits are retrieved.
+        matching basekits are retrieved.  For example, to retrieve all
+        Tcl/Tk 8.6.3 basekits, enter
+
+            quill basekit get "*" "8.6.3.*" "*"
 
     quill basekit remove <name> <version> <platform>
         Removes the specific basekit(s) from the local cache. 
@@ -96,13 +104,16 @@ app_quill::tool define basekit {
 
     proc ListBasekits {argv} {
         # FIRST, get a list of the available basekits.
-        if {"-local" ni $argv} {
+        set source [from argv -source all]
+
+        if {$source ne "local"} {
             puts "Finding basekits at teapot.activestate.com..."
             puts ""
         }
 
         try {
-            set kits [basekit table [env versionof tclsh] {*}$argv]
+            set kits \
+            [basekit table [env versionof tclsh] -source $source {*}$argv]
         } trap INVALID {result} {
             throw FATAL $result
         }

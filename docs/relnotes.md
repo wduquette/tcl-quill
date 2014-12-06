@@ -1,5 +1,24 @@
 # Release Notes
 
+## Quill v0.4.0
+
+Significant Changes:
+
+* Quill has a new template architecture for project trees and other 
+  project elements.
+* There are now two project tree templates, "app" and "lib".
+* There is now a 'quill add' command, for adding skeleton project
+  elements (libs, apps, etc.) to existing projects.
+
+Issues Closed in Quill v0.4.0
+
+
+* #48: 'quill add' command
+* #46: Feature Request - Release checklist
+* #45: Tool usage string convention
+* #34: 'quill new -force'
+* #10: 'quill new lib'  
+
 ## Quill v0.3.0
 
 Significant Changes:
