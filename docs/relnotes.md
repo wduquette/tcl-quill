@@ -13,6 +13,7 @@ Significant Changes:
 Issues Closed in Quill v0.4.0
 
 * #50: 'quill basekit''s help is out-of-date.
+* #49: Can't bootstrap Quill easily
 * #48: 'quill add' command
 * #46: Feature Request - Release checklist
 * #45: Tool usage string convention
