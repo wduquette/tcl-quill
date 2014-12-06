@@ -848,7 +848,7 @@ snit::type ::app_quill::project {
                 }
 
             } else {
-                lappend nblock line
+                lappend nblock $line
             }
         }
         # NEXT, output the updated file if the text has changed.

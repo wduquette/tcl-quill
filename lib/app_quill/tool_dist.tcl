@@ -34,6 +34,14 @@ app_quill::tool define dist {
     # Executes the tool given the arguments.
 
     typemethod execute {argv} {
+        if {!$::got(zipfile::encode)} {
+            throw FATAL [outdent {
+                Cannot build distributions; zipfile::encode is not
+                available locally.  Please check dependencies, and
+                make sure your teapot is configured properly.
+            }]
+        }
+
         if {[llength $argv] == 1} {
             set dists [list [lindex $argv 0]]
         } else {

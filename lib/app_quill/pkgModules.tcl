@@ -22,8 +22,16 @@ package provide app_quill 0.4.0
 
 # -quill-require-begin INSERT PACKAGE REQUIRES HERE
 package require snit 2.3
+
+try {
 package require zipfile::encode 0.3
+    set ::got(zipfile::encode) 1
+} on error {result} {
+    set ::got(zipfile::encode) 0
+}
+
 package require quill 0.4.0
+
 # -quill-require-end
 
 namespace import quill::*
