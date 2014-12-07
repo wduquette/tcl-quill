@@ -57,7 +57,12 @@ app_quill::tool define run {
             {*}$argv >@ stdout 2>@ stderr
 
         # NEXT, Execute the run
-        eval exec $command
+        try {
+            eval exec $command
+        } trap CHILDSTATUS {} {
+            # Ignore CHILDSTATUS errors; all of the child's stdout and
+            # stderr have been made invisible already.
+        }
     }
 }
 

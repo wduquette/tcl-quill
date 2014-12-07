@@ -14,7 +14,7 @@
 #-----------------------------------------------------------------------
 
 # -quill-provide-begin DO NOT EDIT BY HAND
-package provide app_quill 0.4.0
+package provide app_quill 0.4.1
 # -quill-provide-end
 
 #-----------------------------------------------------------------------
@@ -30,7 +30,7 @@ package require zipfile::encode 0.3
     set ::got(zipfile::encode) 0
 }
 
-package require quill 0.4.0
+package require quill 0.4.1
 
 # -quill-require-end
 

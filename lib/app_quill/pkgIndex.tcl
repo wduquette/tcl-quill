@@ -14,6 +14,6 @@
 #-------------------------------------------------------------------------
 
 # -quill-ifneeded-begin DO NOT EDIT BY HAND
-package ifneeded app_quill 0.4.0 [list source [file join $dir pkgModules.tcl]]
+package ifneeded app_quill 0.4.1 [list source [file join $dir pkgModules.tcl]]
 # -quill-ifneeded-end
 

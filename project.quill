@@ -1,4 +1,4 @@
-project tcl-quill 0.4.0 "Quill Project Automation System for Tcl/Tk"
+project tcl-quill 0.4.1 "Quill Project Automation System for Tcl/Tk"
 homepage http://github.com/wduquette/tcl-quill
 app quill -exetype exe
 provide quill
