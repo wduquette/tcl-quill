@@ -675,10 +675,14 @@ snit::type ::app_quill::project {
         assert {[$type gotinfo]}
 
         # FIRST, save the info to quillinfo.
+        set root [project root lib/quillinfo]
         if {[$type gotapp]} {
-            writefile lib/quillinfo/pkgIndex.tcl   [::qfile::quillinfoPkgIndex]
-            writefile lib/quillinfo/pkgModules.tcl [::qfile::quillinfoPkgModules]
-            writefile lib/quillinfo/quillinfo.tcl  [::qfile::quillinfo.tcl]
+            writefile [project root lib/quillinfo/pkgIndex.tcl]   \
+                [::qfile::quillinfoPkgIndex]
+            writefile [project root lib/quillinfo/pkgModules.tcl] \
+                [::qfile::quillinfoPkgModules]
+            writefile [project root lib/quillinfo/quillinfo.tcl]  \
+                [::qfile::quillinfo.tcl]
         }
 
         # NEXT, update Tcl/Tk versions in apploader scripts.
