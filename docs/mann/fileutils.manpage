@@ -1,0 +1,57 @@
+<manpage fileutils(n) "File Utilities" quill(n)>
+
+<section SYNOPSIS>
+
+<example>
+package require quill <version>
+namespace import ::quill::*
+</example>
+
+<itemlist>
+
+<section DESCRIPTION>
+
+fileutils(n) contains a number of file-manipulation commands.<p>
+
+
+<section COMMANDS>
+
+fileutils(n) defines the following commands:<p>
+
+<deflist commands>
+
+<defitem readfile {readfile <i filename>}>
+
+Opens the named file, reads its contents into memory, and returns it.<p>
+
+<defitem writefile {writefile <i filename text>}>
+
+Writes the given <i text> to the given <i filename>, exactly as is (i.e.,
+no extra newline is added).<p>
+
+This command is optimized for updating files in a project tree.  
+Consequently, the file will only be written if its new content differs
+from its old content.  If they are the same, the file on the disk will
+be completely untouched.<p>
+
+<defitem genfile {genfile <i template filename mapping...>}>
+
+Generates a new file from a template file given a variable mapping.
+The template is found in the file called <i template>; it is read,
+and the <i mapping> is applied.  It is a <tt string map> mapping 
+dictionary, expressed as a single argument or as two or more
+key and value arguments.  The result is written to the <i filename>
+using <xref #writefile>.<p>
+
+</deflist commands>
+
+
+<section AUTHOR>
+
+Will Duquette<p>
+
+<section "SEE ALSO">
+
+<xref quill(n)>.
+
+</manpage>
